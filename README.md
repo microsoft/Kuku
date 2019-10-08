@@ -170,6 +170,52 @@ return false, and a leftover item will be stored in a member variable that can b
 `last_insert_fail_item()`. The same item cannot be inserted multiple times: `insert` will
 return `false` in this case.
 
+# Cuckoo.Net
+
+The Cuckoo distribution contains a .Net Core wrapper of the native code. This wrapper currently only supports the Windows OS.
+
+The CuckooLib project produces a C++ dynamic library defining the externalized methods to be used by the C# code. The CuckooDotNet project is the C# wrapper code using the CuckooLib dll.
+
+## Building Cuckoo.Net
+
+### Windows
+
+First, Build the CuckooLib project `CuckooLib.vcxproj` from `Cuckoo.sln`. This results in the
+dynamic library `cuckoolib.dll` to be created in `dotnet\cuckoolib\bin\$(Platform)\$(Configuration)`.
+
+Next, build the CuckooDotNet project `CuckooDotNet.csproj` from `Cuckoo.sln`. This results in the
+dynamic library `cuckoodotnet.dll` to be created in `dotnet\cuckoodotnet\bin\$(Platform)\$(Configuration)`.
+
+## Building Cuckoo.Net Example
+
+Build the  CuckooDotNetExample project `CuckooDotNetExample.csproj` from `Cuckoo.sln`. This results in the
+dynamic library `cuckoodotnetexample.dll` to be created in `dotnet\cuckoodotnetexample\bin\$(Platform)\$(Configuration)`.
+
+## Running Cuckoo.Net Example
+
+From the bin path, run `dotnet CuckooDotNetExample.dll <logTableSize> <stashSize> <locFuncCount> <maxProbe>`. The example program inserts values into the hash table, which you can then query by typing your queried item in the format `<ulong>,<ulong>`.
+
+# Using Cuckoo.Net
+
+Much like in the native library, the cuckoo hash table is represented by an instance of the `CuckooTableDotNet128` class. The
+constructor of `CuckooTableDotNet128` takes as input a set of parameters, defined by the `CuckooTableParameters` class. The parameters contain a base-2 logarithm of the table size
+`(LogTableSize`), the size of the stash (`StashSize`), the number of hash functions
+(`LocFuncCount`), a seed for the hash functions (`LocFuncSeed`), the number of
+iterations allowed in the insertion process, and a value the hash table should contain
+to signal an empty slot (`EmptyItem`). The hash tables items are restricted to 128-bit
+integer data types. These can be created from an array of size 2 of 64-bit integers by instantiating the `Item` class and setting its `Data` property with a ulong array of size 2.
+
+Once the table has been created, items can be inserted using the member function `Insert`.
+Items can be queried with the member function `Query`, which returns a `QueryResult`
+object. The `QueryResult` contains information about the location in the cuckoo table where
+the queried item was found, as well as the hash function that was used to eventually insert
+it.
+
+If Cuckoo fails to insert an item to the table or to the stash, the `Insert` function will
+return false, and a leftover item will be stored in a member variable that can be read with
+`LastInsertFailItem()`. The same item cannot be inserted multiple times: `Insert` will
+return `false` in this case.
+
 # Pull Requests
 
 For contributing to Kuku, please see [CONTRIBUTING.md](CONTRIBUTING.md).

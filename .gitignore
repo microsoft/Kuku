@@ -19,5 +19,6 @@ src/kuku/config.h
 */obj/*
 dotnet/kukudotnet/obj
 dotnet/kukulib/Debug
+dotnet/kukulib/Release
 dotnet/examples/obj
 dotnet/examples/Properties/launchSettings.json
