@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 
-namespace CuckooDotNet
+namespace KukuDotNet
 {
     public class Item128 : IItem
     {

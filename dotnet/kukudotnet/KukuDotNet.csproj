@@ -14,12 +14,12 @@
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <None Include="..\cuckoolib\bin\x64\Release\CuckooLib.dll" Link="CuckooLib.dll">
+    <None Include="..\kukulib\bin\x64\Release\KukuLib.dll" Link="KukuLib.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <None Include="..\cuckoolib\bin\x64\Debug\CuckooLib.dll" Link="CuckooLib.dll">
+    <None Include="..\kukulib\bin\x64\Debug\KukuLib.dll" Link="KukuLib.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -1,41 +1,41 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace CuckooDotNet
+namespace KukuDotNet
 {
-    internal class CuckooDotNet
+    internal class KukuDotNet
     {
-        private const string DllName = "CuckooLib.dll";
+        private const string DllName = "KukuLib.dll";
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr CuckooTable_Create(int log_table_size, uint stash_size, uint loc_func_count, ulong[] loc_func_seed, ulong max_probe, ulong[] empty_item);
+        public static extern IntPtr kukuTable_Create(int log_table_size, uint stash_size, uint loc_func_count, ulong[] loc_func_seed, ulong max_probe, ulong[] empty_item);
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern bool CuckooTable_Insert(IntPtr cuckoo_table, ulong[] item);
+        internal static extern bool kukuTable_Insert(IntPtr kuku_table, ulong[] item);
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern bool CuckooTable_Query(IntPtr cuckoo_table, ulong[] item, ref QueryResult query_result);
+        internal static extern bool kukuTable_Query(IntPtr kuku_table, ulong[] item, ref QueryResult query_result);
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern bool CuckooTable_IsEmptyItem(IntPtr cuckoo_table, ulong[] item);
+        internal static extern bool kukuTable_IsEmptyItem(IntPtr kuku_table, ulong[] item);
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern bool CuckooTable_LastInsertFailItem(IntPtr cuckoo_table, ulong[] item);
+        internal static extern bool kukuTable_LastInsertFailItem(IntPtr kuku_table, ulong[] item);
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern double CuckooTable_FillRate(IntPtr cuckoo_table);
+        internal static extern double kukuTable_FillRate(IntPtr kuku_table);
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern bool CuckooTable_Table(IntPtr cuckoo_table, uint index, ulong[] item);
+        internal static extern bool kukuTable_Table(IntPtr kuku_table, uint index, ulong[] item);
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern uint CuckooTable_TableSize(IntPtr cuckoo_table);
+        internal static extern uint kukuTable_TableSize(IntPtr kuku_table);
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern bool CuckooTable_Stash(IntPtr cuckoo_table, uint index, ulong[] item);
+        internal static extern bool kukuTable_Stash(IntPtr kuku_table, uint index, ulong[] item);
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern uint CuckooTable_StashSize(IntPtr cuckoo_table);
+        internal static extern uint kukuTable_StashSize(IntPtr kuku_table);
     }
 
     internal struct QueryResult

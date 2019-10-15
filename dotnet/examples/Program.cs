@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using CuckooDotNet;
+using KukuDotNet;
 
-namespace CuckooDotNetExample
+namespace KukuDotNetExample
 {
     public class Program
     {
@@ -14,34 +14,34 @@ namespace CuckooDotNetExample
             RunExample(parameters);
         }
 
-        static void RunExample(CuckooTableParameters parameters)
+        static void RunExample(KukuTableParameters parameters)
         {
-            var cuckooTable = new CuckooTableDotNet128(parameters);
+            var kukuTable = new KukuTableDotNet128(parameters);
 
             ulong roundCounter = 0;
             while (true)
             {
                 Console.WriteLine($"Inserted {roundCounter * 20} items.");
-                Console.WriteLine($"Fill rate: {cuckooTable.FillRate()}.");
+                Console.WriteLine($"Fill rate: {kukuTable.FillRate()}.");
 
                 for (ulong i = 0; i < 20; i++)
                 {
                     var item = new Item128 { Data = new[] { i + 1, roundCounter + 1 } };
-                    if (!cuckooTable.Insert(item))
+                    if (!kukuTable.Insert(item))
                     {
                         Console.WriteLine($"Insertion failed: round_counter = {roundCounter}, i = {i}");
                         Console.WriteLine($"Inserted successfully {roundCounter * 20 + i} items.");
-                        Console.WriteLine($"Fill rate: {cuckooTable.FillRate()}.");
+                        Console.WriteLine($"Fill rate: {kukuTable.FillRate()}.");
 
-                        var lastItem = cuckooTable.LastInsertFailItem();
+                        var lastItem = kukuTable.LastInsertFailItem();
                         Console.WriteLine($"Leftover item: [{string.Join(',', lastItem)}].");
                         break;
                     }
                 }
 
-                PrintTable(cuckooTable);
+                PrintTable(kukuTable);
 
-                if (!cuckooTable.IsEmptyItem(cuckooTable.LastInsertFailItem()))
+                if (!kukuTable.IsEmptyItem(kukuTable.LastInsertFailItem()))
                 {
                     break;
                 }
@@ -67,7 +67,7 @@ namespace CuckooDotNetExample
                     continue;
                 }
 
-                var result = cuckooTable.Query(item);
+                var result = kukuTable.Query(item);
                 if (result.Location == 0 && !result.InStash)
                 {
                     Console.WriteLine($"[{string.Join(',', item)}] was not found.");
@@ -91,7 +91,7 @@ namespace CuckooDotNetExample
             return (Math.Abs(longRand % (max - min)) + min);
         }
 
-        private static CuckooTableParameters ParseParameters(string[] args)
+        private static KukuTableParameters ParseParameters(string[] args)
         {
             if (args.Length != 4)
             {
@@ -132,7 +132,7 @@ namespace CuckooDotNetExample
                 Environment.Exit(1);
             }
 
-            var parameters = new CuckooTableParameters()
+            var parameters = new KukuTableParameters()
             {
                 LogTableSize = logTableSize, StashSize = stashSize, LocFuncCount = locFuncCount, MaxProbe = maxProbe
             };
@@ -150,13 +150,13 @@ namespace CuckooDotNetExample
             Console.WriteLine($"Usage: dotnet {name}.dll <logTableSize> <stashSize> <locFuncCount> <maxProbe>");
         }
 
-        static void PrintTable(CuckooTableDotNet128 cuckooTable)
+        static void PrintTable(KukuTableDotNet128 kukuTable)
         {
-            Console.WriteLine($"Table size: { cuckooTable.Table.Size }");
-            Console.WriteLine($"{cuckooTable.Table}");
+            Console.WriteLine($"Table size: { kukuTable.Table.Size }");
+            Console.WriteLine($"{kukuTable.Table}");
 
-            Console.WriteLine($"Stash size: { cuckooTable.Stash.Size }");
-            Console.WriteLine($"{cuckooTable.Stash}");
+            Console.WriteLine($"Stash size: { kukuTable.Stash.Size }");
+            Console.WriteLine($"{kukuTable.Stash}");
         }
     }
 }

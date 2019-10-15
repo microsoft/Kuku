@@ -21,7 +21,7 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="cuckoo_ref.h">
+    <ClInclude Include="kuku_ref.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -32,7 +32,7 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="cuckoo_ref.cpp">
+    <ClCompile Include="kuku_ref.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

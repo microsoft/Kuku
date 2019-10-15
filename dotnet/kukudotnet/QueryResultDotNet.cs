@@ -1,4 +1,4 @@
-﻿namespace CuckooDotNet
+﻿namespace KukuDotNet
 {
     public class QueryResultDotNet
     {

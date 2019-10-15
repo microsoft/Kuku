@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CuckooDotNet
+namespace KukuDotNet
 {
     public interface IItem
     {
