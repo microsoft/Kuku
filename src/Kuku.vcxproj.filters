@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Other">
+      <UniqueIdentifier>{29feaf4f-ebba-4b4e-bd3a-0b75f7fb19e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Other\kuku">
+      <UniqueIdentifier>{bc0124d4-74ae-4097-b66f-ee15e88f6d02}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="kuku\blake2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kuku\blake2-impl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kuku\kuku.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kuku\common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kuku\locfunc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="kuku\kuku.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kuku\blake2b.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kuku\common.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="kuku\config.h.in">
+      <Filter>Other\kuku</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="kuku\CMakeLists.txt">
+      <Filter>Other\kuku</Filter>
+    </Text>
+    <Text Include="CMakeLists.txt">
+      <Filter>Other</Filter>
+    </Text>
+  </ItemGroup>
+</Project>

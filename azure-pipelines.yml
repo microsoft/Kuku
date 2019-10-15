@@ -1,0 +1,97 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'x64'
+  buildConfiguration: 'Release'
+
+steps:
+- task: NuGetToolInstaller@1
+
+- task: NuGetCommand@2
+  displayName: 'Restore from Solution'
+  inputs:
+    restoreSolution: '**/*.sln'
+
+- task: NuGetCommand@2
+  displayName: 'Restore from test configuration'
+  inputs:
+    restoreSolution: config/packages.config
+    restoreDirectory: ConfigPackages
+
+- task: CredScan@2
+  displayName: 'Run CredScan'
+  inputs:
+    outputFormat: sarif
+    debugMode: false
+
+- task: VSBuild@1
+  inputs:
+    solution: '**\*.sln'
+    vsVersion: '16.0'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+    maximumCpuCount: true
+    msbuildArchitecture: 'x64'
+    createLogFile: true
+
+- task: VSTest@2
+  inputs:
+    testSelector: 'testAssemblies'
+    testAssemblyVer2: '**\KukuTest.exe'
+    searchFolder: '$(System.DefaultWorkingDirectory)'
+    vsTestVersion: '16.0'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+
+- task: RoslynAnalyzers@2
+  displayName: 'Run Roslyn Analyzers'
+
+- task: PublishSymbols@2
+  displayName: 'Publish symbols path'
+  inputs:
+    SearchPattern: '**\bin\**\*.pdb'
+    PublishSymbols: false
+  continueOnError: true
+
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+  inputs:
+    SourceFolder: '$(build.sourcesdirectory)'
+    Contents: '**\$(BuildConfiguration)\**\?(*.exe|*.dll|*.lib)'
+    TargetFolder: '$(build.artifactstagingdirectory)'
+
+- task: ComponentGovernanceComponentDetection@0
+  displayName: 'Component Detection'
+  inputs:
+    scanType: 'Register'
+    verbosity: 'Verbose'
+    alertWarningLevel: 'High'
+
+- task: PublishSecurityAnalysisLogs@2
+  inputs:
+    ArtifactName: 'CodeAnalysisLogs'
+    ArtifactType: 'Container'
+    AllTools: true
+    ToolLogsNotFoundAction: 'Standard'
+
+- task: uploadScanResults@1
+  inputs:
+    uploadUrl: 'https://airbuildscan.azurewebsites.net/api/Upload'
+    areaPathParent: '/'
+    areaPathChild: 'PrivateAI'
+  enabled: false
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'    
