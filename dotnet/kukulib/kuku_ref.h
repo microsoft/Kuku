@@ -33,3 +33,5 @@ extern "C" __declspec(dllexport) std::size_t kukuTable_TableSize(kuku::KukuTable
 extern "C" __declspec(dllexport) bool kukuTable_Stash(kuku::KukuTable* kuku_table, std::size_t index, uint64_t* item);
 
 extern "C" __declspec(dllexport) std::size_t kukuTable_StashSize(kuku::KukuTable* kuku_table);
+
+extern "C" __declspec(dllexport) std::size_t kukuTable_Location(kuku::KukuTable* kuku_table, kuku::item_type item, std::size_t loc_func_index);

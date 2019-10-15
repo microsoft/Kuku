@@ -51,6 +51,11 @@ namespace KukuDotNet
             return KukuDotNet.kukuTable_FillRate(this._unmanagedkukuTable);
         }
 
+        public uint GetLocation(TItem item, uint locFuncIndex)
+        {
+            return KukuDotNet.kukuTable_Location(this._unmanagedkukuTable, item.Data, locFuncIndex);
+        }
+
         private TItem GetTableItem(uint index)
         {
             var numArray = new ulong[this._dataLen];

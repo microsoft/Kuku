@@ -36,6 +36,9 @@ namespace KukuDotNet
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
         internal static extern uint kukuTable_StashSize(IntPtr kuku_table);
+
+        [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern uint kukuTable_Location(IntPtr kuku_table, ulong[] item, uint index);
     }
 
     internal struct QueryResult
