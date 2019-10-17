@@ -68,17 +68,10 @@ namespace KukuDotNetExample
                 }
 
                 var result = kukuTable.Query(item);
-                if (result.Location == 0 && !result.InStash)
-                {
-                    Console.WriteLine($"[{string.Join(',', item)}] was not found.");
-                }
-                else
-                {
-                    Console.WriteLine($"Found: [{string.Join(',', item)}]");
-                    Console.WriteLine($"Location: {result.Location}");
-                    Console.WriteLine($"In stash: {result.InStash}");
-                    Console.WriteLine($"Hash function index: {result.LocFuncIndex}");
-                }
+                Console.WriteLine($"Found: [{string.Join(',', item)}]");
+                Console.WriteLine($"Location: {result.Location}");
+                Console.WriteLine($"In stash: {result.InStash}");
+                Console.WriteLine($"Hash function index: {result.LocFuncIndex}");
             }
         }
 
