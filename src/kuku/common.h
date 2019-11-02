@@ -21,6 +21,8 @@ namespace kuku
 {
     using item_type = std::array<std::uint64_t, 2>;
 
+    using location_type = std::uint32_t;
+
     constexpr int bytes_per_uint64 = sizeof(std::uint64_t);
 
     constexpr int bytes_per_item = sizeof(item_type);

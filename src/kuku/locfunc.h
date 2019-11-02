@@ -37,15 +37,15 @@ namespace kuku
         /*
         Returns an integer between 0 and (table_size-1).
         */
-        inline std::size_t operator ()(item_type item) const
+        inline location_type operator ()(item_type item) const
         {
             return compress(item) & (table_size_ - 1);
         }
 
     private:
-        inline std::size_t compress(item_type item) const
+        inline location_type compress(item_type item) const
         {
-            std::size_t out;
+            location_type out;
             blake2b(
                 reinterpret_cast<unsigned char*>(&out),
                 sizeof(out),

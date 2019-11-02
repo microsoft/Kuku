@@ -26,7 +26,7 @@ namespace kuku
         }
 
         // Search the stash
-        for (size_t loc = 0; loc < stash_.size(); loc++)
+        for (location_type loc = 0; loc < stash_.size(); loc++)
         {
             if (are_equal_item(stash_[loc], item))
             {
@@ -69,9 +69,9 @@ namespace kuku
         generate_loc_funcs(loc_func_count, loc_func_seed_);
     }
 
-    set<size_t> KukuTable::all_locations(item_type item) const
+    set<location_type> KukuTable::all_locations(item_type item) const
     {
-        set<size_t> result;
+        set<location_type> result;
         for (auto lf : loc_funcs_)
         {
             result.emplace(lf(item));
@@ -121,7 +121,7 @@ namespace kuku
 
         // Choose random location index
         size_t loc_index = size_t(rd_()) % loc_funcs_.size();
-        size_t loc = loc_funcs_[loc_index](item);
+        location_type loc = loc_funcs_[loc_index](item);
         auto old_item = swap(item, loc);
 
         if (is_empty_item(old_item))

@@ -20,7 +20,7 @@ namespace kuku
     public:
         QueryResult() = default;
 
-        inline std::size_t location() const noexcept
+        inline location_type location() const noexcept
         {
             return location_;
         }
@@ -41,7 +41,7 @@ namespace kuku
         }
 
     private:
-        QueryResult(std::size_t location, std::size_t loc_func_index)
+        QueryResult(location_type location, std::size_t loc_func_index)
             : location_(location), loc_func_index_(loc_func_index)
         {
 #ifdef SEAL_DEBUG
@@ -52,7 +52,7 @@ namespace kuku
 #endif
         }
 
-        std::size_t location_ = 0;
+        location_type location_ = 0;
 
         std::size_t loc_func_index_ = 0;
     };
@@ -92,7 +92,7 @@ namespace kuku
         /*
         Returns the locations that this item may live at.
         */
-        inline std::size_t location(
+        inline location_type location(
             item_type item,
             std::size_t loc_func_index) const
         {
@@ -102,7 +102,7 @@ namespace kuku
         /*
         Returns the locations that this item may live at.
         */
-        std::set<std::size_t> all_locations(item_type item) const;
+        std::set<location_type> all_locations(item_type item) const;
 
         /*
         Clears the table by filling every location with the empty item.
@@ -211,7 +211,7 @@ namespace kuku
         /*
         Swap an item in the table with a given item.
         */
-        inline item_type swap(item_type item, std::size_t location) noexcept
+        inline item_type swap(item_type item, location_type location) noexcept
         {
             item_type old_item = table_[location];
             table_[location] = item;
