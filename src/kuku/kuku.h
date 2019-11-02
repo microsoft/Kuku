@@ -65,7 +65,7 @@ namespace kuku
         */
         KukuTable(
             int log_table_size,
-            std::size_t stash_size,
+            table_size_type stash_size,
             std::size_t loc_func_count,
             item_type loc_func_seed,
             std::uint64_t max_probe,
@@ -119,7 +119,7 @@ namespace kuku
             return table_;
         }
 
-        inline const item_type &table(std::size_t index) const
+        inline const item_type &table(location_type index) const
         {
             return table_[index];
         }
@@ -129,7 +129,7 @@ namespace kuku
             return stash_;
         }
 
-        inline const item_type &stash(std::size_t index) const
+        inline const item_type &stash(location_type index) const
         {
             if (index >= stash_.size() && index < stash_size_)
             {
@@ -143,12 +143,12 @@ namespace kuku
             return log_table_size_;
         }
 
-        inline std::size_t table_size() const noexcept
+        inline table_size_type table_size() const noexcept
         {
-            return std::size_t(1) << log_table_size();
+            return table_size_type(1) << log_table_size();
         }
 
-        inline std::size_t stash_size() const noexcept
+        inline table_size_type stash_size() const noexcept
         {
             return stash_size_;
         }
@@ -172,7 +172,7 @@ namespace kuku
         Returns whether a given location in the table is empty, i.e., contains
         the empty item.
         */
-        inline bool is_empty(std::size_t index) const noexcept
+        inline bool is_empty(location_type index) const noexcept
         {
             return is_empty_item(table_[index]);
         }
@@ -241,7 +241,7 @@ namespace kuku
         /*
         The size of the stash.
         */
-        std::size_t stash_size_;
+        table_size_type stash_size_;
 
         /*
         Seed for the hash functions
@@ -267,7 +267,7 @@ namespace kuku
         /*
         The number of items that have been inserted to table or stash.
         */
-        std::size_t inserted_items_;
+        table_size_type inserted_items_;
 
         /*
         Randomness source.

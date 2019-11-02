@@ -22,7 +22,7 @@ namespace kuku_tests
     TEST(KukuTableTests, Populate1)
     {
         KukuTable ct(10, 0, 2, make_zero_item(), 10, make_zero_item());
-        for (size_t i = 0; i < ct.table_size(); i++)
+        for (location_type i = 0; i < ct.table_size(); i++)
         {
             ASSERT_TRUE(ct.is_empty(i));
         }
@@ -35,7 +35,7 @@ namespace kuku_tests
         ASSERT_THROW(ct.insert(make_item(0, 0)), invalid_argument);
 
         int non_empties = 0;
-        for (size_t i = 0; i < ct.table_size(); i++)
+        for (location_type i = 0; i < ct.table_size(); i++)
         {
             non_empties += ct.is_empty(i) ? 0 : 1;
         }
@@ -51,7 +51,7 @@ namespace kuku_tests
     TEST(KukuTableTests, Populate2)
     {
         KukuTable ct(10, 0, 2, make_zero_item(), 10, make_random_item());
-        for (size_t i = 0; i < ct.table_size(); i++)
+        for (location_type i = 0; i < ct.table_size(); i++)
         {
             ASSERT_TRUE(ct.is_empty(i));
         }
@@ -65,7 +65,7 @@ namespace kuku_tests
         ASSERT_THROW(ct.insert(ct.empty_item()), invalid_argument);
 
         int non_empties = 0;
-        for (size_t i = 0; i < ct.table_size(); i++)
+        for (location_type i = 0; i < ct.table_size(); i++)
         {
             non_empties += ct.is_empty(i) ? 0 : 1;
         }

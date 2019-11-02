@@ -11,7 +11,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../bin)
 add_executable(kukutest)
 
 # Import Kuku
-find_package(Kuku 1.1.0 EXACT REQUIRED
+find_package(Kuku 1.1.1 EXACT REQUIRED
     # Providing a path so this can be built without installing Kuku
     PATHS ${KukuTest_SOURCE_DIR}/../src/cmake
 )

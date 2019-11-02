@@ -27,7 +27,7 @@ namespace kuku
                 throw std::invalid_argument("invalid log_table_size");
             }
 
-            table_size_ = std::size_t(1) << log_table_size;
+            table_size_ = table_size_type(1) << log_table_size;
         }
 
         LocFunc(const LocFunc &copy) = default;
@@ -55,7 +55,7 @@ namespace kuku
             return out;
         }
 
-        std::size_t table_size_;
+        table_size_type table_size_;
 
         item_type seed_;
     };

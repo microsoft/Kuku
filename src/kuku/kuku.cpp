@@ -39,7 +39,7 @@ namespace kuku
     }
 
     KukuTable::KukuTable(
-        int log_table_size, size_t stash_size,
+        int log_table_size, table_size_type stash_size,
         size_t loc_func_count, item_type loc_func_seed,
         uint64_t max_probe, item_type empty_item) :
         log_table_size_(log_table_size),
