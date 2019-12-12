@@ -1,11 +1,35 @@
 ﻿using System;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace KukuDotNet
 {
     internal class KukuDotNet
     {
-        private const string DllName = "KukuLib.dll";
+
+        internal static class Library
+        {
+            internal const string MyLibrary = "libKukuLib";
+
+            static Library()
+            {
+                NativeLibrary.SetDllImportResolver(typeof(Library).Assembly, ImportResolver);
+            }
+
+            private static IntPtr ImportResolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
+            {
+                IntPtr libHandle = IntPtr.Zero;
+                if (libraryName == MyLibrary)
+                {
+                    // Try using the system library 'libmylibrary.so.5'
+                    NativeLibrary.TryLoad("libKukuLib.so", assembly, DllImportSearchPath.System32, out libHandle);
+                }
+
+                return libHandle;
+            }
+        }
+
+        private const string DllName = Library.MyLibrary;
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr kukuTable_Create(int log_table_size, uint stash_size, uint loc_func_count, ulong[] loc_func_seed, ulong max_probe, ulong[] empty_item);

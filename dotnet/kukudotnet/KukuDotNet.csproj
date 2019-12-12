@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <OutputPath>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutputPath>
     <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
@@ -32,8 +32,5 @@
     <None Include="..\kukulib\bin\Win32\Debug\KukuLib.dll" Link="KukuLib.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\kukulib\KukuLib.vcxproj" />
   </ItemGroup>
 </Project>
