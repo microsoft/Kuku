@@ -9,29 +9,29 @@ typedef struct
 	bool in_stash;
 } QueryResult;
 
-extern "C" __declspec(dllexport) kuku::KukuTable* kukuTable_Create(int log_table_size,
+extern "C" kuku::KukuTable* kukuTable_Create(int log_table_size,
 	std::size_t stash_size,
 	std::size_t loc_func_count,
-	kuku::item_type loc_func_seed,
-	std::uint64_t max_probe,
-	kuku::item_type empty_item);
+	uint64_t *loc_func_seed,
+	uint64_t max_probe,
+	uint64_t *empty_item);
 
-extern "C" __declspec(dllexport) bool kukuTable_Insert(kuku::KukuTable* kuku_table, kuku::item_type item);
+extern "C" bool kukuTable_Insert(kuku::KukuTable* kuku_table, uint64_t *item);
 
-extern "C" __declspec(dllexport) bool kukuTable_Query(kuku::KukuTable* kuku_table, kuku::item_type item, QueryResult query_result);
+extern "C" bool kukuTable_Query(kuku::KukuTable* kuku_table, uint64_t *item, QueryResult *query_result);
 
-extern "C" __declspec(dllexport) bool kukuTable_IsEmptyItem(kuku::KukuTable* kuku_table, kuku::item_type& item);
+extern "C" bool kukuTable_IsEmptyItem(kuku::KukuTable* kuku_table, uint64_t *item);
 
-extern "C" __declspec(dllexport) bool kukuTable_LastInsertFailItem(kuku::KukuTable* kuku_table, uint64_t* item);
+extern "C" bool kukuTable_LastInsertFailItem(kuku::KukuTable* kuku_table, uint64_t* item);
 
-extern "C" __declspec(dllexport) double kukuTable_FillRate(kuku::KukuTable* kuku_table);
+extern "C" double kukuTable_FillRate(kuku::KukuTable* kuku_table);
 
-extern "C" __declspec(dllexport) bool kukuTable_Table(kuku::KukuTable* kuku_table, std::size_t index, uint64_t* item);
+extern "C" bool kukuTable_Table(kuku::KukuTable* kuku_table, std::size_t index, uint64_t* item);
 
-extern "C" __declspec(dllexport) std::size_t kukuTable_TableSize(kuku::KukuTable* kuku_table);
+extern "C" std::size_t kukuTable_TableSize(kuku::KukuTable* kuku_table);
 
-extern "C" __declspec(dllexport) bool kukuTable_Stash(kuku::KukuTable* kuku_table, std::size_t index, uint64_t* item);
+extern "C" bool kukuTable_Stash(kuku::KukuTable* kuku_table, std::size_t index, uint64_t* item);
 
-extern "C" __declspec(dllexport) std::size_t kukuTable_StashSize(kuku::KukuTable* kuku_table);
+extern "C" std::size_t kukuTable_StashSize(kuku::KukuTable* kuku_table);
 
-extern "C" __declspec(dllexport) std::size_t kukuTable_Location(kuku::KukuTable* kuku_table, kuku::item_type item, std::size_t loc_func_index);
+extern "C" std::size_t kukuTable_Location(kuku::KukuTable* kuku_table, uint64_t *item, std::size_t loc_func_index);

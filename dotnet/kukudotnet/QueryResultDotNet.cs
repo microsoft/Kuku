@@ -1,4 +1,6 @@
-﻿namespace KukuDotNet
+﻿using System;
+
+namespace KukuDotNet
 {
     public class QueryResultDotNet
     {
@@ -9,10 +11,10 @@
             this._resultStruct = resultStruct;
         }
 
-        public long Location => this._resultStruct.location;
+        public ulong Location => this._resultStruct.location;
 
-        public long LocFuncIndex => this._resultStruct.loc_func_index;
+        public ulong LocFuncIndex => this._resultStruct.loc_func_index;
 
-        public bool InStash => this._resultStruct.in_stash;
+        public bool InStash => this._resultStruct.in_stash; 
     }
 }

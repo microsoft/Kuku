@@ -6,30 +6,23 @@ namespace KukuDotNet
 {
     internal class KukuDotNet
     {
-
-        internal static class Library
+	private const string DllName = "KukuLib";
+        static KukuDotNet()
         {
-            internal const string MyLibrary = "libKukuLib";
-
-            static Library()
-            {
-                NativeLibrary.SetDllImportResolver(typeof(Library).Assembly, ImportResolver);
-            }
-
-            private static IntPtr ImportResolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
-            {
-                IntPtr libHandle = IntPtr.Zero;
-                if (libraryName == MyLibrary)
-                {
-                    // Try using the system library 'libmylibrary.so.5'
-                    NativeLibrary.TryLoad("libKukuLib.so", assembly, DllImportSearchPath.System32, out libHandle);
-                }
-
-                return libHandle;
-            }
+                NativeLibrary.SetDllImportResolver(typeof(KukuDotNet).Assembly, ImportResolver);
         }
 
-        private const string DllName = Library.MyLibrary;
+        private static IntPtr ImportResolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
+        {
+                IntPtr libHandle = IntPtr.Zero;
+                if (libraryName == DllName)
+                {
+                        libHandle = NativeLibrary.Load("libKukuLib.so", assembly, DllImportSearchPath.AssemblyDirectory);
+                        Console.WriteLine(libHandle == IntPtr.Zero);
+                }
+                
+                return libHandle;
+        }
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr kukuTable_Create(int log_table_size, uint stash_size, uint loc_func_count, ulong[] loc_func_seed, ulong max_probe, ulong[] empty_item);
@@ -65,10 +58,11 @@ namespace KukuDotNet
         internal static extern uint kukuTable_Location(IntPtr kuku_table, ulong[] item, uint index);
     }
 
-    internal struct QueryResult
+    [StructLayout(LayoutKind.Sequential)]
+    public struct QueryResult
     {
-        internal long location;
-        internal long loc_func_index;
-        internal bool in_stash;
+        public ulong location;
+        public ulong loc_func_index;
+        public bool in_stash;
     }
 }

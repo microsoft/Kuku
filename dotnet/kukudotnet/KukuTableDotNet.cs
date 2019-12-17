@@ -17,6 +17,7 @@ namespace KukuDotNet
         {
             this._unmanagedkukuTable = KukuDotNet.kukuTable_Create(parameters.LogTableSize, parameters.StashSize,
                 parameters.LocFuncCount, parameters.LocFuncSeed, parameters.MaxProbe, parameters.EmptyItem);
+            
             this._dataLen = new TItem().DataLen;
             this.Table = new KukuTableDotNetTable<TItem>(this);
             this.Stash = new KukuTableDotNetStash<TItem>(this);

@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+	  <TargetFramework>netcoreapp3.1</TargetFramework>
     <OutputPath>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutputPath>
     <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
@@ -30,6 +30,11 @@
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <None Include="..\kukulib\bin\Win32\Debug\KukuLib.dll" Link="KukuLib.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\kukulib\lib\libKukuLib.so" Link="libKukuLib.so">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
