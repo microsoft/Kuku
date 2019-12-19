@@ -13,28 +13,28 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
-  <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+  <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64' And '$(OS)' == 'Windows_NT'">
     <None Include="..\kukulib\bin\x64\Release\KukuLib.dll" Link="KukuLib.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+  <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64' And '$(OS)' == 'Windows_NT'">
     <None Include="..\kukulib\bin\x64\Debug\KukuLib.dll" Link="KukuLib.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+  <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86' And '$(OS)' == 'Windows_NT'">
     <None Include="..\kukulib\bin\Win32\Release\KukuLib.dll" Link="KukuLib.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+  <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86' And '$(OS)' == 'Windows_NT'">
     <None Include="..\kukulib\bin\Win32\Debug\KukuLib.dll" Link="KukuLib.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\kukulib\lib\libKukuLib.so" Link="libKukuLib.so">
+    <None Include="..\kukulib\lib\libKukuLib.so" Link="libKukuLib.so" Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))'">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

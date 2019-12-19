@@ -9,19 +9,18 @@ namespace KukuDotNet
 	private const string DllName = "KukuLib";
         static KukuDotNet()
         {
-                NativeLibrary.SetDllImportResolver(typeof(KukuDotNet).Assembly, ImportResolver);
+            NativeLibrary.SetDllImportResolver(typeof(KukuDotNet).Assembly, ImportResolver);
         }
 
         private static IntPtr ImportResolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
         {
-                IntPtr libHandle = IntPtr.Zero;
-                if (libraryName == DllName)
-                {
-                        libHandle = NativeLibrary.Load("libKukuLib.so", assembly, DllImportSearchPath.AssemblyDirectory);
-                        Console.WriteLine(libHandle == IntPtr.Zero);
-                }
-                
-                return libHandle;
+            var libHandle = IntPtr.Zero;
+            if (libraryName == DllName)
+            {
+                NativeLibrary.TryLoad("libKukuLib.so", assembly, DllImportSearchPath.AssemblyDirectory, out libHandle);
+            }
+            
+            return libHandle;
         }
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
