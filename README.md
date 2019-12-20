@@ -84,6 +84,7 @@ cd ..
 
 Kuku comes with a small example program demonstrating the functionality. After building
 Kuku, you can build the example program as follows:
+
 ````
 cd examples
 cmake .
@@ -170,35 +171,56 @@ return false, and a leftover item will be stored in a member variable that can b
 `last_insert_fail_item()`. The same item cannot be inserted multiple times: `insert` will
 return `false` in this case.
 
-# Cuckoo.Net
+# Kuku.Net
 
-The Cuckoo distribution contains a .Net Core wrapper of the native code. This wrapper currently only supports the Windows OS.
+The Kuku distribution contains a .Net Core wrapper of the native code. This wrapper currently only supports the Windows OS.
 
-The CuckooLib project produces a C++ dynamic library defining the externalized methods to be used by the C# code. The CuckooDotNet project is the C# wrapper code using the CuckooLib dll.
+The KukuLib project produces a C++ dynamic library defining the externalized methods to be used by the C# code. The KukuDotNet project is the C# wrapper code using the KukuLib dll.
 
-## Building Cuckoo.Net
+## Building Kuku.Net
 
 ### Windows
 
-First, Build the CuckooLib project `CuckooLib.vcxproj` from `Cuckoo.sln`. This results in the
-dynamic library `cuckoolib.dll` to be created in `dotnet\cuckoolib\bin\$(Platform)\$(Configuration)`.
+First, Build the KukuLib project `KukuLib.vcxproj` from `Kuku.sln`. This results in the
+dynamic library `kukulib.dll` to be created in `dotnet\kukulib\bin\$(Platform)\$(Configuration)`.
 
-Next, build the CuckooDotNet project `CuckooDotNet.csproj` from `Cuckoo.sln`. This results in the
-dynamic library `cuckoodotnet.dll` to be created in `dotnet\cuckoodotnet\bin\$(Platform)\$(Configuration)`.
+Next, build the KukuDotNet project `KukuDotNet.csproj` from `Kuku.sln`. This results in the
+dynamic library `kukudotnet.dll` to be created in `dotnet\kukudotnet\bin\$(Platform)\$(Configuration)`.
 
-## Building Cuckoo.Net Example
+### Linux
 
-Build the  CuckooDotNetExample project `CuckooDotNetExample.csproj` from `Cuckoo.sln`. This results in the
-dynamic library `cuckoodotnetexample.dll` to be created in `dotnet\cuckoodotnetexample\bin\$(Platform)\$(Configuration)`.
+````
+cd dotnet/kukudotnet
+cmake .
+make
+cd ../..
+````
 
-## Running Cuckoo.Net Example
+## Building Kuku.Net Example
 
-From the bin path, run `dotnet CuckooDotNetExample.dll <logTableSize> <stashSize> <locFuncCount> <maxProbe>`. The example program inserts values into the hash table, which you can then query by typing your queried item in the format `<ulong>,<ulong>`.
+### Windows
 
-# Using Cuckoo.Net
+Build the  KukuDotNetExample project `KukuDotNetExample.csproj` from `Kuku.sln`. This results in the
+dynamic library `kukudotnetexample.dll` to be created in `dotnet\kukudotnetexample\bin\$(Platform)\$(Configuration)`.
 
-Much like in the native library, the cuckoo hash table is represented by an instance of the `CuckooTableDotNet128` class. The
-constructor of `CuckooTableDotNet128` takes as input a set of parameters, defined by the `CuckooTableParameters` class. The parameters contain a base-2 logarithm of the table size
+### Linux
+
+````
+cd dotnet/examples
+dotnet build
+cd ../..
+````
+
+This results in the dynamic library `kukudotnetexample.dll` to be created in `dotnet\kukudotnetexample\bin\$(Platform)\$(Configuration)`.
+
+## Running Kuku.Net Example
+
+From the bin path, run `dotnet KukuDotNetExample.dll <logTableSize> <stashSize> <locFuncCount> <maxProbe>`. The example program inserts values into the hash table, which you can then query by typing your queried item in the format `<ulong>,<ulong>`.
+
+# Using Kuku.Net
+
+Much like in the native library, the kuku hash table is represented by an instance of the `KukuTableDotNet128` class. The
+constructor of `KukuTableDotNet128` takes as input a set of parameters, defined by the `KukuTableParameters` class. The parameters contain a base-2 logarithm of the table size
 `(LogTableSize`), the size of the stash (`StashSize`), the number of hash functions
 (`LocFuncCount`), a seed for the hash functions (`LocFuncSeed`), the number of
 iterations allowed in the insertion process, and a value the hash table should contain
@@ -207,11 +229,11 @@ integer data types. These can be created from an array of size 2 of 64-bit integ
 
 Once the table has been created, items can be inserted using the member function `Insert`.
 Items can be queried with the member function `Query`, which returns a `QueryResult`
-object. The `QueryResult` contains information about the location in the cuckoo table where
+object. The `QueryResult` contains information about the location in the kuku table where
 the queried item was found, as well as the hash function that was used to eventually insert
 it.
 
-If Cuckoo fails to insert an item to the table or to the stash, the `Insert` function will
+If Kuku fails to insert an item to the table or to the stash, the `Insert` function will
 return false, and a leftover item will be stored in a member variable that can be read with
 `LastInsertFailItem()`. The same item cannot be inserted multiple times: `Insert` will
 return `false` in this case.
