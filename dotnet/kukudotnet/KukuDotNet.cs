@@ -6,7 +6,8 @@ namespace KukuDotNet
 {
     internal class KukuDotNet
     {
-	private const string DllName = "KukuLib";
+        private const string DllName = "KukuLib";
+
         static KukuDotNet()
         {
             NativeLibrary.SetDllImportResolver(typeof(KukuDotNet).Assembly, ImportResolver);

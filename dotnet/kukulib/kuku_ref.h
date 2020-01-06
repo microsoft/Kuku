@@ -1,6 +1,6 @@
 #pragma once
-#include "../../src/kuku/kuku.h"
-#include "../../src/kuku/common.h"
+#include "kuku/kuku.h"
+#include "kuku/common.h"
 
 #if defined(_MSC_VER)
 //  Microsoft 
