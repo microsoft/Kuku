@@ -111,12 +111,14 @@
   <ItemGroup>
     <ClInclude Include="kuku\blake2.h" />
     <ClInclude Include="kuku\blake2-impl.h" />
+    <ClInclude Include="kuku\hash.h" />
     <ClInclude Include="kuku\kuku.h" />
     <ClInclude Include="kuku\common.h" />
     <ClInclude Include="kuku\locfunc.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="kuku\blake2b.c" />
+    <ClCompile Include="kuku\blake2xb.c" />
     <ClCompile Include="kuku\common.cpp" />
     <ClCompile Include="kuku\kuku.cpp" />
   </ItemGroup>

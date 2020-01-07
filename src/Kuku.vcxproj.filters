@@ -32,6 +32,9 @@
     <ClInclude Include="kuku\locfunc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="kuku\hash.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="kuku\kuku.cpp">
@@ -41,6 +44,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="kuku\common.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kuku\blake2xb.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
