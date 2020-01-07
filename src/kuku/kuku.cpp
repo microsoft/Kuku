@@ -67,6 +67,10 @@ namespace kuku
 
         // Create the location (hash) functions
         generate_loc_funcs(loc_func_count, loc_func_seed_);
+
+        gen_ = std::mt19937_64(rd_());
+
+        u_ = std::uniform_int_distribution<size_t>(0, loc_func_count-1);
     }
 
     set<location_type> KukuTable::all_locations(item_type item) const
@@ -120,7 +124,9 @@ namespace kuku
         }
 
         // Choose random location index
-        size_t loc_index = size_t(rd_()) % loc_funcs_.size();
+        
+        size_t loc_index = u_(gen_);
+        //size_t loc_index = size_t(rd_()) % loc_funcs_.size();
         location_type loc = loc_funcs_[loc_index](item);
         auto old_item = swap(item, loc);
 

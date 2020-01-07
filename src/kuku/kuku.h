@@ -273,5 +273,9 @@ namespace kuku
         Randomness source.
         */
         std::random_device rd_;
+
+        std::mt19937_64 gen_; 
+
+        std::uniform_int_distribution<size_t> u_;
     };
 }
