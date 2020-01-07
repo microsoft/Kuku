@@ -64,7 +64,7 @@ namespace kuku
         Creates a new kuku hash table.
         */
         KukuTable(
-            int table_size,
+            table_size_type table_size,
             table_size_type stash_size,
             std::size_t loc_func_count,
             item_type loc_func_seed,
@@ -229,7 +229,7 @@ namespace kuku
         std::vector<LocFunc> loc_funcs_;
 
         /*
-        log2 of the number of slots in the table.
+        The size of the table.
         */
         table_size_type table_size_;
 

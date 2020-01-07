@@ -39,7 +39,7 @@ namespace kuku
     }
 
     KukuTable::KukuTable(
-        int table_size, table_size_type stash_size,
+        table_size_type table_size, table_size_type stash_size,
         size_t loc_func_count, item_type loc_func_seed,
         uint64_t max_probe, item_type empty_item) :
         table_size_(table_size),
@@ -53,9 +53,9 @@ namespace kuku
         {
             throw invalid_argument("invalid loc_func_count");
         }
-        if (table_size <=1 || ceil(log2(table_size)) > max_log_table_size)
+        if (table_size < min_table_size || table_size > max_table_size)
         {
-            throw invalid_argument("invalid table_size");
+            throw invalid_argument("table_size is out of range");
         }
         if (!max_probe)
         {
@@ -70,7 +70,7 @@ namespace kuku
 
         gen_ = std::mt19937_64(rd_());
 
-        u_ = std::uniform_int_distribution<size_t>(0, loc_func_count-1);
+        u_ = std::uniform_int_distribution<size_t>(0, loc_func_count - 1);
     }
 
     set<location_type> KukuTable::all_locations(item_type item) const
@@ -108,6 +108,7 @@ namespace kuku
         {
             throw invalid_argument("cannot insert the null item");
         }
+
         if (level >= max_probe_)
         {
             if (stash_.size() < stash_size_)
@@ -123,24 +124,24 @@ namespace kuku
             }
         }
 
-        // for loop over all possible locations
-        //vector<location_type> locs(loc_func_count());
+        // Loop over all possible locations
         location_type loc;
-        for (int i = 0; i < loc_func_count(); i++) {
+        for (size_t i = 0; i < loc_func_count(); i++)
+        {
             loc = loc_funcs_[i](item);
-            if (is_empty_item(table_[loc])) {
+            if (is_empty_item(table_[loc]))
+            {
                 table_[loc] = item; 
                 inserted_items_++;
                 return true;
             }
         }
-        // pop out a random item and recursively insert.
-        
+
+        // Pop out a random item and recursively insert.
         size_t loc_index = u_(gen_);
         loc = loc_funcs_[loc_index](item);
         
         auto old_item = swap(item, loc);
-
         return insert(old_item, level + 1);
     }
 }

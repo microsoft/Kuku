@@ -5,7 +5,6 @@
 
 #include "kuku/common.h"
 #include "kuku/hash.h"
-#include <cstring>
 #include <stdexcept>
 
 namespace kuku
@@ -13,14 +12,13 @@ namespace kuku
     class LocFunc
     {
     public:
-        LocFunc(int table_size, item_type seed) : hf_(seed)
+        LocFunc(table_size_type table_size, item_type seed) :
+            table_size_(table_size), hf_(seed) 
         {
-            if (table_size < 1 || ceil(log(table_size)) > max_log_table_size)
+            if (table_size < min_table_size || table_size > max_table_size)
             {
-                throw std::invalid_argument("invalid table_size");
+                throw std::invalid_argument("table_size is out of range");
             }
-
-            table_size_ = table_size;
         }
 
         LocFunc(const LocFunc &copy) = default;
@@ -32,7 +30,6 @@ namespace kuku
         */
         inline location_type operator ()(item_type item) const noexcept
         {
-            //return hf_(item) & (table_size_ - 1);
             return hf_(item) % table_size_;
         }
 

@@ -133,15 +133,12 @@ int main(int argc, char *argv[])
             empty_item
         );
 
-        chrono::high_resolution_clock clk;
-        auto tp_start = clk.now();
-
         vector<item_type> items(num_items); 
         for (int i = 0; i < num_items; i++) {
             items[i] = make_item(i+1,i+1);
         }
 
-        auto t1 = high_resolution_clock::now();
+        auto tp_start = chrono::high_resolution_clock::now();
         for (uint64_t i = 0; i < num_items; i++)
         {
             if (!table.insert(items[i]))
@@ -153,10 +150,7 @@ int main(int argc, char *argv[])
                 break;
             }
         }
-        auto t2 = high_resolution_clock::now();
-        std::cout << duration_cast<duration<double>>(t2 - t1).count() << std::endl;
-
-        auto tp_end = clk.now();
+        auto tp_end = high_resolution_clock::now();
         auto tp_diff = chrono::duration_cast<chrono::milliseconds>(tp_end - tp_start);
         cout << "Time: " << tp_diff.count() << " ms" << endl;
     }

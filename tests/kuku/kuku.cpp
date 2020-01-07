@@ -16,12 +16,12 @@ namespace kuku_tests
         ASSERT_THROW(KukuTable(0, 0, 1, make_zero_item(), 1, make_zero_item()), invalid_argument);
         ASSERT_THROW(KukuTable(1, 0, 0, make_zero_item(), 1, make_zero_item()), invalid_argument);
         ASSERT_THROW(KukuTable(1, 0, 1, make_zero_item(), 0, make_zero_item()), invalid_argument);
-        ASSERT_NO_THROW(KukuTable(1, 0, 1, make_zero_item(), 1, make_zero_item()));
+        ASSERT_NO_THROW(KukuTable(min_table_size, 0, 1, make_zero_item(), 1, make_zero_item()));
     }
 
     TEST(KukuTableTests, Populate1)
     {
-        KukuTable ct(10, 0, 2, make_zero_item(), 10, make_zero_item());
+        KukuTable ct(1 << 10, 0, 2, make_zero_item(), 10, make_zero_item());
         for (location_type i = 0; i < ct.table_size(); i++)
         {
             ASSERT_TRUE(ct.is_empty(i));
@@ -50,7 +50,7 @@ namespace kuku_tests
 
     TEST(KukuTableTests, Populate2)
     {
-        KukuTable ct(10, 0, 2, make_zero_item(), 10, make_random_item());
+        KukuTable ct(1 << 10, 0, 2, make_zero_item(), 10, make_random_item());
         for (location_type i = 0; i < ct.table_size(); i++)
         {
             ASSERT_TRUE(ct.is_empty(i));
@@ -80,7 +80,7 @@ namespace kuku_tests
 
     TEST(KukuTableTests, Populate3)
     {
-        KukuTable ct(10, 0, 1, make_zero_item(), 10, make_random_item());
+        KukuTable ct(1 << 10, 0, 1, make_zero_item(), 10, make_random_item());
         ASSERT_TRUE(ct.insert(make_item(0, 0)));
         ASSERT_TRUE(ct.insert(make_item(1, 0)));
         ASSERT_TRUE(ct.insert(make_item(0, 1)));
@@ -99,7 +99,7 @@ namespace kuku_tests
 
     TEST(KukuTableTests, Fill1)
     {
-        KukuTable ct(10, 0, 2, make_zero_item(), 100, make_random_item());
+        KukuTable ct(1 << 10, 0, 2, make_zero_item(), 100, make_random_item());
         vector<item_type> inserted_items;
         for (int i = 0; i < 100; i++)
         {
@@ -115,7 +115,7 @@ namespace kuku_tests
 
     TEST(KukuTableTests, Fill2)
     {
-        KukuTable ct(10, 0, 4, make_zero_item(), 100, make_random_item());
+        KukuTable ct(1 << 10, 0, 4, make_zero_item(), 100, make_random_item());
         vector<item_type> inserted_items;
         for (int i = 0; i < 600; i++)
         {
@@ -131,7 +131,7 @@ namespace kuku_tests
 
     TEST(KukuTableTests, Fill3)
     {
-        KukuTable ct(10, 4, 2, make_zero_item(), 100, make_random_item());
+        KukuTable ct(1 << 10, 4, 2, make_zero_item(), 100, make_random_item());
         vector<item_type> inserted_items;
         for (int i = 0; i < 950; i++)
         {
@@ -154,7 +154,7 @@ namespace kuku_tests
     TEST(KukuTableTests, Locations)
     {
         size_t lfc = 2;
-        KukuTable ct(10, 4, lfc, make_random_item(), 100, make_all_ones_item());
+        KukuTable ct(1 << 10, 4, lfc, make_random_item(), 100, make_all_ones_item());
         for (int k = 0; k < 20; k++)
         {
             auto it = make_random_item();
@@ -176,7 +176,7 @@ namespace kuku_tests
 
     TEST(KukuTableTests, RepeatedInsert)
     {
-        KukuTable ct(10, 0, 4, make_zero_item(), 10, make_zero_item());
+        KukuTable ct(1 << 10, 0, 4, make_zero_item(), 10, make_zero_item());
         ASSERT_TRUE(ct.insert(make_item(1, 0)));
         ASSERT_TRUE(ct.insert(make_item(0, 1)));
         ASSERT_TRUE(ct.insert(make_item(1, 1)));
