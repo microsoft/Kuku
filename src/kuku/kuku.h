@@ -64,7 +64,7 @@ namespace kuku
         Creates a new kuku hash table.
         */
         KukuTable(
-            int log_table_size,
+            int table_size,
             table_size_type stash_size,
             std::size_t loc_func_count,
             item_type loc_func_seed,
@@ -138,14 +138,9 @@ namespace kuku
             return stash_[index];
         }
 
-        inline int log_table_size() const noexcept
-        {
-            return log_table_size_;
-        }
-
         inline table_size_type table_size() const noexcept
         {
-            return table_size_type(1) << log_table_size();
+            return table_size_;
         }
 
         inline table_size_type stash_size() const noexcept
@@ -236,7 +231,7 @@ namespace kuku
         /*
         log2 of the number of slots in the table.
         */
-        int log_table_size_;
+        table_size_type table_size_;
 
         /*
         The size of the stash.

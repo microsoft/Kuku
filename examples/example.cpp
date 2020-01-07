@@ -9,6 +9,11 @@
 using namespace std;
 using namespace kuku;
 
+using std::chrono::duration;
+using std::chrono::duration_cast;
+using std::chrono::high_resolution_clock;
+
+
 ostream &operator <<(ostream &stream, item_type item)
 {
     stream << item[1] << " " << item[0];
@@ -110,17 +115,17 @@ int main(int argc, char *argv[])
     //    cout << "Hash function index: " << res.loc_func_index() << endl << endl;
     //}
 
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 1; i++)
     {
-        int log_table_size = 21;
-        table_size_type stash_size = 0;
+        int num_items = 1 << 20;
+        table_size_type stash_size = 2;
         size_t loc_func_count = 3;
         item_type loc_func_seed = make_random_item();
-        uint64_t max_probe = 50;
+        uint64_t max_probe = 200;
         item_type empty_item = make_item(0, 0);
 
         KukuTable table(
-            log_table_size,
+            ceil(num_items * 1.2),
             stash_size,
             loc_func_count,
             loc_func_seed,
@@ -130,14 +135,34 @@ int main(int argc, char *argv[])
 
         chrono::high_resolution_clock clk;
         auto tp_start = clk.now();
-        for (uint64_t i = 0; i < (1 << 20); i++)
-        {
-            table.insert(make_item(i + 1, i + 1));
+
+        vector<item_type> items(num_items); 
+        for (int i = 0; i < num_items; i++) {
+            items[i] = make_item(i+1,i+1);
         }
+
+        auto t1 = high_resolution_clock::now();
+        for (uint64_t i = 0; i < num_items; i++)
+        {
+            if (!table.insert(items[i]))
+            {
+                cout << "Insertion failed: i = " << i << endl;
+                // cout << "Inserted successfully " << round_counter * 20 + i << " items" << endl;
+                cout << "Fill rate: " << table.fill_rate() << endl;
+                cout << "Leftover item: " << table.last_insert_fail_item() << endl << endl;
+                break;
+            }
+        }
+        auto t2 = high_resolution_clock::now();
+        std::cout << duration_cast<duration<double>>(t2 - t1).count() << std::endl;
+
         auto tp_end = clk.now();
         auto tp_diff = chrono::duration_cast<chrono::milliseconds>(tp_end - tp_start);
         cout << "Time: " << tp_diff.count() << " ms" << endl;
     }
+
+    char c; 
+    cin.get(c);
 
     return 0;
 }

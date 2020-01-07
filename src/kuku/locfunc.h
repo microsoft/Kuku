@@ -13,14 +13,14 @@ namespace kuku
     class LocFunc
     {
     public:
-        LocFunc(int log_table_size, item_type seed) : hf_(seed)
+        LocFunc(int table_size, item_type seed) : hf_(seed)
         {
-            if (log_table_size < 1 || log_table_size > max_log_table_size)
+            if (table_size < 1 || ceil(log(table_size)) > max_log_table_size)
             {
-                throw std::invalid_argument("invalid log_table_size");
+                throw std::invalid_argument("invalid table_size");
             }
 
-            table_size_ = table_size_type(1) << log_table_size;
+            table_size_ = table_size;
         }
 
         LocFunc(const LocFunc &copy) = default;
@@ -32,7 +32,8 @@ namespace kuku
         */
         inline location_type operator ()(item_type item) const noexcept
         {
-            return hf_(item) & (table_size_ - 1);
+            //return hf_(item) & (table_size_ - 1);
+            return hf_(item) % table_size_;
         }
 
     private:

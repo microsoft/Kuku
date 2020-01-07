@@ -39,10 +39,10 @@ namespace kuku
     }
 
     KukuTable::KukuTable(
-        int log_table_size, table_size_type stash_size,
+        int table_size, table_size_type stash_size,
         size_t loc_func_count, item_type loc_func_seed,
         uint64_t max_probe, item_type empty_item) :
-        log_table_size_(log_table_size),
+        table_size_(table_size),
         stash_size_(stash_size),
         loc_func_seed_(loc_func_seed),
         max_probe_(max_probe),
@@ -53,9 +53,9 @@ namespace kuku
         {
             throw invalid_argument("invalid loc_func_count");
         }
-        if (log_table_size_ < 1 || log_table_size_ > max_log_table_size)
+        if (table_size <=1 || ceil(log2(table_size)) > max_log_table_size)
         {
-            throw invalid_argument("invalid log_table_size");
+            throw invalid_argument("invalid table_size");
         }
         if (!max_probe)
         {
@@ -63,7 +63,7 @@ namespace kuku
         }
 
         // Allocate the hash table
-        table_.resize(table_size(), empty_item_);
+        table_.resize(table_size_, empty_item_);
 
         // Create the location (hash) functions
         generate_loc_funcs(loc_func_count, loc_func_seed_);
@@ -97,7 +97,7 @@ namespace kuku
         loc_funcs_.clear();
         while (loc_func_count--)
         {
-            loc_funcs_.emplace_back(log_table_size_, seed);
+            loc_funcs_.emplace_back(table_size(), seed);
             increment_item(seed);
         }
     }
