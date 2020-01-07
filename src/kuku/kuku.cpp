@@ -123,21 +123,24 @@ namespace kuku
             }
         }
 
-        // Choose random location index
+        // for loop over all possible locations
+        //vector<location_type> locs(loc_func_count());
+        location_type loc;
+        for (int i = 0; i < loc_func_count(); i++) {
+            loc = loc_funcs_[i](item);
+            if (is_empty_item(table_[loc])) {
+                table_[loc] = item; 
+                inserted_items_++;
+                return true;
+            }
+        }
+        // pop out a random item and recursively insert.
         
         size_t loc_index = u_(gen_);
-        //size_t loc_index = size_t(rd_()) % loc_funcs_.size();
-        location_type loc = loc_funcs_[loc_index](item);
+        loc = loc_funcs_[loc_index](item);
+        
         auto old_item = swap(item, loc);
 
-        if (is_empty_item(old_item))
-        {
-            inserted_items_++;
-            return true;
-        }
-        else
-        {
-            return insert(old_item, level + 1);
-        }
+        return insert(old_item, level + 1);
     }
 }
