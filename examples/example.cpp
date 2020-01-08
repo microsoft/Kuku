@@ -45,13 +45,13 @@ int main(int argc, char *argv[])
 {
     if (argc != 5)
     {
-        cout << "Usage: ./example log_table_size stash_size loc_func_count max_probe" << endl;
-        cout << "E.g., ./example 8 2 4 100" << endl;
+        cout << "Usage: ./example table_size stash_size loc_func_count max_probe" << endl;
+        cout << "E.g., ./example 256 2 4 100" << endl;
 
         return 0;
     }
 
-    int log_table_size = atoi(argv[1]);
+    int table_size = atoi(argv[1]);
     table_size_type stash_size = static_cast<size_t>(atoi(argv[2]));
     size_t loc_func_count = static_cast<size_t>(atoi(argv[3]));
     item_type loc_func_seed = make_random_item();
@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
     item_type empty_item = make_item(0, 0);
 
     KukuTable table(
-        log_table_size,
+        table_size,
         stash_size,
         loc_func_count,
         loc_func_seed,
