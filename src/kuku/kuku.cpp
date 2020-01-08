@@ -15,8 +15,7 @@ namespace kuku
         }
 
         // Search the hash table
-        auto lfc = loc_func_count();
-        for (size_t i = 0; i < lfc; i++)
+        for (size_t i = 0; i < loc_func_count(); i++)
         {
             auto loc = location(item, i);
             if (are_equal_item(table_[loc], item))
@@ -69,7 +68,6 @@ namespace kuku
         generate_loc_funcs(loc_func_count, loc_func_seed_);
 
         gen_ = std::mt19937_64(rd_());
-
         u_ = std::uniform_int_distribution<size_t>(0, loc_func_count - 1);
     }
 
@@ -104,13 +102,7 @@ namespace kuku
 
     bool KukuTable::insert(item_type item)
     {
-        // Cannot insert the empty item
-        if (is_empty_item(item))
-        {
-            throw std::invalid_argument("cannot insert the null item");
-        }
-
-        // Return false if the item already exists in the table
+        // Check if the item is already inserted or is the empty item
         if (query(item))
         {
             return false;
@@ -120,10 +112,9 @@ namespace kuku
         while (level--)
         {
             // Loop over all possible locations
-            location_type loc;
             for (size_t i = 0; i < loc_func_count(); i++)
             {
-                loc = loc_funcs_[i](item);
+                location_type loc = location(item, i);
                 if (is_empty_item(table_[loc]))
                 {
                     table_[loc] = item; 
@@ -131,13 +122,9 @@ namespace kuku
                     return true;
                 }
             }
-
-            // Pop out a random item and recursively insert.
-            size_t loc_index = u_(gen_);
-            loc = loc_funcs_[loc_index](item);
             
             // Swap in the current item and in next round try the popped out item
-            item = swap(item, loc);
+            item = swap(item, location(item, u_(gen_)));
         }
 
         // level reached zero; try stash
