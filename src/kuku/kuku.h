@@ -72,23 +72,9 @@ namespace kuku
             item_type empty_item);
 
         /*
-        Adds a single item to the KukuTable using random-walk kuku hashing.
+        Adds a single item to the KukuTable using random-walk cuckoo hashing.
         */
-        inline bool insert(item_type item)
-        {
-            // Cannot insert the empty item
-            if (is_empty_item(item))
-            {
-                throw std::invalid_argument("cannot insert the null item");
-            }
-
-            // Return false if the item already exists in the table
-            if (query(item))
-            {
-                return false;
-            }
-            return insert(item, 0);
-        }
+        bool insert(item_type item);
 
         /*
         Returns true of the provided item is contained in the hash table.
@@ -237,27 +223,27 @@ namespace kuku
         /*
         The size of the table.
         */
-        table_size_type table_size_;
+        const table_size_type table_size_;
 
         /*
         The size of the stash.
         */
-        table_size_type stash_size_;
+        const table_size_type stash_size_;
 
         /*
         Seed for the hash functions
         */
-        item_type loc_func_seed_;
+        const item_type loc_func_seed_;
 
         /*
         The maximum number of attempts that are made to insert an item.
         */
-        std::uint64_t max_probe_;
+        const std::uint64_t max_probe_;
 
         /*
         An item value that denotes an empty item.
         */
-        item_type empty_item_;
+        const item_type empty_item_;
 
         /*
         Storage for an item that was evicted and could not be re-inserted. This

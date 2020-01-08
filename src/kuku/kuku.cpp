@@ -102,41 +102,55 @@ namespace kuku
         }
     }
 
-    bool KukuTable::insert(item_type item, uint64_t level)
+    bool KukuTable::insert(item_type item)
     {
-        if (level >= max_probe_)
+        // Cannot insert the empty item
+        if (is_empty_item(item))
         {
-            if (stash_.size() < stash_size_)
-            {
-                stash_.push_back(item);
-                inserted_items_++;
-                return true;
-            }
-            else
-            {
-                last_insert_fail_item_ = item;
-                return false;
-            }
+            throw std::invalid_argument("cannot insert the null item");
         }
 
-        // Loop over all possible locations
-        location_type loc;
-        for (size_t i = 0; i < loc_func_count(); i++)
+        // Return false if the item already exists in the table
+        if (query(item))
         {
-            loc = loc_funcs_[i](item);
-            if (is_empty_item(table_[loc]))
-            {
-                table_[loc] = item; 
-                inserted_items_++;
-                return true;
-            }
+            return false;
         }
 
-        // Pop out a random item and recursively insert.
-        size_t loc_index = u_(gen_);
-        loc = loc_funcs_[loc_index](item);
-        
-        auto old_item = swap(item, loc);
-        return insert(old_item, level + 1);
+        uint64_t level = max_probe_;
+        while (level--)
+        {
+            // Loop over all possible locations
+            location_type loc;
+            for (size_t i = 0; i < loc_func_count(); i++)
+            {
+                loc = loc_funcs_[i](item);
+                if (is_empty_item(table_[loc]))
+                {
+                    table_[loc] = item; 
+                    inserted_items_++;
+                    return true;
+                }
+            }
+
+            // Pop out a random item and recursively insert.
+            size_t loc_index = u_(gen_);
+            loc = loc_funcs_[loc_index](item);
+            
+            // Swap in the current item and in next round try the popped out item
+            item = swap(item, loc);
+        }
+
+        // level reached zero; try stash
+        if (stash_.size() < stash_size_)
+        {
+            stash_.push_back(item);
+            inserted_items_++;
+            return true;
+        }
+        else
+        {
+            last_insert_fail_item_ = item;
+            return false;
+        }
     }
 }
