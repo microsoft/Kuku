@@ -15,7 +15,7 @@ namespace kuku
         }
 
         // Search the hash table
-        for (size_t i = 0; i < loc_func_count(); i++)
+        for (uint32_t i = 0; i < loc_func_count(); i++)
         {
             auto loc = location(item, i);
             if (are_equal_item(table_[loc], item))
@@ -29,7 +29,7 @@ namespace kuku
         {
             if (are_equal_item(stash_[loc], item))
             {
-                return { loc, ~size_t(0) };
+                return { loc, ~uint32_t(0) };
             }
         }
 
@@ -39,18 +39,20 @@ namespace kuku
 
     KukuTable::KukuTable(
         table_size_type table_size, table_size_type stash_size,
-        size_t loc_func_count, item_type loc_func_seed,
+        uint32_t loc_func_count, item_type loc_func_seed,
         uint64_t max_probe, item_type empty_item) :
         table_size_(table_size),
         stash_size_(stash_size),
         loc_func_seed_(loc_func_seed),
         max_probe_(max_probe),
         empty_item_(empty_item),
-        last_insert_fail_item_(empty_item_)
+        last_insert_fail_item_(empty_item_),
+        inserted_items_(0),
+        gen_(random_uint64())
     {
-        if (!loc_func_count || loc_func_count > max_loc_func_count)
+        if (loc_func_count < min_loc_func_count || loc_func_count > max_loc_func_count)
         {
-            throw invalid_argument("invalid loc_func_count");
+            throw invalid_argument("loc_func_count is out of range");
         }
         if (table_size < min_table_size || table_size > max_table_size)
         {
@@ -67,8 +69,8 @@ namespace kuku
         // Create the location (hash) functions
         generate_loc_funcs(loc_func_count, loc_func_seed_);
 
-        gen_ = std::mt19937_64(rd_());
-        u_ = std::uniform_int_distribution<size_t>(0, loc_func_count - 1);
+        // Set up the distribution for location function sampling
+        u_ = std::uniform_int_distribution<uint32_t>(0, loc_func_count - 1);
     }
 
     set<location_type> KukuTable::all_locations(item_type item) const
@@ -91,7 +93,7 @@ namespace kuku
         inserted_items_ = 0;
     }
 
-    void KukuTable::generate_loc_funcs(size_t loc_func_count, item_type seed)
+    void KukuTable::generate_loc_funcs(uint32_t loc_func_count, item_type seed)
     {
         loc_funcs_.clear();
         while (loc_func_count--)
@@ -113,7 +115,7 @@ namespace kuku
         while (level--)
         {
             // Loop over all possible locations
-            for (size_t i = 0; i < loc_func_count(); i++)
+            for (uint32_t i = 0; i < loc_func_count(); i++)
             {
                 location_type loc = location(item, i);
                 if (is_empty_item(table_[loc]))
@@ -125,7 +127,7 @@ namespace kuku
             }
             
             // Swap in the current item and in next round try the popped out item
-            item = swap(item, location(item, u_(gen_)));
+            item = swap(item, location(item, static_cast<uint32_t>(u_(gen_))));
         }
 
         // level reached zero; try stash

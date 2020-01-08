@@ -13,10 +13,11 @@ namespace kuku_tests
 {
     TEST(KukuTableTests, Create)
     {
-        ASSERT_THROW(KukuTable(0, 0, 1, make_zero_item(), 1, make_zero_item()), invalid_argument);
+        ASSERT_THROW(KukuTable(0, 0, 2, make_zero_item(), 1, make_zero_item()), invalid_argument);
         ASSERT_THROW(KukuTable(1, 0, 0, make_zero_item(), 1, make_zero_item()), invalid_argument);
-        ASSERT_THROW(KukuTable(1, 0, 1, make_zero_item(), 0, make_zero_item()), invalid_argument);
-        ASSERT_NO_THROW(KukuTable(min_table_size, 0, 1, make_zero_item(), 1, make_zero_item()));
+        ASSERT_THROW(KukuTable(1, 0, 1, make_zero_item(), 1, make_zero_item()), invalid_argument);
+        ASSERT_THROW(KukuTable(1, 0, 2, make_zero_item(), 0, make_zero_item()), invalid_argument);
+        ASSERT_NO_THROW(KukuTable(min_table_size, 0, 2, make_zero_item(), 1, make_zero_item()));
     }
 
     TEST(KukuTableTests, Populate1)
@@ -80,7 +81,7 @@ namespace kuku_tests
 
     TEST(KukuTableTests, Populate3)
     {
-        KukuTable ct(1 << 10, 0, 1, make_zero_item(), 10, make_random_item());
+        KukuTable ct(1 << 10, 0, 2, make_zero_item(), 10, make_random_item());
         ASSERT_TRUE(ct.insert(make_item(0, 0)));
         ASSERT_TRUE(ct.insert(make_item(1, 0)));
         ASSERT_TRUE(ct.insert(make_item(0, 1)));
@@ -153,7 +154,7 @@ namespace kuku_tests
 
     TEST(KukuTableTests, Locations)
     {
-        size_t lfc = 2;
+        uint8_t lfc = 2;
         KukuTable ct(1 << 10, 4, lfc, make_random_item(), 100, make_all_ones_item());
         for (int k = 0; k < 20; k++)
         {
@@ -161,9 +162,9 @@ namespace kuku_tests
             auto all_locs = ct.all_locations(it);
 
             bool collision_found = false;
-            for (size_t i = 0; i < lfc; i++)
+            for (uint8_t i = 0; i < lfc; i++)
             {
-                for (size_t j = 0; j < i; j++)
+                for (uint8_t j = 0; j < i; j++)
                 {
                     collision_found = collision_found ||
                         (ct.location(it, i) == ct.location(it, j));

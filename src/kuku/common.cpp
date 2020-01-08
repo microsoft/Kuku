@@ -27,7 +27,7 @@ uint64_t kuku::random_uint64()
         throw std::runtime_error("BCryptGenRandom failed");
     }
 #else
-#error "Unsupported target platform"
+#   error "Unsupported target platform"
 #endif
     return result;
 }
