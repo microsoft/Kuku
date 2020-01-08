@@ -64,7 +64,7 @@ namespace kuku
         Creates a new kuku hash table.
         */
         KukuTable(
-            int log_table_size,
+            table_size_type table_size,
             table_size_type stash_size,
             std::size_t loc_func_count,
             item_type loc_func_seed,
@@ -72,17 +72,9 @@ namespace kuku
             item_type empty_item);
 
         /*
-        Adds a single item to the KukuTable using random-walk kuku hashing.
+        Adds a single item to the KukuTable using random-walk cuckoo hashing.
         */
-        inline bool insert(item_type item)
-        {
-            // Return false if the item already exists in the table
-            if (query(item))
-            {
-                return false;
-            }
-            return insert(item, 0);
-        }
+        bool insert(item_type item);
 
         /*
         Returns true of the provided item is contained in the hash table.
@@ -138,14 +130,9 @@ namespace kuku
             return stash_[index];
         }
 
-        inline int log_table_size() const noexcept
-        {
-            return log_table_size_;
-        }
-
         inline table_size_type table_size() const noexcept
         {
-            return table_size_type(1) << log_table_size();
+            return table_size_;
         }
 
         inline table_size_type stash_size() const noexcept
@@ -234,29 +221,29 @@ namespace kuku
         std::vector<LocFunc> loc_funcs_;
 
         /*
-        log2 of the number of slots in the table.
+        The size of the table.
         */
-        int log_table_size_;
+        const table_size_type table_size_;
 
         /*
         The size of the stash.
         */
-        table_size_type stash_size_;
+        const table_size_type stash_size_;
 
         /*
         Seed for the hash functions
         */
-        item_type loc_func_seed_;
+        const item_type loc_func_seed_;
 
         /*
         The maximum number of attempts that are made to insert an item.
         */
-        std::uint64_t max_probe_;
+        const std::uint64_t max_probe_;
 
         /*
         An item value that denotes an empty item.
         */
-        item_type empty_item_;
+        const item_type empty_item_;
 
         /*
         Storage for an item that was evicted and could not be re-inserted. This
@@ -273,5 +260,9 @@ namespace kuku
         Randomness source.
         */
         std::random_device rd_;
+
+        std::mt19937_64 gen_; 
+
+        std::uniform_int_distribution<size_t> u_;
     };
 }

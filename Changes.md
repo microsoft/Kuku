@@ -1,5 +1,11 @@
 # List of Changes
 
+## Version 2.0
+
+### 2.0.0
+- Switched to using faster non-cryptographic hash functions and a faster insertion method.
+- Created complete .NET Standard wrappers for the public API.
+
 ## Version 1.1
 
 ### 1.1.1

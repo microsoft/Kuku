@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 #include "gtest/gtest.h"
+#include "kuku/common.h"
 #include "kuku/locfunc.h"
 #include <cmath>
 
@@ -20,14 +21,14 @@ namespace kuku_tests
     TEST(LocFuncTests, Randomness)
     {
         random_device rd;
-        for (int lts = 1; lts < max_log_table_size; lts++)
+        for (int ts = min_table_size; ts < 5 * min_table_size; ts++)
         {
             for (int attempts = 0; attempts < 10; attempts++)
             {
                 uint64_t seed_lw = rd();
                 uint64_t seed_hw = rd();
-                LocFunc lf(lts, make_item(seed_lw, seed_hw));
-                LocFunc lf2(lts, make_item(seed_lw, seed_hw));
+                LocFunc lf(ts, make_item(seed_lw, seed_hw));
+                LocFunc lf2(ts, make_item(seed_lw, seed_hw));
 
                 uint64_t zeros = 0;
                 uint64_t total = 1000;
@@ -37,7 +38,7 @@ namespace kuku_tests
                     ASSERT_TRUE(lf(bl) == lf2(bl));
                     zeros += (lf(bl) == size_t(0));
                 }
-                ASSERT_TRUE(abs(static_cast<double>(zeros) / static_cast<double>(total) - pow(2.0, -lts)) < 0.05);
+                ASSERT_TRUE(abs(static_cast<double>(zeros) / static_cast<double>(total) - pow(2.0, -ts)) < 0.05);
             }
         }
     }

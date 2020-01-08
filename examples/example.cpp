@@ -4,9 +4,15 @@
 #include <kuku/kuku.h>
 #include <iostream>
 #include <iomanip>
+#include <chrono>
 
 using namespace std;
 using namespace kuku;
+
+using std::chrono::duration;
+using std::chrono::duration_cast;
+using std::chrono::high_resolution_clock;
+
 
 ostream &operator <<(ostream &stream, item_type item)
 {
@@ -16,19 +22,19 @@ ostream &operator <<(ostream &stream, item_type item)
 
 void print_table(const KukuTable &table)
 {
-    size_t col_count = 8;
-    for (size_t row = 0; row < table.table_size() / col_count; row++)
+    table_size_type col_count = 8;
+    for (table_size_type row = 0; row < table.table_size() / col_count; row++)
     {
-        for (size_t col = 0; col < col_count; col++)
+        for (table_size_type col = 0; col < col_count; col++)
         {
-            size_t index = row * col_count + col;
+            table_size_type index = row * col_count + col;
             cout << setw(5) << index << ": " << setw(5) << table.table(index) << "\t";
         }
         cout << endl;
     }
 
     cout << endl << "Stash: " << endl;
-    for (size_t i = 0; i < table.stash().size(); i++)
+    for (table_size_type i = 0; i < table.stash().size(); i++)
     {
         cout << i << ": " << table.stash(i) << endl;
     }
@@ -39,21 +45,21 @@ int main(int argc, char *argv[])
 {
     if (argc != 5)
     {
-        cout << "Usage: ./example log_table_size stash_size loc_func_count max_probe" << endl;
-        cout << "E.g., ./example 8 2 4 100" << endl;
+        cout << "Usage: ./example table_size stash_size loc_func_count max_probe" << endl;
+        cout << "E.g., ./example 256 2 4 100" << endl;
 
         return 0;
     }
 
-    int log_table_size = atoi(argv[1]);
-    size_t stash_size = static_cast<size_t>(atoi(argv[2]));
+    int table_size = atoi(argv[1]);
+    table_size_type stash_size = static_cast<size_t>(atoi(argv[2]));
     size_t loc_func_count = static_cast<size_t>(atoi(argv[3]));
     item_type loc_func_seed = make_random_item();
     uint64_t max_probe = static_cast<uint64_t>(atoi(argv[4]));
     item_type empty_item = make_item(0, 0);
 
     KukuTable table(
-        log_table_size,
+        table_size,
         stash_size,
         loc_func_count,
         loc_func_seed,

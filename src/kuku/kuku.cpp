@@ -15,8 +15,7 @@ namespace kuku
         }
 
         // Search the hash table
-        auto lfc = loc_func_count();
-        for (size_t i = 0; i < lfc; i++)
+        for (size_t i = 0; i < loc_func_count(); i++)
         {
             auto loc = location(item, i);
             if (are_equal_item(table_[loc], item))
@@ -39,10 +38,10 @@ namespace kuku
     }
 
     KukuTable::KukuTable(
-        int log_table_size, table_size_type stash_size,
+        table_size_type table_size, table_size_type stash_size,
         size_t loc_func_count, item_type loc_func_seed,
         uint64_t max_probe, item_type empty_item) :
-        log_table_size_(log_table_size),
+        table_size_(table_size),
         stash_size_(stash_size),
         loc_func_seed_(loc_func_seed),
         max_probe_(max_probe),
@@ -53,9 +52,9 @@ namespace kuku
         {
             throw invalid_argument("invalid loc_func_count");
         }
-        if (log_table_size_ < 1 || log_table_size_ > max_log_table_size)
+        if (table_size < min_table_size || table_size > max_table_size)
         {
-            throw invalid_argument("invalid log_table_size");
+            throw invalid_argument("table_size is out of range");
         }
         if (!max_probe)
         {
@@ -63,10 +62,13 @@ namespace kuku
         }
 
         // Allocate the hash table
-        table_.resize(table_size(), empty_item_);
+        table_.resize(table_size_, empty_item_);
 
         // Create the location (hash) functions
         generate_loc_funcs(loc_func_count, loc_func_seed_);
+
+        gen_ = std::mt19937_64(rd_());
+        u_ = std::uniform_int_distribution<size_t>(0, loc_func_count - 1);
     }
 
     set<location_type> KukuTable::all_locations(item_type item) const
@@ -86,6 +88,7 @@ namespace kuku
         table_.resize(sz, empty_item_);
         stash_.clear();
         last_insert_fail_item_ = empty_item_;
+        inserted_items_ = 0;
     }
 
     void KukuTable::generate_loc_funcs(size_t loc_func_count, item_type seed)
@@ -93,45 +96,49 @@ namespace kuku
         loc_funcs_.clear();
         while (loc_func_count--)
         {
-            loc_funcs_.emplace_back(log_table_size_, seed);
+            loc_funcs_.emplace_back(table_size_, seed);
             increment_item(seed);
         }
     }
 
-    bool KukuTable::insert(item_type item, uint64_t level)
+    bool KukuTable::insert(item_type item)
     {
-        if (is_empty_item(item))
+        // Check if the item is already inserted or is the empty item
+        if (query(item))
         {
-            throw invalid_argument("cannot insert the null item");
-        }
-        if (level >= max_probe_)
-        {
-            if (stash_.size() < stash_size_)
-            {
-                stash_.push_back(item);
-                inserted_items_++;
-                return true;
-            }
-            else
-            {
-                last_insert_fail_item_ = item;
-                return false;
-            }
+            return false;
         }
 
-        // Choose random location index
-        size_t loc_index = size_t(rd_()) % loc_funcs_.size();
-        location_type loc = loc_funcs_[loc_index](item);
-        auto old_item = swap(item, loc);
-
-        if (is_empty_item(old_item))
+        uint64_t level = max_probe_;
+        while (level--)
         {
+            // Loop over all possible locations
+            for (size_t i = 0; i < loc_func_count(); i++)
+            {
+                location_type loc = location(item, i);
+                if (is_empty_item(table_[loc]))
+                {
+                    table_[loc] = item; 
+                    inserted_items_++;
+                    return true;
+                }
+            }
+            
+            // Swap in the current item and in next round try the popped out item
+            item = swap(item, location(item, u_(gen_)));
+        }
+
+        // level reached zero; try stash
+        if (stash_.size() < stash_size_)
+        {
+            stash_.push_back(item);
             inserted_items_++;
             return true;
         }
         else
         {
-            return insert(old_item, level + 1);
+            last_insert_fail_item_ = item;
+            return false;
         }
     }
 }
