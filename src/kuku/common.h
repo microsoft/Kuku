@@ -21,13 +21,17 @@ namespace kuku
 {
     using item_type = std::array<std::uint64_t, 2>;
 
+    using location_type = std::uint32_t;
+
+    using table_size_type = location_type;
+
     constexpr int bytes_per_uint64 = sizeof(std::uint64_t);
 
     constexpr int bytes_per_item = sizeof(item_type);
 
     constexpr int max_log_table_size = 30;
 
-    constexpr std::size_t max_table_size = std::size_t(1) << max_log_table_size;
+    constexpr table_size_type max_table_size = table_size_type(1) << max_log_table_size;
 
     /*
     This must be a power of two.

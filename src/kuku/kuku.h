@@ -20,7 +20,7 @@ namespace kuku
     public:
         QueryResult() = default;
 
-        inline std::size_t location() const noexcept
+        inline location_type location() const noexcept
         {
             return location_;
         }
@@ -41,7 +41,7 @@ namespace kuku
         }
 
     private:
-        QueryResult(std::size_t location, std::size_t loc_func_index)
+        QueryResult(location_type location, std::size_t loc_func_index)
             : location_(location), loc_func_index_(loc_func_index)
         {
 #ifdef SEAL_DEBUG
@@ -52,7 +52,7 @@ namespace kuku
 #endif
         }
 
-        std::size_t location_ = 0;
+        location_type location_ = 0;
 
         std::size_t loc_func_index_ = 0;
     };
@@ -65,7 +65,7 @@ namespace kuku
         */
         KukuTable(
             int log_table_size,
-            std::size_t stash_size,
+            table_size_type stash_size,
             std::size_t loc_func_count,
             item_type loc_func_seed,
             std::uint64_t max_probe,
@@ -92,7 +92,7 @@ namespace kuku
         /*
         Returns the locations that this item may live at.
         */
-        inline std::size_t location(
+        inline location_type location(
             item_type item,
             std::size_t loc_func_index) const
         {
@@ -102,7 +102,7 @@ namespace kuku
         /*
         Returns the locations that this item may live at.
         */
-        std::set<std::size_t> all_locations(item_type item) const;
+        std::set<location_type> all_locations(item_type item) const;
 
         /*
         Clears the table by filling every location with the empty item.
@@ -119,7 +119,7 @@ namespace kuku
             return table_;
         }
 
-        inline const item_type &table(std::size_t index) const
+        inline const item_type &table(location_type index) const
         {
             return table_[index];
         }
@@ -129,7 +129,7 @@ namespace kuku
             return stash_;
         }
 
-        inline const item_type &stash(std::size_t index) const
+        inline const item_type &stash(location_type index) const
         {
             if (index >= stash_.size() && index < stash_size_)
             {
@@ -143,12 +143,12 @@ namespace kuku
             return log_table_size_;
         }
 
-        inline std::size_t table_size() const noexcept
+        inline table_size_type table_size() const noexcept
         {
-            return std::size_t(1) << log_table_size();
+            return table_size_type(1) << log_table_size();
         }
 
-        inline std::size_t stash_size() const noexcept
+        inline table_size_type stash_size() const noexcept
         {
             return stash_size_;
         }
@@ -172,7 +172,7 @@ namespace kuku
         Returns whether a given location in the table is empty, i.e., contains
         the empty item.
         */
-        inline bool is_empty(std::size_t index) const noexcept
+        inline bool is_empty(location_type index) const noexcept
         {
             return is_empty_item(table_[index]);
         }
@@ -211,7 +211,7 @@ namespace kuku
         /*
         Swap an item in the table with a given item.
         */
-        inline item_type swap(item_type item, std::size_t location) noexcept
+        inline item_type swap(item_type item, location_type location) noexcept
         {
             item_type old_item = table_[location];
             table_[location] = item;
@@ -241,7 +241,7 @@ namespace kuku
         /*
         The size of the stash.
         */
-        std::size_t stash_size_;
+        table_size_type stash_size_;
 
         /*
         Seed for the hash functions
@@ -267,7 +267,7 @@ namespace kuku
         /*
         The number of items that have been inserted to table or stash.
         */
-        std::size_t inserted_items_;
+        table_size_type inserted_items_;
 
         /*
         Randomness source.

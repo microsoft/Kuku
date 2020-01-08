@@ -3,7 +3,7 @@
 
 cmake_minimum_required(VERSION 3.12)
 
-project(Kuku VERSION 1.0.0 LANGUAGES CXX C)
+project(Kuku VERSION 1.1.1 LANGUAGES CXX C)
 
 if(${MSVC})
     message(FATAL_ERROR "Please build using the attached Visual Studio solution/project files.")
@@ -109,7 +109,7 @@ install(
 write_basic_package_version_file(
     ${KUKU_CONFIG_VERSION_FILENAME}
     VERSION ${Kuku_VERSION}
-    COMPATIBILITY ExactVersion)
+    COMPATIBILITY SameMinorVersion)
 
 # Install other files
 install(

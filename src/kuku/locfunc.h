@@ -27,7 +27,7 @@ namespace kuku
                 throw std::invalid_argument("invalid log_table_size");
             }
 
-            table_size_ = std::size_t(1) << log_table_size;
+            table_size_ = table_size_type(1) << log_table_size;
         }
 
         LocFunc(const LocFunc &copy) = default;
@@ -37,15 +37,15 @@ namespace kuku
         /*
         Returns an integer between 0 and (table_size-1).
         */
-        inline std::size_t operator ()(item_type item) const
+        inline location_type operator ()(item_type item) const
         {
             return compress(item) & (table_size_ - 1);
         }
 
     private:
-        inline std::size_t compress(item_type item) const
+        inline location_type compress(item_type item) const
         {
-            std::size_t out;
+            location_type out;
             blake2b(
                 reinterpret_cast<unsigned char*>(&out),
                 sizeof(out),
@@ -55,7 +55,7 @@ namespace kuku
             return out;
         }
 
-        std::size_t table_size_;
+        table_size_type table_size_;
 
         item_type seed_;
     };
