@@ -76,6 +76,12 @@ namespace kuku
         */
         inline bool insert(item_type item)
         {
+            // Cannot insert the empty item
+            if (is_empty_item(item))
+            {
+                throw std::invalid_argument("cannot insert the null item");
+            }
+
             // Return false if the item already exists in the table
             if (query(item))
             {

@@ -97,18 +97,13 @@ namespace kuku
         loc_funcs_.clear();
         while (loc_func_count--)
         {
-            loc_funcs_.emplace_back(table_size(), seed);
+            loc_funcs_.emplace_back(table_size_, seed);
             increment_item(seed);
         }
     }
 
     bool KukuTable::insert(item_type item, uint64_t level)
     {
-        if (is_empty_item(item))
-        {
-            throw invalid_argument("cannot insert the null item");
-        }
-
         if (level >= max_probe_)
         {
             if (stash_.size() < stash_size_)
