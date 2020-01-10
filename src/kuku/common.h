@@ -4,8 +4,14 @@
 #pragma once
 
 // Include kuku/config.h only on platforms with CMake configuration (not MSVC).
-#ifndef _MSC_VER
-#include "kuku/config.h"
+#ifdef _MSC_VER
+#   ifdef _DEBUG
+#       define KUKU_DEBUG
+#   else
+#       undef KUKU_DEBUG
+#   endif
+#else
+#   include "kuku/config.h"
 #endif
 
 #include <cstddef>
@@ -33,10 +39,12 @@ namespace kuku
 
     constexpr table_size_type max_table_size = table_size_type(1) << 30;
 
+    constexpr std::uint32_t min_loc_func_count = 2;
+
     /*
     This must be a power of two.
     */
-    constexpr std::size_t max_loc_func_count = 16;
+    constexpr std::uint32_t max_loc_func_count = 32;
 
     std::uint64_t random_uint64();
 

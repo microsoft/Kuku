@@ -136,7 +136,7 @@ cd ..
 It is very easy to link your own applications and libraries with Kuku if you use
 CMake. Simply add the following to your `CMakeLists.txt`:
 ````
-find_package(Kuku 1.0.0 EXACT REQUIRED)
+find_package(Kuku 2.0 REQUIRED)
 target_link_libraries(<your target> Kuku::kuku)
 ````
 If Kuku was installed globally, the above `find_package` command will likely find
@@ -151,13 +151,13 @@ cmake . -DCMAKE_PREFIX_PATH=~/mylibs
 # Using Kuku
 
 The cuckoo hash table is represented by an instance of the `KukuTable` class. The
-constructor of `KukuTable` takes as input a base-2 logarithm of the table size
-(`log_table_size`), the size of the stash (`stash_size`), the number of hash functions
-(`loc_func_count`), a seed for the hash functions (`loc_func_seed`), the number of
-iterations allowed in the insertion process, and a value the hash table should contain
-to signal an empty slot (`empty_item`). The hash tables item are restricted to 128-bit
-integer data types (`block`). These can be created from a pair of 64-bit integers using
-the `make_block` function.
+constructor of `KukuTable` takes as input the size of the hash table (`table_size`),
+the size of the stash (`stash_size`), the number of hash functions (`loc_func_count`),
+a seed for the hash functions (`loc_func_seed`), the number of iterations allowed in
+the insertion process, and a value the hash table should contain to signal an empty
+slot (`empty_item`). The hash tables item are restricted to 128-bit integer data types
+(`item_type`). These can be created from a pair of 64-bit integers using the `make_item`
+function.
 
 Once the table has been created, items can be inserted using the member function `insert`.
 Items can be queried with the member function `query`, which returns a `QueryResult`
