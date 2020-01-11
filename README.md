@@ -143,6 +143,7 @@ If Kuku was installed globally, the above `find_package` command will likely fin
 the library automatically. To link with a locally installed Kuku, e.g., installed
 in `~/mylibs` as described above, you may need to tell CMake where to look for Kuku 
 when you configure your application by running:
+
 ````
 cd <directory containing your CMakeLists.txt>
 cmake . -DCMAKE_PREFIX_PATH=~/mylibs
@@ -175,24 +176,28 @@ return `false` in this case.
 
 The Kuku distribution contains a .Net Core wrapper of the native code. This wrapper currently only supports the Windows OS.
 
-The KukuLib project produces a C++ dynamic library defining the externalized methods to be used by the C# code. The KukuDotNet project is the C# wrapper code using the KukuLib dll.
+The KukuNative project produces a C++ dynamic library defining the externalized methods to be used by the C# code. The KukuDotNet project is the C# wrapper code using the KukuNative dll.
 
 ## Building Kuku.Net
 
 ### Windows
 
-First, Build the KukuLib project `KukuLib.vcxproj` from `Kuku.sln`. This results in the
-dynamic library `kukulib.dll` to be created in `dotnet\kukulib\bin\$(Platform)\$(Configuration)`.
+First, Build the KukuLib project `KukuNative.vcxproj` from `Kuku.sln`. This results in the
+dynamic library `kukunative.dll` to be created in `dotnet\kukunative\bin\$(Platform)\$(Configuration)`.
 
 Next, build the KukuDotNet project `KukuDotNet.csproj` from `Kuku.sln`. This results in the
 dynamic library `kukudotnet.dll` to be created in `dotnet\kukudotnet\bin\$(Platform)\$(Configuration)`.
 
 ### Linux
 
+First, make sure that Kuku is installed on your machine, following the instructions above.
+
 ````
-cd dotnet/kukudotnet
+cd dotnet/kukunative
 cmake .
 make
+cd ../kukudotnet
+dotnet build
 cd ../..
 ````
 

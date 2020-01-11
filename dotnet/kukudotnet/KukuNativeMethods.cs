@@ -6,22 +6,7 @@ namespace KukuDotNet
 {
     internal class KukuNativeMethods
     {
-	private const string DllName = "KukuNative";
-        static KukuNativeMethods()
-        {
-            NativeLibrary.SetDllImportResolver(typeof(KukuNativeMethods).Assembly, ImportResolver);
-        }
-
-        private static IntPtr ImportResolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
-        {
-            var libHandle = IntPtr.Zero;
-            if (libraryName == DllName)
-            {
-                NativeLibrary.TryLoad("libKukuNative.so", assembly, DllImportSearchPath.AssemblyDirectory, out libHandle);
-            }
-            
-            return libHandle;
-        }
+    	private const string DllName = "KukuNative";
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
         public static extern IntPtr kukuTable_Create(uint table_size, uint stash_size, uint loc_func_count, ulong[] loc_func_seed, ulong max_probe, ulong[] empty_item);

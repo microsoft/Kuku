@@ -6,10 +6,7 @@ cmake_minimum_required(VERSION 3.12)
 project(KukuNative VERSION 1.0.0 LANGUAGES CXX)
 
 # Import Kuku
-find_package(Kuku 1.0.0 EXACT REQUIRED
-    # Providing a path so this can be built without installing Kuku
-    PATHS ../../src/cmake
-)
+find_package(Kuku 2.0 REQUIRED)
 
 add_library(KukuNative SHARED)
 
