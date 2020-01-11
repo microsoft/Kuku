@@ -13,7 +13,7 @@ find_package(Kuku 1.0.0 EXACT REQUIRED
 
 add_library(KukuLib SHARED)
 
-include_directories(../../src/)
+target_include_directories(KukuLib PUBLIC ../../src/)
 
 target_sources(KukuLib 
 PUBLIC
@@ -24,7 +24,7 @@ PUBLIC
 
 set_target_properties(KukuLib 
     PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib"
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib
 )
 
 # Link Kuku
