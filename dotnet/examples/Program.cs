@@ -24,6 +24,8 @@ namespace KukuDotNetExample
                 Console.WriteLine($"Inserted {roundCounter * 20} items.");
                 Console.WriteLine($"Fill rate: {kukuTable.FillRate()}.");
 
+                Console.ReadKey();
+
                 for (ulong i = 0; i < 20; i++)
                 {
                     var item = new Item128 { Data = new[] { i + 1, roundCounter + 1 } };
@@ -140,7 +142,7 @@ namespace KukuDotNetExample
         private static void ShowHelp()
         {
             var name = typeof(Program).Assembly.GetName().Name;
-            Console.WriteLine($"Usage: dotnet {name}.dll <logTableSize> <stashSize> <locFuncCount> <maxProbe>");
+            Console.WriteLine($"Usage: dotnet {name}.dll <tableSize> <stashSize> <locFuncCount> <maxProbe>");
         }
 
         static void PrintTable(KukuTable128 kukuTable)
