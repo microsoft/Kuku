@@ -19,14 +19,15 @@
 
 typedef struct
 {
-	std::size_t location;
-	std::size_t loc_func_index;
+	uint32_t location;
+	uint32_t loc_func_index;
 	bool in_stash;
 } QueryResult;
 
-extern "C" EXPORT kuku::KukuTable* kukuTable_Create(int log_table_size,
-	std::size_t stash_size,
-	std::size_t loc_func_count,
+extern "C" EXPORT kuku::KukuTable* kukuTable_Create(
+	uint32_t log_table_size,
+	uint32_t stash_size,
+	uint32_t loc_func_count,
 	uint64_t *loc_func_seed,
 	uint64_t max_probe,
 	uint64_t *empty_item);
@@ -41,12 +42,12 @@ extern "C" EXPORT bool kukuTable_LastInsertFailItem(kuku::KukuTable* kuku_table,
 
 extern "C" EXPORT double kukuTable_FillRate(kuku::KukuTable* kuku_table);
 
-extern "C" EXPORT bool kukuTable_Table(kuku::KukuTable* kuku_table, std::size_t index, uint64_t* item);
+extern "C" EXPORT bool kukuTable_Table(kuku::KukuTable* kuku_table, uint32_t index, uint64_t* item);
 
-extern "C" EXPORT std::size_t kukuTable_TableSize(kuku::KukuTable* kuku_table);
+extern "C" EXPORT uint32_t kukuTable_TableSize(kuku::KukuTable* kuku_table);
 
-extern "C" EXPORT bool kukuTable_Stash(kuku::KukuTable* kuku_table, std::size_t index, uint64_t* item);
+extern "C" EXPORT bool kukuTable_Stash(kuku::KukuTable* kuku_table, uint32_t index, uint64_t* item);
 
-extern "C" EXPORT std::size_t kukuTable_StashSize(kuku::KukuTable* kuku_table);
+extern "C" EXPORT uint32_t kukuTable_StashSize(kuku::KukuTable* kuku_table);
 
-extern "C" EXPORT std::size_t kukuTable_Location(kuku::KukuTable* kuku_table, uint64_t *item, std::size_t loc_func_index);
+extern "C" EXPORT uint32_t kukuTable_Location(kuku::KukuTable* kuku_table, uint64_t *item, uint32_t loc_func_index);

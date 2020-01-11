@@ -22,9 +22,9 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{EC30B03C-89D0-4B69-9D75-97AE3574F2C0}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>KukuLib</RootNamespace>
+    <RootNamespace>KukuNative</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>KukuLib</ProjectName>
+    <ProjectName>KukuNative</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.Serialization;
 
 namespace KukuDotNet
@@ -6,7 +7,7 @@ namespace KukuDotNet
     public class KukuTableParameters
     {
         [DataMember(Order = 1)]
-        public int LogTableSize { get; set; }
+        public uint TableSize { get; set; }
 
         [DataMember(Order = 2)]
         public uint StashSize { get; set; }

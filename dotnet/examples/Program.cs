@@ -16,7 +16,7 @@ namespace KukuDotNetExample
 
         static void RunExample(KukuTableParameters parameters)
         {
-            var kukuTable = new KukuTableDotNet128(parameters);
+            var kukuTable = new KukuTable128(parameters);
 
             ulong roundCounter = 0;
             while (true)
@@ -93,10 +93,10 @@ namespace KukuDotNetExample
                 Environment.Exit(1);
             }
 
-            int logTableSize;
-            if (!int.TryParse(args[0], out logTableSize))
+            uint tableSize;
+            if (!uint.TryParse(args[0], out tableSize))
             {
-                Console.WriteLine($"Invalid value for parameter {nameof(logTableSize)}. Expected int.");
+                Console.WriteLine($"Invalid value for parameter {nameof(tableSize)}. Expected int.");
                 ShowHelp();
                 Environment.Exit(1);
             }
@@ -127,7 +127,7 @@ namespace KukuDotNetExample
 
             var parameters = new KukuTableParameters()
             {
-                LogTableSize = logTableSize, StashSize = stashSize, LocFuncCount = locFuncCount, MaxProbe = maxProbe
+                TableSize = tableSize, StashSize = stashSize, LocFuncCount = locFuncCount, MaxProbe = maxProbe
             };
 
             var random = new Random();
@@ -143,7 +143,7 @@ namespace KukuDotNetExample
             Console.WriteLine($"Usage: dotnet {name}.dll <logTableSize> <stashSize> <locFuncCount> <maxProbe>");
         }
 
-        static void PrintTable(KukuTableDotNet128 kukuTable)
+        static void PrintTable(KukuTable128 kukuTable)
         {
             Console.WriteLine($"Table size: { kukuTable.Table.Size }");
             Console.WriteLine($"{kukuTable.Table}");
