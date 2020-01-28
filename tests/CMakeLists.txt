@@ -8,7 +8,7 @@ project(KukuTest LANGUAGES CXX)
 # Executable will be in ../bin
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../bin)
 
-add_executable(kukutest)
+add_executable(tests)
 
 # Import Kuku
 find_package(Kuku 2.0.0 EXACT REQUIRED
@@ -33,4 +33,4 @@ endif()
 add_subdirectory(${GTEST_DIR})
 
 # Link Kuku and GTest
-target_link_libraries(kukutest Kuku::kuku gtest)
+target_link_libraries(tests Kuku::kuku gtest)
