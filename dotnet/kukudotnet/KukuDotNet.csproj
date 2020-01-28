@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
 	  <TargetFramework>netcoreapp3.1</TargetFramework>
-    <OutputPath>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutputPath>
+    <OutputPath>$(ProjectDir)..\lib\$(Platform)\$(Configuration)\</OutputPath>
     <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

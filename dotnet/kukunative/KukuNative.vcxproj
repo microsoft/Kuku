@@ -79,19 +79,19 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)lib\$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(ProjectDir)..\lib\$(Platform)\$(Configuration)\</OutDir>
     <TargetName>kukunative</TargetName>
     <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)lib\$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(ProjectDir)..\lib\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>kukunative</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)lib\$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(ProjectDir)..\lib\$(Platform)\$(Configuration)\</OutDir>
     <TargetName>kukunative</TargetName>
     <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
