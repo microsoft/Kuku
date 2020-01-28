@@ -1,7 +1,12 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+
+#include <algorithm>
+#include <iterator>
 #include "pch.h"
 #include "kuku_ref.h"
 
-extern "C" EXPORT kuku::KukuTable* kukuTable_Create( 
+extern "C" EXPORT kuku::KukuTable *KukuTable_Create( 
 	uint32_t table_size,
 	uint32_t stash_size,
 	uint32_t loc_func_count,
@@ -20,65 +25,66 @@ extern "C" EXPORT kuku::KukuTable* kukuTable_Create(
 		kuku_empty_item);
 }
 
-extern "C" EXPORT bool kukuTable_Insert(kuku::KukuTable* kuku_table, uint64_t *item)
+extern "C" EXPORT bool KukuTable_Insert(kuku::KukuTable *kuku_table, uint64_t *item)
 {
 	kuku::item_type kuku_item = kuku::make_item(item[0], item[1]);
 	return kuku_table->insert(kuku_item);
 }
 
-extern "C" EXPORT bool kukuTable_Query(kuku::KukuTable* kuku_table, uint64_t *item, QueryResult *query_result)
+extern "C" EXPORT bool KukuTable_Query(kuku::KukuTable *kuku_table, uint64_t *item, QueryResult *query_result)
 {
 	kuku::item_type kuku_item = kuku::make_item(item[0], item[1]);
 	kuku::QueryResult res = kuku_table->query(kuku_item);
+	query_result->found = !!res;
+	query_result->in_stash = res.in_stash();
 	query_result->location = res.location();
 	query_result->loc_func_index = res.loc_func_index();
-	query_result->in_stash = res.in_stash();
 	return true;
 }
 
-extern "C" EXPORT bool kukuTable_IsEmptyItem(kuku::KukuTable* kuku_table, uint64_t *item)
+extern "C" EXPORT bool KukuTable_IsEmptyItem(kuku::KukuTable *kuku_table, uint64_t *item)
 {
 	kuku::item_type kuku_item = kuku::make_item(item[0], item[1]);
 	return kuku_table->is_empty_item(kuku_item);
 }
 
-extern "C" EXPORT bool kukuTable_LastInsertFailItem(kuku::KukuTable* kuku_table, uint64_t* item)
+extern "C" EXPORT bool KukuTable_LastInsertFailItem(kuku::KukuTable *kuku_table, uint64_t *item)
 {
 	kuku::item_type src = kuku_table->last_insert_fail_item();
 	std::copy(std::begin(src), std::end(src), item);
 	return true;
 }
 
-extern "C" EXPORT double kukuTable_FillRate(kuku::KukuTable* kuku_table)
+extern "C" EXPORT double KukuTable_FillRate(kuku::KukuTable *kuku_table)
 {
 	return kuku_table->fill_rate();
 }
 
-extern "C" EXPORT bool kukuTable_Table(kuku::KukuTable* kuku_table, uint32_t index, uint64_t* item)
+extern "C" EXPORT bool KukuTable_Table(kuku::KukuTable *kuku_table, uint32_t index, uint64_t *item)
 {
 	kuku::item_type src = kuku_table->table(index);
 	std::copy(std::begin(src), std::end(src), item);
 	return true;
 }
 
-extern "C" EXPORT uint32_t kukuTable_TableSize(kuku::KukuTable* kuku_table)
+extern "C" EXPORT uint32_t KukuTable_TableSize(kuku::KukuTable *kuku_table)
 {
 	return kuku_table->table_size();
 }
 
-extern "C" EXPORT bool kukuTable_Stash(kuku::KukuTable* kuku_table, uint32_t index, uint64_t* item)
+extern "C" EXPORT bool KukuTable_Stash(kuku::KukuTable *kuku_table, uint32_t index, uint64_t *item)
 {
 	kuku::item_type src = kuku_table->stash(index);
 	std::copy(std::begin(src), std::end(src), item);
 	return true;
 }
 
-extern "C" EXPORT uint32_t kukuTable_StashSize(kuku::KukuTable* kuku_table)
+extern "C" EXPORT uint32_t KukuTable_StashSize(kuku::KukuTable *kuku_table)
 {
 	return kuku_table->stash_size();
 }
 
-extern "C" EXPORT uint32_t kukuTable_Location(kuku::KukuTable* kuku_table, uint64_t* item, uint32_t loc_func_index)
+extern "C" EXPORT uint32_t KukuTable_Location(kuku::KukuTable *kuku_table, uint64_t *item, uint32_t loc_func_index)
 {
 	kuku::item_type kuku_item = kuku::make_item(item[0], item[1]);
 	return kuku_table->location(kuku_item, loc_func_index);

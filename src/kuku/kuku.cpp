@@ -120,12 +120,12 @@ namespace kuku
                 location_type loc = location(item, i);
                 if (is_empty_item(table_[loc]))
                 {
-                    table_[loc] = item; 
+                    table_[loc] = item;
                     inserted_items_++;
                     return true;
                 }
             }
-            
+
             // Swap in the current item and in next round try the popped out item
             item = swap(item, location(item, static_cast<uint32_t>(u_(gen_))));
         }

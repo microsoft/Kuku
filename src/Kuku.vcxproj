@@ -50,15 +50,19 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>kuku</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>kuku</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>kuku</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>kuku</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
     <ClCompile>
@@ -119,7 +123,6 @@
   <ItemGroup>
     <ClCompile Include="kuku\blake2b.c" />
     <ClCompile Include="kuku\blake2xb.c" />
-    <ClCompile Include="kuku\common.cpp" />
     <ClCompile Include="kuku\kuku.cpp" />
   </ItemGroup>
   <ItemGroup>

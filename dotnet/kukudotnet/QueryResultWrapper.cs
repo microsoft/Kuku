@@ -1,6 +1,7 @@
-﻿using System;
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
 
-namespace KukuDotNet
+namespace Microsoft.Research.Kuku
 {
     public class QueryResultWrapper
     {
@@ -8,13 +9,15 @@ namespace KukuDotNet
 
         internal QueryResultWrapper(QueryResult resultStruct)
         {
-            this._resultStruct = resultStruct;
+             _resultStruct = resultStruct;
         }
 
-        public uint Location => this._resultStruct.location;
+        public bool Found => _resultStruct.found;
 
-        public uint LocFuncIndex => this._resultStruct.loc_func_index;
+        public bool InStash => _resultStruct.in_stash;
 
-        public bool InStash => this._resultStruct.in_stash; 
+        public uint Location => _resultStruct.location;
+
+        public uint LocFuncIndex => _resultStruct.loc_func_index;
     }
 }

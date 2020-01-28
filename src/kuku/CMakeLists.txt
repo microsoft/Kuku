@@ -5,7 +5,6 @@ target_sources(kuku
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/blake2b.c
         ${CMAKE_CURRENT_LIST_DIR}/blake2xb.c
-        ${CMAKE_CURRENT_LIST_DIR}/common.cpp
         ${CMAKE_CURRENT_LIST_DIR}/kuku.cpp
 )
 

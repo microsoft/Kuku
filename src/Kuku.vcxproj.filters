@@ -43,9 +43,6 @@
     <ClCompile Include="kuku\blake2b.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="kuku\common.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="kuku\blake2xb.c">
       <Filter>Source Files</Filter>
     </ClCompile>

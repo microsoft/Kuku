@@ -9,11 +9,6 @@
 using namespace std;
 using namespace kuku;
 
-using std::chrono::duration;
-using std::chrono::duration_cast;
-using std::chrono::high_resolution_clock;
-
-
 ostream &operator <<(ostream &stream, item_type item)
 {
     stream << item[1] << " " << item[0];
@@ -23,17 +18,13 @@ ostream &operator <<(ostream &stream, item_type item)
 void print_table(const KukuTable &table)
 {
     table_size_type col_count = 8;
-    for (table_size_type row = 0; row < table.table_size() / col_count; row++)
+    for (table_size_type i = 0; i < table.table_size(); i++)
     {
-        for (table_size_type col = 0; col < col_count; col++)
-        {
-            table_size_type index = row * col_count + col;
-            cout << setw(5) << index << ": " << setw(5) << table.table(index) << "\t";
-        }
-        cout << endl;
+        cout << setw(5) << i << ": " << setw(5) << table.table(i)
+            << ((i % col_count == col_count - 1) ? "\n" : "\t");
     }
 
-    cout << endl << "Stash: " << endl;
+    cout << endl << endl << "Stash: " << endl;
     for (table_size_type i = 0; i < table.stash().size(); i++)
     {
         cout << i << ": " << table.stash(i) << endl;
@@ -110,9 +101,12 @@ int main(int argc, char *argv[])
             static_cast<uint64_t>(atoi(lw)), static_cast<uint64_t>(atoi(hw)));
         QueryResult res = table.query(item);
         cout << "Found: " << boolalpha << !!res << endl;
-        cout << "Location: " << res.location() << endl;
-        cout << "In stash: " << boolalpha << res.in_stash() << endl;
-        cout << "Hash function index: " << res.loc_func_index() << endl << endl;
+        if (res)
+        {
+            cout << "Location: " << res.location() << endl;
+            cout << "In stash: " << boolalpha << res.in_stash() << endl;
+            cout << "Hash function index: " << res.loc_func_index() << endl << endl;
+        }
     }
 
     return 0;

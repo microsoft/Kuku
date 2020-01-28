@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+
+using System;
 using System.Linq;
-using KukuDotNet;
+using Microsoft.Research.Kuku;
 
 namespace KukuDotNetExample
 {
@@ -70,10 +71,13 @@ namespace KukuDotNetExample
                 }
 
                 var result = kukuTable.Query(item);
-                Console.WriteLine($"Found: [{string.Join(',', item)}]");
-                Console.WriteLine($"Location: {result.Location}");
-                Console.WriteLine($"In stash: {result.InStash}");
-                Console.WriteLine($"Hash function index: {result.LocFuncIndex}");
+                Console.WriteLine($"Found: {result.Found}");
+                if (result.Found)
+                {
+                    Console.WriteLine($"Location: {result.Location}");
+                    Console.WriteLine($"In stash: {result.InStash}");
+                    Console.WriteLine($"Hash function index: {result.LocFuncIndex}");
+                }
             }
         }
 
@@ -95,32 +99,28 @@ namespace KukuDotNetExample
                 Environment.Exit(1);
             }
 
-            uint tableSize;
-            if (!uint.TryParse(args[0], out tableSize))
+            if (!uint.TryParse(args[0], out uint tableSize))
             {
-                Console.WriteLine($"Invalid value for parameter {nameof(tableSize)}. Expected int.");
+                Console.WriteLine($"Invalid value for parameter {nameof(tableSize)}. Expected uint.");
                 ShowHelp();
                 Environment.Exit(1);
             }
 
-            uint stashSize;
-            if (!uint.TryParse(args[1], out stashSize))
+            if (!uint.TryParse(args[1], out uint stashSize))
             {
                 Console.WriteLine($"Invalid value for parameter {nameof(stashSize)}. Expected uint.");
                 ShowHelp();
                 Environment.Exit(1);
             }
 
-            uint locFuncCount;
-            if (!uint.TryParse(args[2], out locFuncCount))
+            if (!uint.TryParse(args[2], out uint locFuncCount))
             {
                 Console.WriteLine($"Invalid value for parameter {nameof(locFuncCount)}. Expected uint.");
                 ShowHelp();
                 Environment.Exit(1);
             }
 
-            ulong maxProbe;
-            if (!ulong.TryParse(args[3], out maxProbe))
+            if (!ulong.TryParse(args[3], out ulong maxProbe))
             {
                 Console.WriteLine($"Invalid value for parameter {nameof(maxProbe)}. Expected uint.");
                 ShowHelp();
@@ -133,7 +133,10 @@ namespace KukuDotNetExample
             };
 
             var random = new Random();
-            parameters.LocFuncSeed = new[] { (ulong)LongRandom(0, long.MaxValue, random), (ulong)LongRandom(0, long.MaxValue, random) };
+            parameters.LocFuncSeed = new[] {
+                (ulong)LongRandom(0, long.MaxValue, random),
+                (ulong)LongRandom(0, long.MaxValue, random)
+            };
             parameters.EmptyItem = new ulong[] { 0, 0 };
 
             return parameters;

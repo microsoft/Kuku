@@ -14,27 +14,27 @@
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64' And '$(OS)' == 'Windows_NT'">
-    <None Include="..\kukunative\bin\x64\Release\KukuNative.dll" Link="KukuNative.dll">
+    <None Include="..\..\lib\x64\Release\kukunative.dll" Link="kukunative.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64' And '$(OS)' == 'Windows_NT'">
-    <None Include="..\kukunative\bin\x64\Debug\KukuNative.dll" Link="KukuNative.dll">
+    <None Include="..\..\lib\x64\Debug\kukunative.dll" Link="kukunative.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86' And '$(OS)' == 'Windows_NT'">
-    <None Include="..\kukunative\bin\Win32\Release\KukuNative.dll" Link="KukuNative.dll">
+    <None Include="..\..\lib\Win32\Release\kukunative.dll" Link="kukunative.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86' And '$(OS)' == 'Windows_NT'">
-    <None Include="..\kukunative\bin\Win32\Debug\KukuNative.dll" Link="KukuNative.dll">
+    <None Include="..\..\lib\Win32\Debug\kukunative.dll" Link="kukunative.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\kukunative\lib\libKukuNative.so" Link="libKukuNative.so" Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))'">
+    <None Include="..\..\lib\libkukunative.so" Link="libkukunative.so" Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))'">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

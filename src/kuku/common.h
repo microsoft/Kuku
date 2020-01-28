@@ -46,11 +46,19 @@ namespace kuku
     */
     constexpr std::uint32_t max_loc_func_count = 32;
 
-    std::uint64_t random_uint64();
+    inline std::uint64_t random_uint64()
+    {
+        std::random_device rd;
+        return (static_cast<std::uint64_t>(rd()) << 32)
+            + static_cast<std::uint64_t>(rd());
+    }
 
     inline void set_item(const unsigned char *in, item_type &destination) noexcept
     {
-        std::copy_n(in, bytes_per_item, reinterpret_cast<unsigned char*>(destination.data()));
+        std::copy_n(
+            in,
+            bytes_per_item,
+            reinterpret_cast<unsigned char*>(destination.data()));
     }
 
     inline item_type make_item(const unsigned char *in) noexcept

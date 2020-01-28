@@ -164,29 +164,31 @@ Once the table has been created, items can be inserted using the member function
 Items can be queried with the member function `query`, which returns a `QueryResult`
 object. The `QueryResult` contains information about the location in the `KukuTable` where
 the queried item was found, as well as the hash function that was used to eventually insert
-it. Since `QueryResult` has an `operator bool()` defined, the user can simply query for the
-truth value of the result to see whether the queried item was found in the table.
+it. `QueryResult` has an `operator bool()` defined which returns whether the queried item
+was found in the hash table.
 
 If Kuku fails to insert an item to the table or to the stash, the `insert` function will
 return false, and a leftover item will be stored in a member variable that can be read with
 `last_insert_fail_item()`. The same item cannot be inserted multiple times: `insert` will
 return `false` in this case.
 
-# Kuku.Net
+# Kuku for .NET
 
-The Kuku distribution contains a .Net Core wrapper of the native code. This wrapper currently only supports the Windows OS.
+The Kuku distribution contains a .NET Standard wrapper of the native code.
+The `KukuNative` project produces a C++ dynamic library defining the externalized methods to
+be used by the C# code. The `KukuDotNet` project is the C# wrapper code using the `KukuNative`
+dynamic library.
 
-The KukuNative project produces a C++ dynamic library defining the externalized methods to be used by the C# code. The KukuDotNet project is the C# wrapper code using the KukuNative dll.
-
-## Building Kuku.Net
+## Building Kuku for .NET
 
 ### Windows
 
-First, Build the KukuLib project `KukuNative.vcxproj` from `Kuku.sln`. This results in the
-dynamic library `kukunative.dll` to be created in `dotnet\kukunative\bin\$(Platform)\$(Configuration)`.
+First, build the `KukuLib` project `KukuNative.vcxproj` from `Kuku.sln`. This results in the
+dynamic library `kukunative.dll` to be created in `lib\$(Platform)\$(Configuration)`.
 
 Next, build the KukuDotNet project `KukuDotNet.csproj` from `Kuku.sln`. This results in the
-dynamic library `kukudotnet.dll` to be created in `dotnet\kukudotnet\bin\$(Platform)\$(Configuration)`.
+dynamic library `KukuDotNet.dll` to be created in
+`dotnet\kukudotnet\bin\$(Platform)\$(Configuration)\netcoreapp3.1`.
 
 ### Linux
 
@@ -197,16 +199,17 @@ cd dotnet/kukunative
 cmake .
 make
 cd ../kukudotnet
-dotnet build
+dotnet build -c Release
 cd ../..
 ````
 
-## Building Kuku.Net Example
+## Building Examples
 
 ### Windows
 
-Build the  KukuDotNetExample project `KukuDotNetExample.csproj` from `Kuku.sln`. This results in the
-dynamic library `kukudotnetexample.dll` to be created in `dotnet\kukudotnetexample\bin\$(Platform)\$(Configuration)`.
+Build the `KukuDotNetExample` project `KukuDotNetExample.csproj` from `Kuku.sln`. This
+results in the dynamic library `KukuDotNetExample.dll` to be created in
+`dotnet\examples\bin\$(Platform)\$(Configuration)`.
 
 ### Linux
 
@@ -216,32 +219,37 @@ dotnet build
 cd ../..
 ````
 
-This results in the dynamic library `kukudotnetexample.dll` to be created in `dotnet\kukudotnetexample\bin\$(Platform)\$(Configuration)`.
+This results in the dynamic library `KukuDotNetExample.dll` to be created in
+`dotnet\examples\bin\$(Platform)\$(Configuration)`.
 
-## Running Kuku.Net Example
+## Running Examples
 
-From the bin path, run `dotnet KukuDotNetExample.dll <logTableSize> <stashSize> <locFuncCount> <maxProbe>`. The example program inserts values into the hash table, which you can then query by typing your queried item in the format `<ulong>,<ulong>`.
+From the bin path, run `dotnet KukuDotNetExample.dll <tableSize> <stashSize> <locFuncCount> <maxProbe>`.
+The example program inserts values into the hash table, which you can then query
+by typing your queried item in the format `<ulong>,<ulong>`.
 
-# Using Kuku.Net
+# Using Kuku for .NET
 
-Much like in the native library, the kuku hash table is represented by an instance of the `KukuTableDotNet128` class. The
-constructor of `KukuTableDotNet128` takes as input a set of parameters, defined by the `KukuTableParameters` class. The parameters contain a base-2 logarithm of the table size
-`(LogTableSize`), the size of the stash (`StashSize`), the number of hash functions
-(`LocFuncCount`), a seed for the hash functions (`LocFuncSeed`), the number of
-iterations allowed in the insertion process, and a value the hash table should contain
-to signal an empty slot (`EmptyItem`). The hash tables items are restricted to 128-bit
-integer data types. These can be created from an array of size 2 of 64-bit integers by instantiating the `Item` class and setting its `Data` property with a ulong array of size 2.
+Much like in the native library, the cuckoo hash table is represented by an instance of the
+`KukuTable128` class. The constructor of `KukuTable128` takes as input a set of parameters,
+defined by the `KukuTableParameters` class. The parameters contain the table size
+`(TableSize`), the size of the stash (`StashSize`), the number of hash functions
+(`LocFuncCount`), a seed for the hash functions (`LocFuncSeed`), the number of iterations
+allowed in the insertion process, and a value the hash table should contain to signal
+an empty slot (`EmptyItem`). The hash tables items are restricted to 128-bit integer data
+types. These can be created from an array of size 2 of 64-bit integers by instantiating
+the `Item` class and setting its `Data` property with a ulong array of size 2.
 
 Once the table has been created, items can be inserted using the member function `Insert`.
-Items can be queried with the member function `Query`, which returns a `QueryResult`
-object. The `QueryResult` contains information about the location in the kuku table where
-the queried item was found, as well as the hash function that was used to eventually insert
-it.
+Items can be queried with the member function `Query`, which returns a `QueryResultWrapper`
+object. The `QueryResultWrapper` contains information about whether the queried item was
+found in the hash table, the location where it was found, as well as the hash function that
+was used to eventually insert it.
 
-If Kuku fails to insert an item to the table or to the stash, the `Insert` function will
-return false, and a leftover item will be stored in a member variable that can be read with
-`LastInsertFailItem()`. The same item cannot be inserted multiple times: `Insert` will
-return `false` in this case.
+If `KukuTable128.Insert` fails to insert an item to the table or to the stash, it will
+return `false`, and a leftover item will be stored in a member variable that can be read
+with `KukuTable128.LastInsertFailItem()`. The same item cannot be inserted multiple times:
+`Insert` will return `false` in this case.
 
 # Pull Requests
 

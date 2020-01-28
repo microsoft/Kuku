@@ -35,7 +35,7 @@ namespace kuku
             return !~loc_func_index_;
         }
 
-        inline operator bool() const
+        inline operator bool() const noexcept
         {
             return !(loc_func_index_ & ~(max_loc_func_count - 1)) || in_stash();
         }
@@ -254,7 +254,7 @@ namespace kuku
         /*
         Randomness source for location function sampling.
         */
-        std::mt19937_64 gen_; 
+        std::mt19937_64 gen_;
 
         std::uniform_int_distribution<std::uint32_t> u_;
     };

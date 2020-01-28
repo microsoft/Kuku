@@ -13,7 +13,7 @@ namespace kuku
     {
     public:
         LocFunc(table_size_type table_size, item_type seed) :
-            table_size_(table_size), hf_(seed) 
+            table_size_(table_size), hf_(seed)
         {
             if (table_size < min_table_size || table_size > max_table_size)
             {

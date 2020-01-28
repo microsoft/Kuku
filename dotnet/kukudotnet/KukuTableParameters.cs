@@ -1,7 +1,9 @@
-using System;
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+
 using System.Runtime.Serialization;
 
-namespace KukuDotNet
+namespace Microsoft.Research.Kuku
 {
     [DataContract]
     public class KukuTableParameters
