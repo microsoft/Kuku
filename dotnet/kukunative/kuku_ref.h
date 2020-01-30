@@ -5,6 +5,7 @@
 
 #include "kuku/kuku.h"
 #include "kuku/common.h"
+#include <cstddef>
 
 #if defined(_MSC_VER)
 //  Microsoft
@@ -20,6 +21,9 @@
 #define IMPORT
 #pragma warning Unknown dynamic link import/export semantics.
 #endif
+
+// Check that std::size_t is 64 bits
+static_assert(sizeof(std::size_t) == 8, "Require sizeof(std::size_t) == 8");
 
 typedef struct
 {
