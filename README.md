@@ -44,14 +44,14 @@ for Kuku header files.
 
 Kuku comes with a small example program demonstrating the functionality. Build the
 KukuExamples project `examples\KukuExamples.vcxproj` from `Kuku.sln`. This results
-in an executable `example.exe` to be created in `bin\$(Platform)\$(Configuration)`.
+in an executable `kukuexample.exe` to be created in `bin\$(Platform)\$(Configuration)`.
 
 #### Building Unit Tests
 
 The unit tests require the Google Test framework to be installed. The appropriate
 NuGet package is already listed in `tests\packages.config`, so once you attempt to
-build the KukuTest project `tests\KukuTest.vcxproj` from `Kuku.sln` Visual
-Studio will automatically download and install it for you.
+build the KukuTest project `tests\KukuTests.vcxproj` from `Kuku.sln` Visual Studio
+will automatically download and install it for you.
 
 ## Linux and macOS
 
@@ -74,7 +74,6 @@ commands presented below are assumed to be executed in the directory `Kuku`.
 
 You can build Kuku for your machine by executing the following commands:
 ````
-cd src 
 cmake .
 make
 cd ..
@@ -86,49 +85,32 @@ Kuku comes with a small example program demonstrating the functionality. After b
 Kuku, you can build the example program as follows:
 
 ````
-cd examples
-cmake .
+cmake . -DKUKU_BUILD_EXAMPLES=ON
 make
-cd ../..
 ````
-The `example` executable can now be found in `bin/`.
+The `kukuexample` executable can now be found in `bin/`.
 
 #### Building Unit Tests
 
 To build the unit tests you will need the [GoogleTest](https://github.com/google/googletest)
-framework, which is included in Kuku as a git submodule. To download the GoogleTest
-source files, do:
+framework, which Kuku can download and build automatically for you. This can all be
+done with the following commands:
 ````
-git submodule update --init
-````
-This needs to be executed only once, and can be skipped if Kuku was cloned with
-`git --recurse-submodules`. To build the tests, do:
-````
-cd tests
-cmake .
+cmake . -DKUKU_BUILD_TESTS=ON
 make
-cd ..
 ````
 The `kukutest` executable can now be found in `bin/`. All unit tests should pass
 successfully.
 
 ### Installing Kuku
 
-If you have root access to the system you can install Kuku system-wide as follows:
+If you have root access to the system you can install Kuku system-wide with
+`sudo make install`. To instead install Kuku locally, e.g. to `~/mylibs/`,
+do the following:
 ````
-cd src
-cmake .
-make
-sudo make install
-cd ..
-````
-To instead install Kuku locally, e.g., to `~/mylibs/`, do the following:
-````
-cd src
 cmake . -DCMAKE_INSTALL_PREFIX=~/mylibs
 make
 make install
-cd ..
 ````
 
 ### Linking with Kuku through CMake
@@ -176,31 +158,28 @@ return `false` in this case.
 
 The Kuku distribution contains a .NET Standard wrapper of the native code.
 The `KukuNative` project produces a C++ dynamic library defining the externalized methods to
-be used by the C# code. The `KukuDotNet` project is the C# wrapper code using the `KukuNative`
+be used by the C# code. The `KukuDotNet` project is the C# wrapper code using the `Kuku_C`
 dynamic library.
 
 ## Building Kuku for .NET
 
 ### Windows
 
-First, build the `KukuLib` project `KukuNative.vcxproj` from `Kuku.sln`. This results in the
-dynamic library `kukunative.dll` to be created in `lib\$(Platform)\$(Configuration)`.
+First, build the C export library project `Kuku_C.vcxproj` from `Kuku.sln`. This results
+in the dynamic library `kukuc.dll` to be created in `lib\$(Platform)\$(Configuration)`.
 
-Next, build the KukuDotNet project `KukuDotNet.csproj` from `Kuku.sln`. This results in the
-dynamic library `KukuDotNet.dll` to be created in
-`dotnet\kukudotnet\bin\$(Platform)\$(Configuration)\netcoreapp3.1`.
+Next, build the KukuDotNet project `KukuDotNet.csproj` from `Kuku.sln`. This results in
+the dynamic library `KukuDotNet.dll` to be created in
+`lib\dotnet\$(Configuration)\netstandard2.1`.
 
 ### Linux
 
 First, make sure that Kuku is installed on your machine, following the instructions above.
 
 ````
-cd dotnet/kukunative
-cmake .
+cmake . -DKUKU_BUILD_KUKU_C=ON
 make
-cd ../kukudotnet
-dotnet build -c Release
-cd ../..
+dotnet build dotnet/src -c Release
 ````
 
 ## Building Examples
@@ -209,18 +188,17 @@ cd ../..
 
 Build the `KukuDotNetExample` project `KukuDotNetExample.csproj` from `Kuku.sln`. This
 results in the dynamic library `KukuDotNetExample.dll` to be created in
-`dotnet\examples\bin\$(Platform)\$(Configuration)`.
+`bin\dotnet\$(Configuration)\netcoreapp3.1`.
 
 ### Linux
 
+Build the .NET examples with
 ````
-cd dotnet/examples
-dotnet build
-cd ../..
+dotnet build dotnet/examples -c Release
 ````
 
 This results in the dynamic library `KukuDotNetExample.dll` to be created in
-`dotnet\examples\bin\$(Platform)\$(Configuration)`.
+`bin/dotnet/$(Configuration)/netcoreapp3.1`.
 
 ## Running Examples
 

@@ -20,6 +20,7 @@
 #    define KUKU_C_CALL __cdecl
 #else // _MSC_VER
 #    define KUKU_C_DECOR extern "C"
+#    define KUKU_C_CALL
 #endif // _MSC_VER
 
 #define KUKU_C_FUNC(x) KUKU_C_DECOR x KUKU_C_CALL

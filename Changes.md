@@ -5,6 +5,7 @@
 ### 2.0.0
 - Switched to using faster non-cryptographic hash functions and a faster insertion method.
 - Created .NET Standard wrappers for the public API.
+- Kuku is not a CMake project (with a top-level CMake file)
 
 ## Version 1.1
 
