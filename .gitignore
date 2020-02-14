@@ -6,9 +6,8 @@ src/obj/
 bin/
 lib/
 packages/
-src/cmake/KukuConfig.cmake
-src/cmake/KukuConfigVersion.cmake
-src/cmake/KukuTargets.cmake
+cmake/
+!cmake/KukuConfig.cmake.in
 src/kuku/config.h
 **/compile_commands.json
 **/install_manifest.txt
@@ -17,10 +16,10 @@ src/kuku/config.h
 **/Makefile
 **/cmake_install.cmake
 */obj/*
-dotnet/kukudotnet/obj
-dotnet/kukunative/Debug
-dotnet/kukunative/Release
+dotnet/src/obj
+dotnet/src/Properties/launchSettings.json
 dotnet/examples/obj
 dotnet/examples/Properties/launchSettings.json
 .vscode/settings.json
-/dotnet/kukudotnet/Properties/launchSettings.json
+thirdparty/googletest/
+!thirdparty/googletest/CMakeLists.txt

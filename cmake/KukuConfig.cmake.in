@@ -1,0 +1,73 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT license.
+
+# Exports target Kuku::kuku
+#
+# Creates variables:
+#   Kuku_FOUND : If a static Kuku library was found
+#   Kuku_SHARED_FOUND : If a shared Kuku library was found
+#   Kuku_C_FOUND : If a Kuku C export library was found
+#   Kuku_VERSION : The full version number
+#   Kuku_VERSION_MAJOR : The major version number
+#   Kuku_VERSION_MINOR : The minor version number
+#   Kuku_VERSION_PATH : The patch version number
+#   KUKU_DEBUG : Set to non-zero value if Kuku is compiled with extra debugging code
+
+@PACKAGE_INIT@
+
+macro(warning_when_not_quiet msg)
+    if(NOT Kuku_FIND_QUIETLY)
+        message(WARNING ${msg})
+    endif()
+endmacro()
+
+macro(status_when_not_quiet msg)
+    if(NOT Kuku_FIND_QUIETLY)
+        message(STATUS ${msg})
+    endif()
+endmacro()
+
+set(Kuku_FOUND FALSE)
+set(Kuku_SHARED_FOUND FALSE)
+set(Kuku_C_FOUND FALSE)
+
+set(Kuku_VERSION @Kuku_VERSION@)
+set(Kuku_VERSION_MAJOR @Kuku_VERSION_MAJOR@)
+set(Kuku_VERSION_MINOR @Kuku_VERSION_MINOR@)
+set(Kuku_VERSION_PATCH @Kuku_VERSION_PATCH@)
+
+set(KUKU_BUILD_TYPE @CMAKE_BUILD_TYPE@)
+set(KUKU_DEBUG @KUKU_DEBUG@)
+
+include(${CMAKE_CURRENT_LIST_DIR}/KukuTargets.cmake)
+
+if(TARGET Kuku::kuku)
+    set(Kuku_FOUND TRUE)
+endif()
+
+if(TARGET Kuku::kuku_shared)
+    set(Kuku_SHARED_FOUND TRUE)
+endif()
+
+if(TARGET Kuku::kukuc)
+    set(Kuku_C_FOUND TRUE)
+endif()
+        
+if(Kuku_FOUND)
+    status_when_not_quiet("Kuku -> Version ${Kuku_VERSION} detected")
+    if(Kuku_DEBUG)
+        status_when_not_quiet("Performance warning: Kuku compiled in debug mode")
+    endif()
+
+    set(Kuku_TARGETS_AVAILABLE "Kuku -> Targets available: Kuku::kuku")
+    if(Kuku_SHARED_FOUND)
+        string(APPEND Kuku_TARGETS_AVAILABLE ", Kuku::kuku_shared")
+    endif()
+    if(Kuku_C_FOUND)
+        string(APPEND Kuku_TARGETS_AVAILABLE ", Kuku::kukuc")
+    endif()
+
+    status_when_not_quiet(${Kuku_TARGETS_AVAILABLE})
+else()
+    warning_when_not_quiet("Kuku -> NOT FOUND")
+endif()

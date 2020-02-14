@@ -1,20 +1,31 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <OutputPath>$(ProjectDir)..\bin\$(Platform)\$(Configuration)\</OutputPath>
-    <Platforms>AnyCPU;x64;x86</Platforms>
+    <Authors>Microsoft Research</Authors>
+    <Company>Microsoft Corporation</Company>
+    <Description>.NET wrapper examples for Kuku</Description>
+    <Copyright>Microsoft Corporation 2019</Copyright>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+
+  <PropertyGroup Condition="'$(Platform)'=='AnyCPU'">
     <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>$(ProjectDir)../../bin/dotnet/$(Configuration)</OutputPath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
-    <PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <PlatformTarget>x64</PlatformTarget>
-  </PropertyGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\kukudotnet\KukuDotNet.csproj" />
+    <ProjectReference Include="$(ProjectDir)../src/KukuDotNet.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <KukuCBinaryFiles Condition="$([MSBuild]::IsOsPlatform(Windows))" Include="$(ProjectDir)..\..\lib\x64\$(Configuration)\kukuc.dll" />
+    <KukuCBinaryFiles Condition="$([MSBuild]::IsOsPlatform(Linux))" Include="$(ProjectDir)../../lib/libkukuc.so.*" />
+    <KukuCBinaryFiles Condition="$([MSBuild]::IsOsPlatform(OSX))" Include="$(ProjectDir)../../lib/libkukuc.*.dylib" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Copy SourceFiles="@(KukuCBinaryFiles)" DestinationFolder="$(TargetDir)" />
+  </Target>
+
 </Project>

@@ -1,7 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT license.
 
-target_sources(kuku
+# Source files in this directory
+target_sources(kuku_obj
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/blake2b.c
         ${CMAKE_CURRENT_LIST_DIR}/blake2xb.c
@@ -11,6 +12,7 @@ target_sources(kuku
 # Create the config file
 configure_file(${CMAKE_CURRENT_LIST_DIR}/config.h.in ${CMAKE_CURRENT_LIST_DIR}/config.h)
 
+# Add header files for installation
 install(
     FILES
         ${CMAKE_CURRENT_LIST_DIR}/blake2.h
