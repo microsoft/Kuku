@@ -23,9 +23,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="CMakeLists.txt">
-      <Filter>Other</Filter>
-    </Text>
     <Text Include="kuku\CMakeLists.txt">
       <Filter>Other\kuku</Filter>
     </Text>

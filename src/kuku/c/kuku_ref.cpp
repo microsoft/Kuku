@@ -6,7 +6,7 @@
 #include "pch.h"
 #include "kuku_ref.h"
 
-extern "C" EXPORT kuku::KukuTable *KukuTable_Create( 
+KUKU_C_FUNC(kuku::KukuTable*) KukuTable_Create( 
 	uint32_t table_size,
 	uint32_t stash_size,
 	uint32_t loc_func_count,
@@ -25,13 +25,13 @@ extern "C" EXPORT kuku::KukuTable *KukuTable_Create(
 		kuku_empty_item);
 }
 
-extern "C" EXPORT bool KukuTable_Insert(kuku::KukuTable *kuku_table, uint64_t *item)
+KUKU_C_FUNC(bool) KukuTable_Insert(kuku::KukuTable *kuku_table, uint64_t *item)
 {
 	kuku::item_type kuku_item = kuku::make_item(item[0], item[1]);
 	return kuku_table->insert(kuku_item);
 }
 
-extern "C" EXPORT bool KukuTable_Query(kuku::KukuTable *kuku_table, uint64_t *item, QueryResult *query_result)
+KUKU_C_FUNC(bool) KukuTable_Query(kuku::KukuTable *kuku_table, uint64_t *item, QueryResult *query_result)
 {
 	kuku::item_type kuku_item = kuku::make_item(item[0], item[1]);
 	kuku::QueryResult res = kuku_table->query(kuku_item);
@@ -42,49 +42,49 @@ extern "C" EXPORT bool KukuTable_Query(kuku::KukuTable *kuku_table, uint64_t *it
 	return true;
 }
 
-extern "C" EXPORT bool KukuTable_IsEmptyItem(kuku::KukuTable *kuku_table, uint64_t *item)
+KUKU_C_FUNC(bool) KukuTable_IsEmptyItem(kuku::KukuTable *kuku_table, uint64_t *item)
 {
 	kuku::item_type kuku_item = kuku::make_item(item[0], item[1]);
 	return kuku_table->is_empty_item(kuku_item);
 }
 
-extern "C" EXPORT bool KukuTable_LastInsertFailItem(kuku::KukuTable *kuku_table, uint64_t *item)
+KUKU_C_FUNC(bool) KukuTable_LastInsertFailItem(kuku::KukuTable *kuku_table, uint64_t *item)
 {
 	kuku::item_type src = kuku_table->last_insert_fail_item();
 	std::copy(std::begin(src), std::end(src), item);
 	return true;
 }
 
-extern "C" EXPORT double KukuTable_FillRate(kuku::KukuTable *kuku_table)
+KUKU_C_FUNC(double) KukuTable_FillRate(kuku::KukuTable *kuku_table)
 {
 	return kuku_table->fill_rate();
 }
 
-extern "C" EXPORT bool KukuTable_Table(kuku::KukuTable *kuku_table, uint32_t index, uint64_t *item)
+KUKU_C_FUNC(bool) KukuTable_Table(kuku::KukuTable *kuku_table, uint32_t index, uint64_t *item)
 {
 	kuku::item_type src = kuku_table->table(index);
 	std::copy(std::begin(src), std::end(src), item);
 	return true;
 }
 
-extern "C" EXPORT uint32_t KukuTable_TableSize(kuku::KukuTable *kuku_table)
+KUKU_C_FUNC(uint32_t) KukuTable_TableSize(kuku::KukuTable *kuku_table)
 {
 	return kuku_table->table_size();
 }
 
-extern "C" EXPORT bool KukuTable_Stash(kuku::KukuTable *kuku_table, uint32_t index, uint64_t *item)
+KUKU_C_FUNC(bool) KukuTable_Stash(kuku::KukuTable *kuku_table, uint32_t index, uint64_t *item)
 {
 	kuku::item_type src = kuku_table->stash(index);
 	std::copy(std::begin(src), std::end(src), item);
 	return true;
 }
 
-extern "C" EXPORT uint32_t KukuTable_StashSize(kuku::KukuTable *kuku_table)
+KUKU_C_FUNC(uint32_t) KukuTable_StashSize(kuku::KukuTable *kuku_table)
 {
 	return kuku_table->stash_size();
 }
 
-extern "C" EXPORT uint32_t KukuTable_Location(kuku::KukuTable *kuku_table, uint64_t *item, uint32_t loc_func_index)
+KUKU_C_FUNC(uint32_t) KukuTable_Location(kuku::KukuTable *kuku_table, uint64_t *item, uint32_t loc_func_index)
 {
 	kuku::item_type kuku_item = kuku::make_item(item[0], item[1]);
 	return kuku_table->location(kuku_item, loc_func_index);

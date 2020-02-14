@@ -126,7 +126,6 @@
     <ClCompile Include="kuku\kuku.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="CMakeLists.txt" />
     <Text Include="kuku\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>

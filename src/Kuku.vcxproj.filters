@@ -56,8 +56,5 @@
     <Text Include="kuku\CMakeLists.txt">
       <Filter>Other\kuku</Filter>
     </Text>
-    <Text Include="CMakeLists.txt">
-      <Filter>Other</Filter>
-    </Text>
   </ItemGroup>
 </Project>

@@ -7,20 +7,22 @@
 #include "kuku/common.h"
 #include <cstddef>
 
-#if defined(_MSC_VER)
-//  Microsoft
-#define EXPORT __declspec(dllexport)
-#define IMPORT __declspec(dllimport)
-#elif defined(__GNUC__)
-//  GCC/clang
-#define EXPORT
-#define IMPORT
-#else
-//  Do nothing
-#define EXPORT
-#define IMPORT
-#pragma warning Unknown dynamic link import/export semantics.
-#endif
+#ifdef _MSC_VER
+     // Check that architecture (platform) is x64
+#    ifndef _WIN64
+         static_assert(false, "Require architecture == x64");
+#    endif
+#    ifdef KUKU_C_EXPORTS
+#        define KUKU_C_DECOR extern "C" __declspec(dllexport)
+#    else
+#        define KUKU_C_DECOR extern "C" __declspec(dllimport)
+#    endif
+#    define KUKU_C_CALL __cdecl
+#else // _MSC_VER
+#    define KUKU_C_DECOR extern "C"
+#endif // _MSC_VER
+
+#define KUKU_C_FUNC(x) KUKU_C_DECOR x KUKU_C_CALL
 
 // Check that std::size_t is 64 bits
 static_assert(sizeof(std::size_t) == 8, "Require sizeof(std::size_t) == 8");
@@ -33,7 +35,7 @@ typedef struct
 	uint32_t loc_func_index;
 } QueryResult;
 
-extern "C" EXPORT kuku::KukuTable* KukuTable_Create(
+KUKU_C_FUNC(kuku::KukuTable*) KukuTable_Create(
 	uint32_t log_table_size,
 	uint32_t stash_size,
 	uint32_t loc_func_count,
@@ -41,22 +43,22 @@ extern "C" EXPORT kuku::KukuTable* KukuTable_Create(
 	uint64_t max_probe,
 	uint64_t *empty_item);
 
-extern "C" EXPORT bool KukuTable_Insert(kuku::KukuTable *kuku_table, uint64_t *item);
+KUKU_C_FUNC(bool) KukuTable_Insert(kuku::KukuTable *kuku_table, uint64_t *item);
 
-extern "C" EXPORT bool KukuTable_Query(kuku::KukuTable *kuku_table, uint64_t *item, QueryResult *query_result);
+KUKU_C_FUNC(bool) KukuTable_Query(kuku::KukuTable *kuku_table, uint64_t *item, QueryResult *query_result);
 
-extern "C" EXPORT bool KukuTable_IsEmptyItem(kuku::KukuTable *kuku_table, uint64_t *item);
+KUKU_C_FUNC(bool) KukuTable_IsEmptyItem(kuku::KukuTable *kuku_table, uint64_t *item);
 
-extern "C" EXPORT bool KukuTable_LastInsertFailItem(kuku::KukuTable *kuku_table, uint64_t *item);
+KUKU_C_FUNC(bool) KukuTable_LastInsertFailItem(kuku::KukuTable *kuku_table, uint64_t *item);
 
-extern "C" EXPORT double KukuTable_FillRate(kuku::KukuTable *kuku_table);
+KUKU_C_FUNC(double) KukuTable_FillRate(kuku::KukuTable *kuku_table);
 
-extern "C" EXPORT bool KukuTable_Table(kuku::KukuTable *kuku_table, uint32_t index, uint64_t *item);
+KUKU_C_FUNC(bool) KukuTable_Table(kuku::KukuTable *kuku_table, uint32_t index, uint64_t *item);
 
-extern "C" EXPORT uint32_t KukuTable_TableSize(kuku::KukuTable *kuku_table);
+KUKU_C_FUNC(uint32_t) KukuTable_TableSize(kuku::KukuTable *kuku_table);
 
-extern "C" EXPORT bool KukuTable_Stash(kuku::KukuTable *kuku_table, uint32_t index, uint64_t *item);
+KUKU_C_FUNC(bool) KukuTable_Stash(kuku::KukuTable *kuku_table, uint32_t index, uint64_t *item);
 
-extern "C" EXPORT uint32_t KukuTable_StashSize(kuku::KukuTable *kuku_table);
+KUKU_C_FUNC(uint32_t) KukuTable_StashSize(kuku::KukuTable *kuku_table);
 
-extern "C" EXPORT uint32_t KukuTable_Location(kuku::KukuTable *kuku_table, uint64_t *item, uint32_t loc_func_index);
+KUKU_C_FUNC(uint32_t) KukuTable_Location(kuku::KukuTable *kuku_table, uint64_t *item, uint32_t loc_func_index);
