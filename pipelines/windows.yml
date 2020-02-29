@@ -8,7 +8,7 @@ steps:
   displayName: 'NuGet restore from Solution'
   inputs:
     command: 'restore'
-    restoreSolution: 'SEAL.sln'
+    restoreSolution: 'Kuku.sln'
     feedsToUse: 'select'
 
 - task: NuGetCommand@2
@@ -29,9 +29,9 @@ steps:
     targetType: 'inline'
     script: |
         # Get signing certificate
-        $CertOutFile = Join-Path -Path $env:BUILD_SOURCESDIRECTORY -ChildPath dotnet\src\SEALNetCert.snk
-        if (Test-Path env:SEALNetSigningCertificate) {
-            Invoke-WebRequest -Uri "$env:SEALNetSigningCertificate" -OutFile $CertOutFile
+        $CertOutFile = Join-Path -Path $env:BUILD_SOURCESDIRECTORY -ChildPath dotnet\src\KukuNetCert.snk
+        if (Test-Path env:KukuNetSigningCertificate) {
+            Invoke-WebRequest -Uri "$env:KukuNetSigningCertificate" -OutFile $CertOutFile
         }
 
 - task: UseDotNet@2
@@ -41,7 +41,7 @@ steps:
     version: '3.1.x'
 
 - task: VSBuild@1
-  displayName: 'Build solution SEAL'
+  displayName: 'Build solution Kuku'
   inputs:
     solution: 'Kuku.sln'
     platform: 'x64'

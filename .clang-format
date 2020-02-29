@@ -69,9 +69,7 @@ IncludeBlocks:   Merge
 IncludeCategories:
   - Regex:           '<.*>'
     Priority:        1
-  - Regex:           '"seal/util/.*"'
-    Priority:        -2
-  - Regex:           '"seal/.*"'
+  - Regex:           '"kuku/.*"'
     Priority:        -3
 IncludeIsMainRegex: '(Test)?$'
 IndentCaseLabels: false
