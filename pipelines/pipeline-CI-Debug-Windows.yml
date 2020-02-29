@@ -1,4 +1,4 @@
-C# This defines a pipeline to build on Windows in Debug mode.
+# This defines a pipeline to build on Windows in Debug mode.
 
 trigger:
   batch: true
