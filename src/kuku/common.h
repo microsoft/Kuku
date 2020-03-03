@@ -35,7 +35,7 @@ namespace kuku
 
     constexpr int bytes_per_item = sizeof(item_type);
 
-    constexpr table_size_type min_table_size = table_size_type(1) << 6;
+    constexpr table_size_type min_table_size = table_size_type(1);
 
     constexpr table_size_type max_table_size = table_size_type(1) << 30;
 
