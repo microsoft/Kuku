@@ -50,7 +50,7 @@ KUKU_C_FUNC(bool) KukuTable_Query(kuku::KukuTable *kuku_table, uint64_t *item, Q
 
 KUKU_C_FUNC(bool) KukuTable_IsEmptyItem(kuku::KukuTable *kuku_table, uint64_t *item);
 
-KUKU_C_FUNC(bool) KukuTable_LastInsertFailItem(kuku::KukuTable *kuku_table, uint64_t *item);
+KUKU_C_FUNC(bool) KukuTable_LeftoverItem(kuku::KukuTable *kuku_table, uint64_t *item);
 
 KUKU_C_FUNC(double) KukuTable_FillRate(kuku::KukuTable *kuku_table);
 

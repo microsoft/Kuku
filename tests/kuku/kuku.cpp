@@ -151,10 +151,10 @@ namespace kuku_tests
             if (!ct.insert(inserted_items.back()))
             {
                 auto it = find_if(inserted_items.cbegin(), inserted_items.cend(), [&](const item_type &item) {
-                    return are_equal_item(ct.last_insert_fail_item(), item);
+                    return are_equal_item(ct.leftover_item(), item);
                 });
                 ASSERT_TRUE(it != inserted_items.cend());
-                ASSERT_FALSE(ct.query(ct.last_insert_fail_item()));
+                ASSERT_FALSE(ct.query(ct.leftover_item()));
                 inserted_items.erase(it);
             }
         }

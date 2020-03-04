@@ -46,7 +46,7 @@ namespace kuku
         loc_func_seed_(loc_func_seed),
         max_probe_(max_probe),
         empty_item_(empty_item),
-        last_insert_fail_item_(empty_item_),
+        leftover_item_(empty_item_),
         inserted_items_(0),
         gen_(random_uint64())
     {
@@ -89,7 +89,7 @@ namespace kuku
         table_.resize(0);
         table_.resize(sz, empty_item_);
         stash_.clear();
-        last_insert_fail_item_ = empty_item_;
+        leftover_item_ = empty_item_;
         inserted_items_ = 0;
     }
 
@@ -139,7 +139,7 @@ namespace kuku
         }
         else
         {
-            last_insert_fail_item_ = item;
+            leftover_item_ = item;
             return false;
         }
     }

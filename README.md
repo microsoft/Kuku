@@ -151,8 +151,8 @@ was found in the hash table.
 
 If Kuku fails to insert an item to the table or to the stash, the `insert` function will
 return false, and a leftover item will be stored in a member variable that can be read with
-`last_insert_fail_item()`. The same item cannot be inserted multiple times: `insert` will
-return `false` in this case.
+`leftover_item()`. The same item cannot be inserted multiple times: `insert` will return
+`false` in this case.
 
 # Kuku for .NET
 

@@ -172,9 +172,9 @@ namespace kuku
             return are_equal_item(item, empty_item_);
         }
 
-        inline item_type last_insert_fail_item() const noexcept
+        inline item_type leftover_item() const noexcept
         {
-            return last_insert_fail_item_;
+            return leftover_item_;
         }
 
         inline double fill_rate() const noexcept
@@ -244,7 +244,7 @@ namespace kuku
         Storage for an item that was evicted and could not be re-inserted. This
         is populated when insert fails.
         */
-        item_type last_insert_fail_item_;
+        item_type leftover_item_;
 
         /*
         The number of items that have been inserted to table or stash.

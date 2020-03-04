@@ -75,14 +75,14 @@ int main(int argc, char *argv[])
                     << round_counter << ", i = " << i << endl;
                 cout << "Inserted successfully " << round_counter * 20 + i << " items" << endl;
                 cout << "Fill rate: " << table.fill_rate() << endl;
-                cout << "Leftover item: " << table.last_insert_fail_item() << endl << endl;
+                cout << "Leftover item: " << table.leftover_item() << endl << endl;
                 break;
             }
         }
 
         print_table(table);
 
-        if (!table.is_empty_item(table.last_insert_fail_item()))
+        if (!table.is_empty_item(table.leftover_item()))
         {
             break;
         }

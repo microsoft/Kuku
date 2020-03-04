@@ -23,7 +23,7 @@ namespace KukuDotNetExample
             while (true)
             {
                 Console.WriteLine($"Inserted {roundCounter * 20} items.");
-                Console.WriteLine($"Fill rate: {kukuTable.FillRate()}.");
+                Console.WriteLine($"Fill rate: {kukuTable.FillRate}.");
 
                 Console.ReadKey();
 
@@ -34,9 +34,9 @@ namespace KukuDotNetExample
                     {
                         Console.WriteLine($"Insertion failed: round_counter = {roundCounter}, i = {i}");
                         Console.WriteLine($"Inserted successfully {roundCounter * 20 + i} items.");
-                        Console.WriteLine($"Fill rate: {kukuTable.FillRate()}.");
+                        Console.WriteLine($"Fill rate: {kukuTable.FillRate}.");
 
-                        var lastItem = kukuTable.LastInsertFailItem();
+                        var lastItem = kukuTable.LeftoverItem;
                         Console.WriteLine($"Leftover item: [{string.Join(',', lastItem)}].");
                         break;
                     }
@@ -44,7 +44,7 @@ namespace KukuDotNetExample
 
                 PrintTable(kukuTable);
 
-                if (!kukuTable.IsEmptyItem(kukuTable.LastInsertFailItem()))
+                if (!kukuTable.IsEmptyItem(kukuTable.LeftoverItem))
                 {
                     break;
                 }

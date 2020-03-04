@@ -23,7 +23,7 @@ namespace Microsoft.Research.Kuku
         internal static extern bool KukuTable_IsEmptyItem(IntPtr kuku_table, ulong[] item);
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
-        internal static extern bool KukuTable_LastInsertFailItem(IntPtr kuku_table, ulong[] item);
+        internal static extern bool KukuTable_LeftoverItem(IntPtr kuku_table, ulong[] item);
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
         internal static extern double KukuTable_FillRate(IntPtr kuku_table);

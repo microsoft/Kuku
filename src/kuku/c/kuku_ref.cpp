@@ -48,9 +48,9 @@ KUKU_C_FUNC(bool) KukuTable_IsEmptyItem(kuku::KukuTable *kuku_table, uint64_t *i
 	return kuku_table->is_empty_item(kuku_item);
 }
 
-KUKU_C_FUNC(bool) KukuTable_LastInsertFailItem(kuku::KukuTable *kuku_table, uint64_t *item)
+KUKU_C_FUNC(bool) KukuTable_LeftoverItem(kuku::KukuTable *kuku_table, uint64_t *item)
 {
-	kuku::item_type src = kuku_table->last_insert_fail_item();
+	kuku::item_type src = kuku_table->leftover_item();
 	std::copy(std::begin(src), std::end(src), item);
 	return true;
 }

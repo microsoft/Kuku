@@ -30,10 +30,7 @@ namespace Microsoft.Research.Kuku
             Stash = new KukuTableStash<TItem>(this);
         }
 
-        public bool Insert(TItem item)
-        {
-            return NativeMethods.KukuTable_Insert(_unmanagedkukuTable, item.Data);
-        }
+        public bool Insert(TItem item) => NativeMethods.KukuTable_Insert(_unmanagedkukuTable, item.Data);
 
         public QueryResultWrapper Query(TItem item)
         {
@@ -42,27 +39,22 @@ namespace Microsoft.Research.Kuku
             return new QueryResultWrapper(queryResult);
         }
 
-        public bool IsEmptyItem(TItem item)
+        public bool IsEmptyItem(TItem item) => NativeMethods.KukuTable_IsEmptyItem(_unmanagedkukuTable, item.Data);
+
+        public TItem LeftoverItem
         {
-            return NativeMethods.KukuTable_IsEmptyItem(_unmanagedkukuTable, item.Data);
+            get
+            {
+                var numArray = new ulong[this._dataLen];
+                NativeMethods.KukuTable_LeftoverItem(_unmanagedkukuTable, numArray);
+                return new TItem { Data = numArray };
+            }
         }
 
-        public TItem LastInsertFailItem()
-        {
-            var numArray = new ulong[this._dataLen];
-            NativeMethods.KukuTable_LastInsertFailItem(_unmanagedkukuTable, numArray);
-            return new TItem {Data = numArray};
-        }
+        public double FillRate => NativeMethods.KukuTable_FillRate(_unmanagedkukuTable);
 
-        public double FillRate()
-        {
-            return NativeMethods.KukuTable_FillRate(_unmanagedkukuTable);
-        }
-
-        public uint GetLocation(TItem item, uint locFuncIndex)
-        {
-            return NativeMethods.KukuTable_Location(_unmanagedkukuTable, item.Data, locFuncIndex);
-        }
+        public uint GetLocation(TItem item, uint locFuncIndex) =>
+            NativeMethods.KukuTable_Location(_unmanagedkukuTable, item.Data, locFuncIndex);
 
         private TItem GetTableItem(uint index)
         {
@@ -71,10 +63,7 @@ namespace Microsoft.Research.Kuku
             return new TItem {Data = numArray};
         }
 
-        private uint KukuTableSize()
-        {
-            return NativeMethods.KukuTable_TableSize(_unmanagedkukuTable);
-        }
+        private uint KukuTableSize => NativeMethods.KukuTable_TableSize(_unmanagedkukuTable);
 
         private TItem GetStashItem(uint index)
         {
@@ -83,10 +72,7 @@ namespace Microsoft.Research.Kuku
             return new TItem {Data = numArray};
         }
 
-        private uint StashSize()
-        {
-            return NativeMethods.KukuTable_StashSize(_unmanagedkukuTable);
-        }
+        private uint StashSize => NativeMethods.KukuTable_StashSize(_unmanagedkukuTable);
 
         public class KukuTableTable<TTableItem> where TTableItem : IItem, new()
         {
@@ -99,7 +85,7 @@ namespace Microsoft.Research.Kuku
 
             public TTableItem this[uint index] => _kukuTable.GetTableItem(index);
 
-            public uint Size => _kukuTable.KukuTableSize();
+            public uint Size => _kukuTable.KukuTableSize;
 
             public override string ToString()
             {
@@ -127,7 +113,7 @@ namespace Microsoft.Research.Kuku
 
             public TStashItem this[uint index] => _kukuTable.GetStashItem(index);
 
-            public uint Size => _kukuTable.StashSize();
+            public uint Size => _kukuTable.StashSize;
 
             public override string ToString()
             {
