@@ -257,9 +257,9 @@ set(KUKU_BUILD_EXAMPLES_OPTION_STR "Build C++ examples for Kuku")
 option(KUKU_BUILD_EXAMPLES ${KUKU_BUILD_EXAMPLES_OPTION_STR} OFF)
 
 if(KUKU_BUILD_EXAMPLES)
-    add_executable(kukuexample)
+    add_executable(kukuexamples)
     add_subdirectory(examples)
-    target_link_libraries(kukuexample PUBLIC kuku)
+    target_link_libraries(kukuexamples PUBLIC kuku)
 endif()
 
 ##################
