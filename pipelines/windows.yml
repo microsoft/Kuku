@@ -24,16 +24,16 @@ steps:
     outputFormat: sarif
     debugMode: false
 
-- task: PowerShell@2
-  displayName: 'Download Strong Name certificate'
-  inputs:
-    targetType: 'inline'
-    script: |
-        # Get signing certificate
-        $CertOutFile = Join-Path -Path $env:BUILD_SOURCESDIRECTORY -ChildPath dotnet\src\KukuNetCert.snk
-        if (Test-Path env:KukuNetSigningCertificate) {
-            Invoke-WebRequest -Uri "$env:KukuNetSigningCertificate" -OutFile $CertOutFile
-        }
+#- task: PowerShell@2
+#  displayName: 'Download Strong Name certificate'
+#  inputs:
+#    targetType: 'inline'
+#    script: |
+#        # Get signing certificate
+#        $CertOutFile = Join-Path -Path $env:BUILD_SOURCESDIRECTORY -ChildPath dotnet\src\KukuDotNetCert.snk
+#        if (Test-Path env:KukuDotNetSigningCertificate) {
+#            Invoke-WebRequest -Uri "$env:KukuNetSigningCertificate" -OutFile $CertOutFile
+#        }
 
 - task: UseDotNet@2
   displayName: 'Get .NET Core 3.1 SDK'
@@ -62,14 +62,14 @@ steps:
     configuration: ${{ parameters.configuration }}
     diagnosticsEnabled: True
 
-#- task: VSTest@2
-#  displayName: 'VsTest - dotnet tests'
-#  inputs:
-#    testAssemblyVer2: |
-#        **\${{ parameters.configuration }}\**\kukunettest.dll
-#        !**\obj\**
-#    configuration: ${{ parameters.configuration }}
-#    diagnosticsEnabled: True
+- task: VSTest@2
+  displayName: 'VsTest - dotnet tests'
+  inputs:
+    testAssemblyVer2: |
+        **\${{ parameters.configuration }}\**\KukuDotNetTests.dll
+        !**\obj\**
+    configuration: ${{ parameters.configuration }}
+    diagnosticsEnabled: True
 
 - task: PublishSymbols@2
   displayName: 'Publish symbols path'
@@ -89,33 +89,26 @@ steps:
 #  displayName: 'Copy Nuspec File to: $(Build.ArtifactStagingDirectory)'
 #  inputs:
 #    SourceFolder: '$(Build.SourcesDirectory)\dotnet\nuget\'
-#    Contents: 'SEALNet.nuspec'
+#    Contents: 'KukuDotNet.nuspec'
 #    TargetFolder: '$(Build.ArtifactStagingDirectory)\dotnet\nuget\'
 
 #- task: CopyFiles@2
 #  displayName: 'Copy Targets File to: $(Build.ArtifactStagingDirectory)'
 #  inputs:
 #    SourceFolder: '$(Build.SourcesDirectory)\dotnet\nuget\'
-#    Contents: 'SEALNet.targets'
+#    Contents: 'KukuDotNet.targets'
 #    TargetFolder: '$(Build.ArtifactStagingDirectory)\dotnet\nuget\'
 
 - task: securedevelopmentteam.vss-secure-development-tools.build-task-binskim.BinSkim@3
   displayName: 'Run BinSkim'
   inputs:
     InputType: Basic
-    AnalyzeTarget: '$(Build.ArtifactStagingDirectory)\native\bin\x64\${{ parameters.path }}\*.exe'
+    AnalyzeTarget: '$(Build.ArtifactStagingDirectory)\bin\x64\${{ parameters.path }}\*.exe'
     AnalyzeSymPath: '**\bin\**\*.pdb'
-  enabled: false
+  enabled: true
 
 - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
   displayName: 'Component Detection'
-
-- task: corygehr.air-autoassess.uploadScanResults.uploadScanResults@1
-  displayName: 'Upload Scan Results for Analysis'
-  inputs:
-    uploadUrl: 'https://airbuildscan.azurewebsites.net/api/Upload'
-    areaPathParent: 'KUKU'
-  enabled: false
 
 - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@2
   displayName: 'Publish Security Analysis Logs'

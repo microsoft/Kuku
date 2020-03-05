@@ -3,11 +3,11 @@
 
 namespace Microsoft.Research.Kuku
 {
-    public class QueryResultWrapper
+    public class QueryResult
     {
-        private readonly QueryResult _resultStruct;
+        private readonly QueryResultData _resultStruct;
 
-        internal QueryResultWrapper(QueryResult resultStruct)
+        internal QueryResult(QueryResultData resultStruct)
         {
              _resultStruct = resultStruct;
         }

@@ -11,7 +11,7 @@ namespace kuku
     {
         if (is_empty_item(item))
         {
-            throw invalid_argument("cannot query the empty item");
+            throw invalid_argument("item cannot be the empty item");
         }
 
         // Search the hash table

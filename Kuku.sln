@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KukuDotNet", "dotnet\src\Ku
 		{EC30B03C-89D0-4B69-9D75-97AE3574F2C0} = {EC30B03C-89D0-4B69-9D75-97AE3574F2C0}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KukuDotNetExample", "dotnet\examples\KukuDotNetExample.csproj", "{7ECB2D33-D9B4-470C-AAE5-AB02EE389925}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KukuDotNetExamples", "dotnet\examples\KukuDotNetExamples.csproj", "{7ECB2D33-D9B4-470C-AAE5-AB02EE389925}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Kuku_C", "src\Kuku_C.vcxproj", "{EC30B03C-89D0-4B69-9D75-97AE3574F2C0}"
 EndProject
@@ -44,6 +44,25 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "googletest", "googletest", "{9828622B-3D73-43C1-B5CC-EF300F685801}"
 	ProjectSection(SolutionItems) = preProject
 		thirdparty\googletest\CMakeLists.txt = thirdparty\googletest\CMakeLists.txt
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KukuDotNetTests", "dotnet\tests\KukuDotNetTests.csproj", "{102BD340-AB62-4B98-BB40-564B0A21D72E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FEBFBD23-067B-4E66-A9AC-55AE664AFEFA} = {FEBFBD23-067B-4E66-A9AC-55AE664AFEFA}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pipelines", "pipelines", "{F619837E-C018-44CB-98C5-AE249B50396A}"
+	ProjectSection(SolutionItems) = preProject
+		pipelines\jobs.yml = pipelines\jobs.yml
+		pipelines\nix.yml = pipelines\nix.yml
+		pipelines\nuget.yml = pipelines\nuget.yml
+		pipelines\pipeline-CI-Debug-Linux.yml = pipelines\pipeline-CI-Debug-Linux.yml
+		pipelines\pipeline-CI-Debug-macOS.yml = pipelines\pipeline-CI-Debug-macOS.yml
+		pipelines\pipeline-CI-Debug-Windows.yml = pipelines\pipeline-CI-Debug-Windows.yml
+		pipelines\pipeline-CI-Release-All.yml = pipelines\pipeline-CI-Release-All.yml
+		pipelines\pipeline-Nuget.yml = pipelines\pipeline-Nuget.yml
+		pipelines\pipeline-PR-Debug-All.yml = pipelines\pipeline-PR-Debug-All.yml
+		pipelines\windows.yml = pipelines\windows.yml
 	EndProjectSection
 EndProject
 Global
@@ -145,6 +164,22 @@ Global
 		{EC30B03C-89D0-4B69-9D75-97AE3574F2C0}.Release|x64.ActiveCfg = Release|x64
 		{EC30B03C-89D0-4B69-9D75-97AE3574F2C0}.Release|x64.Build.0 = Release|x64
 		{EC30B03C-89D0-4B69-9D75-97AE3574F2C0}.Release|x86.ActiveCfg = Release|x64
+		{102BD340-AB62-4B98-BB40-564B0A21D72E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{102BD340-AB62-4B98-BB40-564B0A21D72E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{102BD340-AB62-4B98-BB40-564B0A21D72E}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{102BD340-AB62-4B98-BB40-564B0A21D72E}.Debug|Win32.Build.0 = Debug|Any CPU
+		{102BD340-AB62-4B98-BB40-564B0A21D72E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{102BD340-AB62-4B98-BB40-564B0A21D72E}.Debug|x64.Build.0 = Debug|Any CPU
+		{102BD340-AB62-4B98-BB40-564B0A21D72E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{102BD340-AB62-4B98-BB40-564B0A21D72E}.Debug|x86.Build.0 = Debug|Any CPU
+		{102BD340-AB62-4B98-BB40-564B0A21D72E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{102BD340-AB62-4B98-BB40-564B0A21D72E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{102BD340-AB62-4B98-BB40-564B0A21D72E}.Release|Win32.ActiveCfg = Release|Any CPU
+		{102BD340-AB62-4B98-BB40-564B0A21D72E}.Release|Win32.Build.0 = Release|Any CPU
+		{102BD340-AB62-4B98-BB40-564B0A21D72E}.Release|x64.ActiveCfg = Release|Any CPU
+		{102BD340-AB62-4B98-BB40-564B0A21D72E}.Release|x64.Build.0 = Release|Any CPU
+		{102BD340-AB62-4B98-BB40-564B0A21D72E}.Release|x86.ActiveCfg = Release|Any CPU
+		{102BD340-AB62-4B98-BB40-564B0A21D72E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -154,6 +189,8 @@ Global
 		{7ECB2D33-D9B4-470C-AAE5-AB02EE389925} = {5D1A937A-C730-409C-A2A3-C30DA6192485}
 		{B5D6273D-41A3-4A85-B676-EF3764559886} = {F1DB7A9B-EF27-42BA-9C1E-A81860504883}
 		{9828622B-3D73-43C1-B5CC-EF300F685801} = {B5D6273D-41A3-4A85-B676-EF3764559886}
+		{102BD340-AB62-4B98-BB40-564B0A21D72E} = {5D1A937A-C730-409C-A2A3-C30DA6192485}
+		{F619837E-C018-44CB-98C5-AE249B50396A} = {F1DB7A9B-EF27-42BA-9C1E-A81860504883}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C1D4D52A-3D0B-4C89-8EA1-438107DCED88}

@@ -74,6 +74,9 @@ namespace kuku_tests
         ASSERT_TRUE(ct.insert(make_item(1, 1)));
         ASSERT_TRUE(ct.insert(make_item(2, 2)));
 
+        // Fails
+        ASSERT_FALSE(ct.insert(make_item(2, 2)));
+
         ASSERT_THROW(ct.insert(ct.empty_item()), invalid_argument);
 
         int non_empties = 0;
@@ -83,25 +86,7 @@ namespace kuku_tests
         }
         ASSERT_EQ(non_empties, 5);
 
-        ASSERT_TRUE(ct.query(make_item(1, 0)));
-        ASSERT_TRUE(ct.query(make_item(0, 1)));
-        ASSERT_TRUE(ct.query(make_item(1, 1)));
-        ASSERT_TRUE(ct.query(make_item(2, 2)));
-        ASSERT_FALSE(ct.query(make_item(3, 3)));
-    }
-
-    TEST(KukuTableTests, Populate4)
-    {
-        KukuTable ct(1 << 10, 0, 2, make_zero_item(), 10, make_random_item());
-        ASSERT_TRUE(ct.insert(make_item(0, 0)));
-        ASSERT_TRUE(ct.insert(make_item(1, 0)));
-        ASSERT_TRUE(ct.insert(make_item(0, 1)));
-        ASSERT_TRUE(ct.insert(make_item(1, 1)));
-        ASSERT_TRUE(ct.insert(make_item(2, 2)));
-
-        // Fails
-        ASSERT_FALSE(ct.insert(make_item(2, 2)));
-
+        ASSERT_TRUE(ct.query(make_item(0, 0)));
         ASSERT_TRUE(ct.query(make_item(1, 0)));
         ASSERT_TRUE(ct.query(make_item(0, 1)));
         ASSERT_TRUE(ct.query(make_item(1, 1)));
@@ -127,7 +112,7 @@ namespace kuku_tests
 
     TEST(KukuTableTests, Fill2)
     {
-        KukuTable ct(1 << 10, 0, 4, make_zero_item(), 100, make_random_item());
+        KukuTable ct((1 << 10) - 1, 0, 4, make_zero_item(), 100, make_random_item());
         vector<item_type> inserted_items;
         for (int i = 0; i < 600; i++)
         {
@@ -143,7 +128,7 @@ namespace kuku_tests
 
     TEST(KukuTableTests, Fill3)
     {
-        KukuTable ct(1 << 10, 4, 2, make_zero_item(), 100, make_random_item());
+        KukuTable ct((1 << 10) + 1, 4, 2, make_zero_item(), 100, make_random_item());
         vector<item_type> inserted_items;
         for (int i = 0; i < 950; i++)
         {

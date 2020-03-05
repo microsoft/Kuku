@@ -18,12 +18,12 @@ namespace Microsoft.Research.Kuku
         public uint LocFuncCount { get; set; }
 
         [DataMember(Order = 4)]
-        public ulong[] LocFuncSeed { get; set; }
+        public Item LocFuncSeed { get; set; }
 
         [DataMember(Order = 5)]
         public ulong MaxProbe { get; set; }
 
         [DataMember(Order = 6)]
-        public ulong[] EmptyItem { get; set; }
+        public Item EmptyItem { get; set; }
     }
 }

@@ -16,6 +16,7 @@ src/kuku/config.h
 **/Makefile
 **/cmake_install.cmake
 */obj/*
+dotnet/tests/obj/*
 dotnet/src/obj
 dotnet/src/Properties/launchSettings.json
 dotnet/examples/obj

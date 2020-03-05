@@ -5,7 +5,7 @@ developed by the Cryptography and Privacy Research group at Microsoft. Kuku is
 written in modern standard C++ and has no external dependencies, making it easy
 to compile and run in many different environments.
 
-# Basic Concepts 
+# Basic Concepts
 
 Cuckoo hashing is a hashing technique that can achieve very high fill rates, and
 in particular create efficient hash tables with a single item per bin. This is
@@ -50,7 +50,7 @@ in an executable `kukuexample.exe` to be created in `bin\$(Platform)\$(Configura
 
 The unit tests require the Google Test framework to be installed. The appropriate
 NuGet package is already listed in `tests\packages.config`, so once you attempt to
-build the KukuTest project `tests\KukuTests.vcxproj` from `Kuku.sln` Visual Studio
+build the KukuTests project `tests\KukuTests.vcxproj` from `Kuku.sln` Visual Studio
 will automatically download and install it for you.
 
 ## Linux and macOS
@@ -123,7 +123,7 @@ target_link_libraries(<your target> Kuku::kuku)
 ````
 If Kuku was installed globally, the above `find_package` command will likely find
 the library automatically. To link with a locally installed Kuku, e.g., installed
-in `~/mylibs` as described above, you may need to tell CMake where to look for Kuku 
+in `~/mylibs` as described above, you may need to tell CMake where to look for Kuku
 when you configure your application by running:
 
 ````
@@ -186,8 +186,8 @@ dotnet build dotnet/src -c Release
 
 ### Windows
 
-Build the `KukuDotNetExample` project `KukuDotNetExample.csproj` from `Kuku.sln`. This
-results in the dynamic library `KukuDotNetExample.dll` to be created in
+Build the KukuDotNetExamples project `KukuDotNetExample.csproj` from `Kuku.sln`. This
+results in the dynamic library `KukuDotNetExamples.dll` to be created in
 `bin\dotnet\$(Configuration)\netcoreapp3.1`.
 
 ### Linux
@@ -197,19 +197,19 @@ Build the .NET examples with
 dotnet build dotnet/examples -c Release
 ````
 
-This results in the dynamic library `KukuDotNetExample.dll` to be created in
+This results in the dynamic library `KukuDotNetExamples.dll` to be created in
 `bin/dotnet/$(Configuration)/netcoreapp3.1`.
 
 ## Running Examples
 
-From the bin path, run `dotnet KukuDotNetExample.dll <tableSize> <stashSize> <locFuncCount> <maxProbe>`.
+From the bin path, run `dotnet KukuDotNetExamples.dll <tableSize> <stashSize> <locFuncCount> <maxProbe>`.
 The example program inserts values into the hash table, which you can then query
 by typing your queried item in the format `<ulong>,<ulong>`.
 
 # Using Kuku for .NET
 
 Much like in the native library, the cuckoo hash table is represented by an instance of the
-`KukuTable128` class. The constructor of `KukuTable128` takes as input a set of parameters,
+`KukuTable` class. The constructor of `KukuTable` takes as input a set of parameters,
 defined by the `KukuTableParameters` class. The parameters contain the table size
 `(TableSize`), the size of the stash (`StashSize`), the number of hash functions
 (`LocFuncCount`), a seed for the hash functions (`LocFuncSeed`), the number of iterations
@@ -219,14 +219,14 @@ types. These can be created from an array of size 2 of 64-bit integers by instan
 the `Item` class and setting its `Data` property with a ulong array of size 2.
 
 Once the table has been created, items can be inserted using the member function `Insert`.
-Items can be queried with the member function `Query`, which returns a `QueryResultWrapper`
-object. The `QueryResultWrapper` contains information about whether the queried item was
+Items can be queried with the member function `Query`, which returns a `QueryResult`
+object. The `QueryResult` contains information about whether the queried item was
 found in the hash table, the location where it was found, as well as the hash function that
 was used to eventually insert it.
 
-If `KukuTable128.Insert` fails to insert an item to the table or to the stash, it will
+If `KukuTable.Insert` fails to insert an item to the table or to the stash, it will
 return `false`, and a leftover item will be stored in a member variable that can be read
-with `KukuTable128.LastInsertFailItem()`. The same item cannot be inserted multiple times:
+with `KukuTable.LastInsertFailItem()`. The same item cannot be inserted multiple times:
 `Insert` will return `false` in this case.
 
 # Pull Requests

@@ -17,35 +17,65 @@ namespace Microsoft.Research.Kuku
         internal static extern bool KukuTable_Insert(IntPtr kuku_table, ulong[] item);
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
-        internal static extern bool KukuTable_Query(IntPtr kuku_table, ulong[] item, ref QueryResult query_result);
+        internal static extern bool KukuTable_Query(IntPtr kuku_table, ulong[] item, ref QueryResultData query_result);
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
         internal static extern bool KukuTable_IsEmptyItem(IntPtr kuku_table, ulong[] item);
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
-        internal static extern bool KukuTable_LeftoverItem(IntPtr kuku_table, ulong[] item);
+        internal static extern void KukuTable_EmptyItem(IntPtr kuku_table, ulong[] item);
+
+        [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        internal static extern void KukuTable_LeftoverItem(IntPtr kuku_table, ulong[] item);
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
         internal static extern double KukuTable_FillRate(IntPtr kuku_table);
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
-        internal static extern bool KukuTable_Table(IntPtr kuku_table, uint index, ulong[] item);
+        internal static extern uint KukuTable_LocFuncCount(IntPtr kuku_table);
+
+        [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        internal static extern void KukuTable_Table(IntPtr kuku_table, uint index, ulong[] item);
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
         internal static extern uint KukuTable_TableSize(IntPtr kuku_table);
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
-        internal static extern bool KukuTable_Stash(IntPtr kuku_table, uint index, ulong[] item);
+        internal static extern void KukuTable_Stash(IntPtr kuku_table, uint index, ulong[] item);
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
         internal static extern uint KukuTable_StashSize(IntPtr kuku_table);
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
         internal static extern uint KukuTable_Location(IntPtr kuku_table, ulong[] item, uint loc_func_index);
+
+        [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        internal static extern void KukuTable_AllLocations(IntPtr kuku_table, ulong[] item, uint[] locations, out uint count);
+
+        [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        internal static extern void KukuTable_ClearTable(IntPtr kuku_table);
+
+        [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        internal static extern void Common_SetRandomItem(ulong[] item);
+
+        [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        internal static extern void Common_IncrementItem(ulong[] item);
+
+        [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        internal static extern uint Common_MinTableSize();
+
+        [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        internal static extern uint Common_MaxTableSize();
+
+        [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        internal static extern uint Common_MinLocFuncCount();
+
+        [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        internal static extern uint Common_MaxLocFuncCount();
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct QueryResult
+    public struct QueryResultData
     {
         public bool found;
         public bool in_stash;

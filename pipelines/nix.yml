@@ -21,12 +21,12 @@ steps:
     packageType: 'sdk'
     version: '3.1.x'
 
-#- task: DotNetCoreCLI@2
-#  displayName: 'Run dotnet unit tests'
-#  inputs:
-#    command: test
-#    projects: '**/SEALNetTest.csproj'
-#    arguments: '--configuration ${{ parameters.configuration }} --verbosity detailed'
+- task: DotNetCoreCLI@2
+  displayName: 'Run dotnet unit tests'
+  inputs:
+    command: test
+    projects: '**/KukuDotNetTest.csproj'
+    arguments: '--configuration ${{ parameters.configuration }} --verbosity detailed'
 
 - task: CopyFiles@2
   displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'

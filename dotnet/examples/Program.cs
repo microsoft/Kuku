@@ -17,7 +17,7 @@ namespace KukuDotNetExample
 
         static void RunExample(KukuTableParameters parameters)
         {
-            var kukuTable = new KukuTable128(parameters);
+            var kukuTable = new KukuTable(parameters);
 
             ulong roundCounter = 0;
             while (true)
@@ -29,7 +29,7 @@ namespace KukuDotNetExample
 
                 for (ulong i = 0; i < 20; i++)
                 {
-                    var item = new Item128 { Data = new[] { i + 1, roundCounter + 1 } };
+                    var item = Item.MakeItem(i + 1, roundCounter + 1);
                     if (!kukuTable.Insert(item))
                     {
                         Console.WriteLine($"Insertion failed: round_counter = {roundCounter}, i = {i}");
@@ -56,13 +56,13 @@ namespace KukuDotNetExample
             {
                 Console.WriteLine("Query item: ");
                 var input = Console.ReadLine();
-                Item128 item;
+                Item item;
                 try
                 {
                     if (input == null) continue;
 
                     var data = input.Split(",").Select(ulong.Parse).ToArray();
-                    item = new Item128 { Data = data};
+                    item = Item.MakeItem(data[0], data[1]);
                 }
                 catch
                 {
@@ -133,11 +133,8 @@ namespace KukuDotNetExample
             };
 
             var random = new Random();
-            parameters.LocFuncSeed = new[] {
-                (ulong)LongRandom(0, long.MaxValue, random),
-                (ulong)LongRandom(0, long.MaxValue, random)
-            };
-            parameters.EmptyItem = new ulong[] { 0, 0 };
+            parameters.LocFuncSeed = Item.MakeRandomItem();
+            parameters.EmptyItem = Item.MakeZeroItem();
 
             return parameters;
         }
@@ -148,7 +145,7 @@ namespace KukuDotNetExample
             Console.WriteLine($"Usage: dotnet {name}.dll <tableSize> <stashSize> <locFuncCount> <maxProbe>");
         }
 
-        static void PrintTable(KukuTable128 kukuTable)
+        static void PrintTable(KukuTable kukuTable)
         {
             Console.WriteLine($"Table size: { kukuTable.Table.Size }");
             Console.WriteLine($"{kukuTable.Table}");
