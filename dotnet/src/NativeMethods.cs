@@ -77,7 +77,9 @@ namespace Microsoft.Research.Kuku
     [StructLayout(LayoutKind.Sequential)]
     public struct QueryResultData
     {
+        [MarshalAs(UnmanagedType.I1)]
         public bool found;
+        [MarshalAs(UnmanagedType.I1)]
         public bool in_stash;
         public uint location;
         public uint loc_func_index;
