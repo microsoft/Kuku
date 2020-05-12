@@ -65,6 +65,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pipelines", "pipelines", "{
 		pipelines\windows.yml = pipelines\windows.yml
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{C23B76EB-BF81-42A6-8A49-61EB173174A8}"
+	ProjectSection(SolutionItems) = preProject
+		dotnet\nuget\KukuDotNet-multi.nuspec = dotnet\nuget\KukuDotNet-multi.nuspec
+		dotnet\nuget\KukuDotNet.nuspec = dotnet\nuget\KukuDotNet.nuspec
+		dotnet\nuget\KukuDotNet.targets = dotnet\nuget\KukuDotNet.targets
+		dotnet\nuget\NUGET.md = dotnet\nuget\NUGET.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -191,6 +199,7 @@ Global
 		{9828622B-3D73-43C1-B5CC-EF300F685801} = {B5D6273D-41A3-4A85-B676-EF3764559886}
 		{102BD340-AB62-4B98-BB40-564B0A21D72E} = {5D1A937A-C730-409C-A2A3-C30DA6192485}
 		{F619837E-C018-44CB-98C5-AE249B50396A} = {F1DB7A9B-EF27-42BA-9C1E-A81860504883}
+		{C23B76EB-BF81-42A6-8A49-61EB173174A8} = {5D1A937A-C730-409C-A2A3-C30DA6192485}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C1D4D52A-3D0B-4C89-8EA1-438107DCED88}

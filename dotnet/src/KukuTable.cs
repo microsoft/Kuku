@@ -191,7 +191,7 @@ namespace Microsoft.Research.Kuku
                 for (uint i = 0; i < size; ++i)
                 {
                     sb.Append(string.Format(
-                        string.Join(',', this[i]) + ((i % columns == columns - 1) ? "\n" : "\t")));
+                        string.Join(",", this[i]) + ((i % columns == columns - 1) ? "\n" : "\t")));
                 }
                 return sb.ToString();
             }
@@ -217,7 +217,7 @@ namespace Microsoft.Research.Kuku
 
                 for (uint i = 0; i < size; ++i)
                 {
-                    sb.Append($"{i}: {string.Join(',', this[i])}\t");
+                    sb.Append($"{i}: {string.Join(",", this[i])}\t");
                 }
 
                 sb.Append("\n");

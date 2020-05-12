@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Copyright (c) Microsoft Corporation. All rights reserved.
+     Licensed under the MIT license. -->
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <KUKUCBinaryFiles Condition="$([MSBuild]::IsOsPlatform('Windows'))" Include="$(MSBuildThisFileDirectory)../runtimes/win10-x64/kukuc.dll" />
+    <KUKUCBinaryFiles Condition="$([MSBuild]::IsOsPlatform('Linux'))" Include="$(MSBuildThisFileDirectory)../runtimes/linux-x64/libkukuc.so*" />
+    <KUKUCBinaryFiles Condition="$([MSBuild]::IsOsPlatform('OSX'))" Include="$(MSBuildThisFileDirectory)../runtimes/macos-x64/libkukuc*.dylib" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="@(KUKUCBinaryFiles)">
+      <Link Condition="$([MSBuild]::IsOsPlatform('Windows'))">kukuc.dll</Link>
+      <Link Condition="$([MSBuild]::IsOsPlatform('Linux'))">libkukuc.so</Link>
+      <Link Condition="$([MSBuild]::IsOsPlatform('OSX'))">libkukuc.dylib</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>
