@@ -5,9 +5,8 @@ using Microsoft.Research.Kuku;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
-using System.Reflection.Metadata.Ecma335;
 
-namespace KukuDotNetTest
+namespace KukuNetTest
 {
     [TestClass]
     public class KukuTableTests
