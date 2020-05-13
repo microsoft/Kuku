@@ -54,7 +54,7 @@ steps:
       displayName: 'Build NuGet Package'
       inputs:
           command: 'pack'
-          packagesToPack: '$(Build.ArtifactStagingDirectory)\windows-drop\dotnet\nuget\KukuDotNet-multi.nuspec'
+          packagesToPack: '$(Build.ArtifactStagingDirectory)\windows-drop\dotnet\nuget\KukuNet-multi.nuspec'
           packDestination: '$(Build.ArtifactStagingDirectory)\windows-drop\dotnet\nuget\Release'
           buildProperties: 'Configuration=Release;NUGET_WINDOWS_KUKU_C_PATH=$(Build.ArtifactStagingDirectory)\windows-drop\lib\x64\Release\kukuc.dll;NUGET_LINUX_KUKU_C_PATH=$(Build.ArtifactStagingDirectory)\windows-drop\lib\libkukuc.so;NUGET_MACOS_KUKU_C_PATH=$(Build.ArtifactStagingDirectory)\windows-drop\lib\libkukuc.dylib'
 

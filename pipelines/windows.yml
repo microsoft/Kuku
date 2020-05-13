@@ -24,16 +24,24 @@ steps:
     outputFormat: sarif
     debugMode: false
 
-#- task: PowerShell@2
-#  displayName: 'Download Strong Name certificate'
-#  inputs:
-#    targetType: 'inline'
-#    script: |
-#        # Get signing certificate
-#        $CertOutFile = Join-Path -Path $env:BUILD_SOURCESDIRECTORY -ChildPath dotnet\src\KukuNetCert.snk
-#        if (Test-Path env:KukuNetSigningCertificate) {
-#            Invoke-WebRequest -Uri "$env:KukuNetSigningCertificate" -OutFile $CertOutFile
-#        }
+- ${{ if eq(parameters.configuration, 'Release') }}:
+  - task: PowerShell@2
+    displayName: 'Download Strong Name certificate'
+    inputs:
+      targetType: 'inline'
+      script: |
+          # Get signing certificate
+          $CertOutFile = Join-Path -Path $env:BUILD_SOURCESDIRECTORY -ChildPath dotnet\src\KukuNetCert.snk
+          if (Test-Path env:KukuNetSigningCertificate) {
+              Invoke-WebRequest -Uri "$env:KukuNetSigningCertificate" -OutFile $CertOutFile
+          }
+
+- ${{ if eq(parameters.configuration, 'Release') }}:
+  - task: UseDotNet@2
+    displayName: 'Get .NET Core 2.0 SDK'
+    inputs:
+      packageType: 'sdk'
+      version: '2.0.x'
 
 - task: UseDotNet@2
   displayName: 'Get .NET Core 3.1 SDK'
@@ -85,19 +93,19 @@ steps:
     Contents: '**\${{ parameters.configuration }}\**\?(*.exe|*.dll|*.lib|*.xml)'
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
-#- task: CopyFiles@2
-#  displayName: 'Copy Nuspec File to: $(Build.ArtifactStagingDirectory)'
-#  inputs:
-#    SourceFolder: '$(Build.SourcesDirectory)\dotnet\nuget\'
-#    Contents: 'KukuNet.nuspec'
-#    TargetFolder: '$(Build.ArtifactStagingDirectory)\dotnet\nuget\'
+- task: CopyFiles@2
+  displayName: 'Copy Nuspec File to: $(Build.ArtifactStagingDirectory)'
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)\dotnet\nuget\'
+    Contents: 'KukuNet-multi.nuspec'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)\dotnet\nuget\'
 
-#- task: CopyFiles@2
-#  displayName: 'Copy Targets File to: $(Build.ArtifactStagingDirectory)'
-#  inputs:
-#    SourceFolder: '$(Build.SourcesDirectory)\dotnet\nuget\'
-#    Contents: 'KukuNet.targets'
-#    TargetFolder: '$(Build.ArtifactStagingDirectory)\dotnet\nuget\'
+- task: CopyFiles@2
+  displayName: 'Copy Targets File to: $(Build.ArtifactStagingDirectory)'
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)\dotnet\nuget\'
+    Contents: 'KukuNet.targets'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)\dotnet\nuget\'
 
 - task: securedevelopmentteam.vss-secure-development-tools.build-task-binskim.BinSkim@3
   displayName: 'Run BinSkim'
