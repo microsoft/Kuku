@@ -1,5 +1,12 @@
 # List of Changes
 
+## Version 2.1
+
+### 2.1.0
+- Changed name `KukuDotNet` to `KukuNet`.
+- Improved `README.md`.
+- Added NuGet package.
+
 ## Version 2.0
 
 ### 2.0.0
