@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\KukuDotNet.csproj" />
+    <ProjectReference Include="..\src\KukuNet.csproj" />
   </ItemGroup>
 
   <ItemGroup>

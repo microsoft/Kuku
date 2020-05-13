@@ -30,8 +30,8 @@ steps:
 #    targetType: 'inline'
 #    script: |
 #        # Get signing certificate
-#        $CertOutFile = Join-Path -Path $env:BUILD_SOURCESDIRECTORY -ChildPath dotnet\src\KukuDotNetCert.snk
-#        if (Test-Path env:KukuDotNetSigningCertificate) {
+#        $CertOutFile = Join-Path -Path $env:BUILD_SOURCESDIRECTORY -ChildPath dotnet\src\KukuNetCert.snk
+#        if (Test-Path env:KukuNetSigningCertificate) {
 #            Invoke-WebRequest -Uri "$env:KukuNetSigningCertificate" -OutFile $CertOutFile
 #        }
 
@@ -66,7 +66,7 @@ steps:
   displayName: 'VsTest - dotnet tests'
   inputs:
     testAssemblyVer2: |
-        **\${{ parameters.configuration }}\**\KukuDotNetTests.dll
+        **\${{ parameters.configuration }}\**\KukuNetTests.dll
         !**\obj\**
     configuration: ${{ parameters.configuration }}
     diagnosticsEnabled: True
@@ -89,14 +89,14 @@ steps:
 #  displayName: 'Copy Nuspec File to: $(Build.ArtifactStagingDirectory)'
 #  inputs:
 #    SourceFolder: '$(Build.SourcesDirectory)\dotnet\nuget\'
-#    Contents: 'KukuDotNet.nuspec'
+#    Contents: 'KukuNet.nuspec'
 #    TargetFolder: '$(Build.ArtifactStagingDirectory)\dotnet\nuget\'
 
 #- task: CopyFiles@2
 #  displayName: 'Copy Targets File to: $(Build.ArtifactStagingDirectory)'
 #  inputs:
 #    SourceFolder: '$(Build.SourcesDirectory)\dotnet\nuget\'
-#    Contents: 'KukuDotNet.targets'
+#    Contents: 'KukuNet.targets'
 #    TargetFolder: '$(Build.ArtifactStagingDirectory)\dotnet\nuget\'
 
 - task: securedevelopmentteam.vss-secure-development-tools.build-task-binskim.BinSkim@3

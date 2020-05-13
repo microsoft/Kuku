@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 
-namespace KukuDotNetTest
+namespace KukuNetTest
 {
     /// <summary>
     /// Test utilities
