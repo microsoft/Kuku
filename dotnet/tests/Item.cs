@@ -5,7 +5,7 @@ using Microsoft.Research.Kuku;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace KukuDotNetTest
+namespace KukuNetTest
 {
     [TestClass]
     public class ItemTests

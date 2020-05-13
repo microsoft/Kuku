@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using Microsoft.Research.Kuku;
 
-namespace KukuDotNetExample
+namespace KukuNetExample
 {
     public class Program
     {
