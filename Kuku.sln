@@ -51,6 +51,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pipelines", "pipelines", "{
 		pipelines\windows.yml = pipelines\windows.yml
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KukuNet", "dotnet\src\KukuNet.csproj", "{029CC83E-9B1F-4EA2-A54B-899A75E9A97B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EC30B03C-89D0-4B69-9D75-97AE3574F2C0} = {EC30B03C-89D0-4B69-9D75-97AE3574F2C0}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KukuNetExamples", "dotnet\examples\KukuNetExamples.csproj", "{8D7AF1DE-3603-4922-BC13-5AD41ED9D8EF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KukuNetTests", "dotnet\tests\KukuNetTests.csproj", "{4013D47D-E62F-4F75-A3EA-27C2520CB983}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{C23B76EB-BF81-42A6-8A49-61EB173174A8}"
 	ProjectSection(SolutionItems) = preProject
 		dotnet\nuget\KukuDotNet-multi.nuspec = dotnet\nuget\KukuDotNet-multi.nuspec
