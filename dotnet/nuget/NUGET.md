@@ -8,7 +8,7 @@ You will need to:
 1. Compile binaries
     1. `src\Kuku.vcxproj`
     2. `src\Kuku_C.vcxproj`
-    3. `dotnet\src\KukuDotNet.csproj`
+    3. `dotnet\src\KukuNet.csproj`
 3. [Download the NuGet command line tool](https://dist.nuget.org/win-x86-commandline/latest/nuget.exe)
 4. Run the command below to create NuGet package
 5. Add NuGet package reference to your .NET projects
@@ -17,7 +17,7 @@ The command to create the NuGet package after compiling binaries is the followin
 
 ````
 cd dotnet\nuget
-nuget.exe pack KukuDotNet.nuspec -properties Configuration=Release -Verbosity detailed -OutputDir Release
+nuget.exe pack KukuNet.nuspec -properties Configuration=Release -Verbosity detailed -OutputDir Release
 cd ..\..
 ````
 
