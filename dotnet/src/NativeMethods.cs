@@ -14,12 +14,15 @@ namespace Microsoft.Research.Kuku
         public static extern IntPtr KukuTable_Create(uint table_size, uint stash_size, uint loc_func_count, ulong[] loc_func_seed, ulong max_probe, ulong[] empty_item);
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.I1)]
         internal static extern bool KukuTable_Insert(IntPtr kuku_table, ulong[] item);
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.I1)]
         internal static extern bool KukuTable_Query(IntPtr kuku_table, ulong[] item, ref QueryResultData query_result);
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.I1)]
         internal static extern bool KukuTable_IsEmptyItem(IntPtr kuku_table, ulong[] item);
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
