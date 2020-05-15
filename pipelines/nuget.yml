@@ -61,7 +61,7 @@ steps:
     - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
       displayName: 'ESRP CodeSigning NuGet package'
       inputs:
-        ConnectedServiceName: 'ESRP CodeSigning'
+        ConnectedServiceName: 'Kuku ESRP'
         FolderPath: '$(Build.ArtifactStagingDirectory)\windows-drop\dotnet\nuget\Release'
         Pattern: '*.nupkg'
         signConfigType: inlineSignParams

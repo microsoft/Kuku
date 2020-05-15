@@ -90,7 +90,7 @@ steps:
   - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
     displayName: 'ESRP Add Strong Name'
     inputs:
-      ConnectedServiceName: 'ESRP CodeSigning'
+      ConnectedServiceName: 'Kuku ESRP'
       FolderPath: lib/dotnet/${{ parameters.configuration }}/netstandard2.0
       Pattern: 'KukuNet.dll'
       signConfigType: inlineSignParams
@@ -116,7 +116,7 @@ steps:
   - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
     displayName: 'ESRP CodeSigning .NET Standard 2.0'
     inputs:
-      ConnectedServiceName: 'ESRP CodeSigning'
+      ConnectedServiceName: 'Kuku ESRP'
       FolderPath: lib/dotnet/${{ parameters.configuration }}/netstandard2.0
       Pattern: 'KukuNet.dll'
       signConfigType: inlineSignParams
@@ -148,7 +148,7 @@ steps:
   - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
     displayName: 'ESRP CodeSigning native'
     inputs:
-      ConnectedServiceName: 'ESRP CodeSigning'
+      ConnectedServiceName: 'Kuku ESRP'
       FolderPath: lib/x64/${{ parameters.configuration }}
       Pattern: 'kukuc.dll'
       signConfigType: inlineSignParams
