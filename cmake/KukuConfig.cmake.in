@@ -15,18 +15,6 @@
 
 @PACKAGE_INIT@
 
-macro(warning_when_not_quiet msg)
-    if(NOT Kuku_FIND_QUIETLY)
-        message(WARNING ${msg})
-    endif()
-endmacro()
-
-macro(status_when_not_quiet msg)
-    if(NOT Kuku_FIND_QUIETLY)
-        message(STATUS ${msg})
-    endif()
-endmacro()
-
 set(Kuku_FOUND FALSE)
 set(Kuku_SHARED_FOUND FALSE)
 set(Kuku_C_FOUND FALSE)
@@ -52,11 +40,13 @@ endif()
 if(TARGET Kuku::kukuc)
     set(Kuku_C_FOUND TRUE)
 endif()
-        
+
 if(Kuku_FOUND)
-    status_when_not_quiet("Kuku -> Version ${Kuku_VERSION} detected")
-    if(Kuku_DEBUG)
-        status_when_not_quiet("Performance warning: Kuku compiled in debug mode")
+    if(NOT Kuku_FIND_QUIETLY)
+        message(STATUS "Kuku -> Version ${Kuku_VERSION} detected")
+    endif()
+    if(Kuku_DEBUG AND NOT Kuku_FIND_QUIETLY)
+        message(STATUS "Performance warning: Kuku compiled in debug mode")
     endif()
 
     set(Kuku_TARGETS_AVAILABLE "Kuku -> Targets available: Kuku::kuku")
@@ -66,8 +56,11 @@ if(Kuku_FOUND)
     if(Kuku_C_FOUND)
         string(APPEND Kuku_TARGETS_AVAILABLE ", Kuku::kukuc")
     endif()
-
-    status_when_not_quiet(${Kuku_TARGETS_AVAILABLE})
+    if(NOT Kuku_FIND_QUIETLY)
+        message(STATUS ${Kuku_TARGETS_AVAILABLE})
+    endif()
 else()
-    warning_when_not_quiet("Kuku -> NOT FOUND")
+    if(NOT Kuku_FIND_QUIETLY)
+        message(WARNING "Kuku -> NOT FOUND")
+    endif()
 endif()
