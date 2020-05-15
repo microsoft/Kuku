@@ -71,9 +71,9 @@ namespace KukuNetTest
                 }
 
                 // Workaround: Check if exception is FileNotFoundException
-                if (ex is FileNotFoundException workaroundExc)
+                if (ex is FileNotFoundException || ex is DllNotFoundException)
                 {
-                    string workaroundStr = workaroundExc.GetType().ToString();
+                    string workaroundStr = ex.GetType().ToString();
                     Trace.WriteLine($"WARNING: {caller}:{line}: Expected exception of type '{expectedStr}', got type '{workaroundStr}' instead.");
                     WorkaroundInstanceCount++;
                     return;
