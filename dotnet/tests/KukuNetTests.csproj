@@ -27,7 +27,7 @@
   <ItemGroup>
     <KukuCBinaryFiles Condition="$([MSBuild]::IsOsPlatform(Windows))" Include="$(ProjectDir)..\..\lib\x64\$(Configuration)\kukuc.dll" />
     <KukuCBinaryFiles Condition="$([MSBuild]::IsOsPlatform(Linux))" Include="$(ProjectDir)../../lib/libkukuc.so.*" />
-    <KukuCBinaryFiles Condition="$([MSBuild]::IsOsPlatform(OSX))" Include="$(ProjectDir)../../lib/libkukuc.*.dylib" />
+    <KukuCBinaryFiles Condition="$([MSBuild]::IsOsPlatform(OSX))" Include="$(ProjectDir)../../lib/libkukuc*.dylib" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
