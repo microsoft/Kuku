@@ -25,7 +25,7 @@ steps:
   displayName: 'Run dotnet unit tests'
   inputs:
     command: test
-    projects: '**/KukuNetTest.csproj'
+    projects: '**/KukuNetTests.csproj'
     arguments: '--configuration ${{ parameters.configuration }} --verbosity detailed'
 
 - task: CopyFiles@2

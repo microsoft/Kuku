@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "KukuDotNetTests": {
+      "commandName": "Project",
+      "nativeDebugging": false
+    }
+  }
+}

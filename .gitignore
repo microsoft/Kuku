@@ -24,3 +24,4 @@ dotnet/examples/Properties/launchSettings.json
 .vscode/settings.json
 thirdparty/googletest/
 !thirdparty/googletest/CMakeLists.txt
+*.nupkg
