@@ -57,6 +57,7 @@ namespace Microsoft.Research.Kuku
             }
 
             ulong[] data = new ulong[2] { item.Data.Item1, item.Data.Item2 };
+            Console.WriteLine($"Inserting {data[0]} - {data[1]}");
             return NativeMethods.KukuTable_Insert(_unmanagedkukuTable, data);
         }
 

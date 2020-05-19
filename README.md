@@ -1,7 +1,7 @@
 # Kuku
 
 Kuku is a simple open-source ([MIT licensed](LICENSE)) cuckoo hashing library
-developed by the Cryptography and Privacy Research group at Microsoft. 
+developed by the Cryptography and Privacy Research group at Microsoft.
 Kuku is written in modern standard C++ and has no external dependencies, making it easy
 to compile and run in many different environments.
 

@@ -4,7 +4,7 @@
 #pragma once
 
 #include "kuku/common.h"
-#include "kuku/hash.h"
+#include "kuku/internal/hash.h"
 #include <stdexcept>
 
 namespace kuku
@@ -12,8 +12,7 @@ namespace kuku
     class LocFunc
     {
     public:
-        LocFunc(table_size_type table_size, item_type seed) :
-            table_size_(table_size), hf_(seed)
+        LocFunc(table_size_type table_size, item_type seed) : table_size_(table_size), hf_(seed)
         {
             if (table_size < min_table_size || table_size > max_table_size)
             {
@@ -23,12 +22,12 @@ namespace kuku
 
         LocFunc(const LocFunc &copy) = default;
 
-        LocFunc &operator =(const LocFunc &assign) = delete;
+        LocFunc &operator=(const LocFunc &assign) = delete;
 
         /*
         Returns an integer between 0 and (table_size - 1).
         */
-        inline location_type operator ()(item_type item) const noexcept
+        inline location_type operator()(item_type item) const noexcept
         {
             return hf_(item) % table_size_;
         }
@@ -38,4 +37,4 @@ namespace kuku
 
         HashFunc hf_;
     };
-}
+} // namespace kuku

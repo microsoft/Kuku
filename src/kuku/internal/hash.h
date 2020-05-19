@@ -8,7 +8,7 @@
 #   pragma warning(push)
 #   pragma warning(disable: 4804)
 #endif
-#include "kuku/blake2.h"
+#include "kuku/internal/blake2.h"
 #ifdef _MSC_VER
 #   pragma warning(pop)
 #endif

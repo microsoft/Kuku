@@ -111,7 +111,7 @@ namespace KukuNetTest
             bl.SetZeroItem();
             Assert.IsTrue(bl.IsZeroItem());
         }
-        
+
         [TestMethod]
         public void IncrementItem()
         {

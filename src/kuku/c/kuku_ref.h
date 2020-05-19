@@ -5,8 +5,8 @@
 
 #include "kuku/common.h"
 #include "kuku/kuku.h"
-#include <cstdint>
 #include <cstddef>
+#include <cstdint>
 
 #ifdef _MSC_VER
 // Check that architecture (platform) is x64
@@ -37,7 +37,8 @@ typedef struct
     uint32_t loc_func_index;
 } QueryResultData;
 
-KUKU_C_FUNC(void *) KukuTable_Create(
+KUKU_C_FUNC(void *)
+KukuTable_Create(
     uint32_t table_size, uint32_t stash_size, uint32_t loc_func_count, uint64_t *loc_func_seed, uint64_t max_probe,
     uint64_t *empty_item);
 

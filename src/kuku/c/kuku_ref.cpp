@@ -1,11 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-#include "pch.h"
 #include "kuku_ref.h"
+#include "pch.h"
 #include <set>
 
-KUKU_C_FUNC(void *) KukuTable_Create(
+KUKU_C_FUNC(void *)
+KukuTable_Create(
     uint32_t table_size, uint32_t stash_size, uint32_t loc_func_count, uint64_t *loc_func_seed, uint64_t max_probe,
     uint64_t *empty_item)
 {

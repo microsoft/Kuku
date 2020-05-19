@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-#include "gtest/gtest.h"
 #include "kuku/common.h"
+#include "gtest/gtest.h"
 #include <cmath>
 
 using namespace kuku;
@@ -33,11 +33,8 @@ namespace kuku_tests
         ASSERT_EQ(0xF00FF00FF00FF00F, bl[0]);
         ASSERT_EQ(0xBABABABABABABABA, bl[1]);
 
-        unsigned char data[bytes_per_item]{
-            0x00, 0x01, 0x02, 0x03,
-            0x04, 0x05, 0x06, 0x07,
-            0x00, 0x01, 0x02, 0x03,
-            0x04, 0x05, 0x06, 0x07 };
+        unsigned char data[bytes_per_item]{ 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+                                            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 };
         set_item(data, bl);
         ASSERT_EQ(0x0706050403020100, bl[0]);
         ASSERT_EQ(0x0706050403020100, bl[1]);
@@ -145,4 +142,4 @@ namespace kuku_tests
         ASSERT_EQ(0x0, it[0]);
         ASSERT_EQ(0x0, it[1]);
     }
-}
+} // namespace kuku_tests

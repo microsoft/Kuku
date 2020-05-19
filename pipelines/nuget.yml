@@ -26,7 +26,7 @@ steps:
       displayName: 'Copy Targets File to: $(Build.ArtifactStagingDirectory)'
       inputs:
           SourceFolder: '$(Build.SourcesDirectory)\dotnet\nuget\'
-          Contents: 'SEALNet.targets'
+          Contents: 'KukuNet.targets'
           TargetFolder: '$(Build.ArtifactStagingDirectory)\windows-drop\dotnet\nuget\'
 
     - task: CopyFiles@2

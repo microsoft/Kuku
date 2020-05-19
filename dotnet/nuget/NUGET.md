@@ -33,4 +33,4 @@ packages in this known location. In Microsoft Visual Studio 2019, for example, y
 After this, you should be able to add a reference to this package in your own .NET project. After
 creating or opening your project in Visual Studio, you can right click on the project in the
 Solution Explorer window, and select `Manage NuGet packages...`. In the window that appears
-you will be able to select the `Microsoft.Research.SEAL` NuGet package to add to your project.
+you will be able to select the `Microsoft.Research.Kuku` NuGet package to add to your project.

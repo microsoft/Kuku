@@ -1,15 +1,15 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-#include <kuku/kuku.h>
-#include <iostream>
-#include <iomanip>
 #include <chrono>
+#include <iomanip>
+#include <iostream>
+#include <kuku/kuku.h>
 
 using namespace std;
 using namespace kuku;
 
-ostream &operator <<(ostream &stream, item_type item)
+ostream &operator<<(ostream &stream, item_type item)
 {
     stream << item[1] << " " << item[0];
     return stream;
@@ -20,8 +20,7 @@ void print_table(const KukuTable &table)
     table_size_type col_count = 8;
     for (table_size_type i = 0; i < table.table_size(); i++)
     {
-        cout << setw(5) << i << ": " << setw(5) << table.table(i)
-            << ((i % col_count == col_count - 1) ? "\n" : "\t");
+        cout << setw(5) << i << ": " << setw(5) << table.table(i) << ((i % col_count == col_count - 1) ? "\n" : "\t");
     }
 
     cout << endl << endl << "Stash: " << endl;
@@ -49,14 +48,7 @@ int main(int argc, char *argv[])
     uint64_t max_probe = static_cast<uint64_t>(atoi(argv[4]));
     item_type empty_item = make_item(0, 0);
 
-    KukuTable table(
-        table_size,
-        stash_size,
-        loc_func_count,
-        loc_func_seed,
-        max_probe,
-        empty_item
-    );
+    KukuTable table(table_size, stash_size, loc_func_count, loc_func_seed, max_probe, empty_item);
 
     uint64_t round_counter = 0;
     while (true)
@@ -71,8 +63,7 @@ int main(int argc, char *argv[])
         {
             if (!table.insert(make_item(i + 1, round_counter + 1)))
             {
-                cout << "Insertion failed: round_counter = "
-                    << round_counter << ", i = " << i << endl;
+                cout << "Insertion failed: round_counter = " << round_counter << ", i = " << i << endl;
                 cout << "Inserted successfully " << round_counter * 20 + i << " items" << endl;
                 cout << "Fill rate: " << table.fill_rate() << endl;
                 cout << "Leftover item: " << table.leftover_item() << endl << endl;
@@ -97,8 +88,7 @@ int main(int argc, char *argv[])
         char lw[64];
         cin.getline(hw, 10, ' ');
         cin.getline(lw, 10, '\n');
-        item_type item = make_item(
-            static_cast<uint64_t>(atoi(lw)), static_cast<uint64_t>(atoi(hw)));
+        item_type item = make_item(static_cast<uint64_t>(atoi(lw)), static_cast<uint64_t>(atoi(hw)));
         QueryResult res = table.query(item);
         cout << "Found: " << boolalpha << !!res << endl;
         if (res)

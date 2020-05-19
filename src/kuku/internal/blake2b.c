@@ -17,8 +17,8 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "blake2.h"
-#include "blake2-impl.h"
+#include "kuku/internal/blake2.h"
+#include "kuku/internal/blake2-impl.h"
 
 static const uint64_t blake2b_IV[8] =
 {

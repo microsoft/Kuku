@@ -15,14 +15,14 @@
     <Filter Include="Other\kuku">
       <UniqueIdentifier>{bc0124d4-74ae-4097-b66f-ee15e88f6d02}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\internal">
+      <UniqueIdentifier>{fb7a4590-cf55-4641-b652-d645d9505de1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\internal">
+      <UniqueIdentifier>{b5f66d54-541b-44ba-8812-c8a132c14520}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="kuku\blake2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="kuku\blake2-impl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="kuku\kuku.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -32,23 +32,29 @@
     <ClInclude Include="kuku\locfunc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="kuku\hash.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="kuku\internal\blake2.h">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="kuku\internal\blake2-impl.h">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="kuku\internal\hash.h">
+      <Filter>Header Files\internal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="kuku\kuku.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="kuku\blake2b.c">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="kuku\internal\blake2xb.c">
+      <Filter>Source Files\internal</Filter>
     </ClCompile>
-    <ClCompile Include="kuku\blake2xb.c">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="kuku\internal\blake2b.c">
+      <Filter>Source Files\internal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="kuku\config.h.in">
+    <None Include="kuku\internal\config.h.in">
       <Filter>Other\kuku</Filter>
     </None>
   </ItemGroup>

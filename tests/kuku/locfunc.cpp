@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-#include "gtest/gtest.h"
 #include "kuku/common.h"
 #include "kuku/locfunc.h"
+#include "gtest/gtest.h"
 #include <cmath>
 
 using namespace kuku;
@@ -37,8 +37,9 @@ namespace kuku_tests
                     ASSERT_TRUE(lf(bl) == lf2(bl));
                     zeros += (lf(bl) == size_t(0));
                 }
-                ASSERT_TRUE(abs(static_cast<double>(zeros) / static_cast<double>(total) - 1/static_cast<double>(ts)) < 0.05);
+                ASSERT_TRUE(
+                    abs(static_cast<double>(zeros) / static_cast<double>(total) - 1 / static_cast<double>(ts)) < 0.05);
             }
         }
     }
-}
+} // namespace kuku_tests

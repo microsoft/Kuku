@@ -5,11 +5,11 @@
 
 #include "kuku/common.h"
 #include "kuku/locfunc.h"
-#include <vector>
-#include <random>
 #include <memory>
-#include <stdexcept>
+#include <random>
 #include <set>
+#include <stdexcept>
+#include <vector>
 
 namespace kuku
 {
@@ -41,8 +41,8 @@ namespace kuku
         }
 
     private:
-        QueryResult(location_type location, std::uint32_t loc_func_index) :
-            location_(location), loc_func_index_(loc_func_index)
+        QueryResult(location_type location, std::uint32_t loc_func_index)
+            : location_(location), loc_func_index_(loc_func_index)
         {
 #ifdef KUKU_DEBUG
             if (location >= max_table_size)
@@ -64,12 +64,8 @@ namespace kuku
         Creates a new kuku hash table.
         */
         KukuTable(
-            table_size_type table_size,
-            table_size_type stash_size,
-            std::uint32_t loc_func_count,
-            item_type loc_func_seed,
-            std::uint64_t max_probe,
-            item_type empty_item);
+            table_size_type table_size, table_size_type stash_size, std::uint32_t loc_func_count,
+            item_type loc_func_seed, std::uint64_t max_probe, item_type empty_item);
 
         /*
         Adds a single item to the KukuTable using random-walk cuckoo hashing.
@@ -84,9 +80,7 @@ namespace kuku
         /*
         Returns the locations that this item may live at.
         */
-        inline location_type location(
-            item_type item,
-            std::uint32_t loc_func_index) const
+        inline location_type location(item_type item, std::uint32_t loc_func_index) const
         {
             return loc_funcs_[loc_func_index](item);
         }
@@ -180,13 +174,13 @@ namespace kuku
         inline double fill_rate() const noexcept
         {
             return static_cast<double>(inserted_items_) /
-                (static_cast<double>(table_size()) + static_cast<double>(stash_size_));
+                   (static_cast<double>(table_size()) + static_cast<double>(stash_size_));
         }
 
     private:
         KukuTable(const KukuTable &copy) = delete;
 
-        KukuTable &operator =(const KukuTable &assign) = delete;
+        KukuTable &operator=(const KukuTable &assign) = delete;
 
         void generate_loc_funcs(std::uint32_t loc_func_count, item_type seed);
 
@@ -258,4 +252,4 @@ namespace kuku
 
         std::uniform_int_distribution<std::uint32_t> u_;
     };
-}
+} // namespace kuku

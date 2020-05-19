@@ -5,23 +5,23 @@
 
 // Include kuku/config.h only on platforms with CMake configuration (not MSVC).
 #ifdef _MSC_VER
-#   ifdef _DEBUG
-#       define KUKU_DEBUG
-#   else
-#       undef KUKU_DEBUG
-#   endif
+#ifdef _DEBUG
+#define KUKU_DEBUG
 #else
-#   include "kuku/config.h"
+#undef KUKU_DEBUG
+#endif
+#else
+#include "kuku/internal/config.h"
 #endif
 
+#include <algorithm>
+#include <array>
 #include <cstddef>
 #include <cstdint>
-#include <utility>
 #include <cstring>
-#include <stdexcept>
 #include <random>
-#include <array>
-#include <algorithm>
+#include <stdexcept>
+#include <utility>
 
 namespace kuku
 {
@@ -49,16 +49,12 @@ namespace kuku
     inline std::uint64_t random_uint64()
     {
         std::random_device rd;
-        return (static_cast<std::uint64_t>(rd()) << 32)
-            + static_cast<std::uint64_t>(rd());
+        return (static_cast<std::uint64_t>(rd()) << 32) + static_cast<std::uint64_t>(rd());
     }
 
     inline void set_item(const unsigned char *in, item_type &destination) noexcept
     {
-        std::copy_n(
-            in,
-            bytes_per_item,
-            reinterpret_cast<unsigned char*>(destination.data()));
+        std::copy_n(in, bytes_per_item, reinterpret_cast<unsigned char *>(destination.data()));
     }
 
     inline item_type make_item(const unsigned char *in) noexcept
@@ -68,17 +64,13 @@ namespace kuku
         return out;
     }
 
-    inline void set_item(
-        std::uint64_t low_word,
-        std::uint64_t high_word,
-        item_type &destination) noexcept
+    inline void set_item(std::uint64_t low_word, std::uint64_t high_word, item_type &destination) noexcept
     {
         destination[0] = low_word;
         destination[1] = high_word;
     }
 
-    inline item_type make_item(
-        std::uint64_t low_word, std::uint64_t high_word) noexcept
+    inline item_type make_item(std::uint64_t low_word, std::uint64_t high_word) noexcept
     {
         return { low_word, high_word };
     }
@@ -138,4 +130,4 @@ namespace kuku
         in[0] += 1;
         in[1] += !in[0] ? 1 : 0;
     }
-}
+} // namespace kuku

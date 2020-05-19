@@ -113,23 +113,23 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="kuku\blake2.h" />
-    <ClInclude Include="kuku\blake2-impl.h" />
-    <ClInclude Include="kuku\hash.h" />
+    <ClInclude Include="kuku\internal\blake2.h" />
+    <ClInclude Include="kuku\internal\blake2-impl.h" />
+    <ClInclude Include="kuku\internal\hash.h" />
     <ClInclude Include="kuku\kuku.h" />
     <ClInclude Include="kuku\common.h" />
     <ClInclude Include="kuku\locfunc.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="kuku\blake2b.c" />
-    <ClCompile Include="kuku\blake2xb.c" />
+    <ClCompile Include="kuku\internal\blake2b.c" />
+    <ClCompile Include="kuku\internal\blake2xb.c" />
     <ClCompile Include="kuku\kuku.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="kuku\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="kuku\config.h.in" />
+    <None Include="kuku\internal\config.h.in" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
