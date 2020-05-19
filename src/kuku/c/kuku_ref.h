@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "kuku/common.h"
 #include "kuku/kuku.h"
 #include <cstddef>
 #include <cstdint>

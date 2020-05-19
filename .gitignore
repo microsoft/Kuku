@@ -8,7 +8,7 @@ lib/
 packages/
 cmake/
 !cmake/KukuConfig.cmake.in
-src/kuku/config.h
+src/kuku/internal/config.h
 **/compile_commands.json
 **/install_manifest.txt
 **/CMakeCache.txt
