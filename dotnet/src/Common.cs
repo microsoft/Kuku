@@ -3,6 +3,9 @@
 
 namespace Microsoft.Research.Kuku
 {
+    /// <summary>
+    /// Set of common properties
+    /// </summary>
     public static class Common
     {
         /// <summary>The smallest allowed table size.</summary>

@@ -21,7 +21,7 @@ namespace Microsoft.Research.Kuku
         }
 
         /// <summary>Assigns this hash table item to be equal to a given item.</summary>
-        /// <param name="copy">The hash table item to assign from</param>
+        /// <param name="assign">The hash table item to assign from</param>
         public void Set(Item assign) => Data = assign.Data;
 
         /// <summary>The hash table item value represented as a pair of 64-bit words.</summary>

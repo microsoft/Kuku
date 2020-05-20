@@ -13,4 +13,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <OutputPath>$(ProjectDir)../../lib/dotnet/$(Configuration)/</OutputPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <DocumentationFile>../../lib/dotnet/Release/KukuNet.xml</DocumentationFile>
+  </PropertyGroup>
 </Project>

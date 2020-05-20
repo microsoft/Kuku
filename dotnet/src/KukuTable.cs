@@ -255,13 +255,14 @@ namespace Microsoft.Research.Kuku
             return Item.MakeItem((data[0], data[1]));
         }
 
+        /// <summary>Returns the size of the stash for the hash table.</summary>
         public uint StashSize => NativeMethods.KukuTable_StashSize(_unmanagedkukuTable);
 
-        /// <summary>Gives access to the hash table associated with a <see cref="KukuTabe"/> instance.</summary>
+        /// <summary>Gives access to the hash table associated with a <see cref="KukuTable"/> instance.</summary>
         /// <remarks>
-        /// Gives access to the hash table associated with a <see cref="KukuTabe"/> instance. The hash table is
+        /// Gives access to the hash table associated with a <see cref="KukuTable"/> instance. The hash table is
         /// automatically created when a <see cref="KukuTable"/> instance is created, and can be accessed through the
-        /// <see cref="KukuTabe"/> class as well. This class merely provides another convenient handle to view the hash
+        /// <see cref="KukuTable"/> class as well. This class merely provides another convenient handle to view the hash
         /// table data.
         /// </remarks>
         public class KukuTableTable
@@ -302,13 +303,13 @@ namespace Microsoft.Research.Kuku
             }
         }
 
-        /// <summary>Gives access to the stash associated with a <see cref="KukuTabe"/> instance.</summary>
+        /// <summary>Gives access to the stash associated with a <see cref="KukuTable"/> instance.</summary>
         /// <remarks>
-        /// Gives access to the stash associated with a <see cref="KukuTabe"/> instance. The stash is automatically used
+        /// Gives access to the stash associated with a <see cref="KukuTable"/> instance. The stash is automatically used
         /// for items that could otherwise not fit into the hash table. The stash can have any size, including zero.
         /// True insertion failure occurs only when a hash table item cannot be inserted into the table, and the stash
         /// is full so it cannot be inserted into the stash either. A stash is automatically created when a hash table
-        /// is created, and can be accessed through the <see cref="KukuTabe"/> class as well. This class merely provides
+        /// is created, and can be accessed through the <see cref="KukuTable"/> class as well. This class merely provides
         /// another convenient handle to view the stash data.
         /// </remarks>
         public class KukuTableStash

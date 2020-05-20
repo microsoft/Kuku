@@ -31,7 +31,7 @@ namespace Microsoft.Research.Kuku
         /// <summary>Returns the index of the location function that was used to insert the queried item.</summary>
         /// <remarks>
         /// Returns the index of the location function that was used to insert the queried item. This value is
-        /// meaningless when <see cref="InStash" /> is true. A value equal to <see cref="MaxLocFuncCount" /> indicates
+        /// meaningless when <see cref="InStash" /> is true. A value equal to <see cref="Common.MaxLocFuncCount" /> indicates
         /// the item was not found in the table or stash.
         /// </remarks>
         public uint LocFuncIndex => _resultStruct.loc_func_index;

@@ -8,7 +8,7 @@ namespace Microsoft.Research.Kuku
 {
     internal class NativeMethods
     {
-    	private const string DllName = "kukuc";
+        private const string DllName = "kukuc";
 
         [DllImport(DllName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
         public static extern IntPtr KukuTable_Create(uint table_size, uint stash_size, uint loc_func_count, ulong[] loc_func_seed, ulong max_probe, ulong[] empty_item);
@@ -78,7 +78,7 @@ namespace Microsoft.Research.Kuku
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct QueryResultData
+    internal struct QueryResultData
     {
         [MarshalAs(UnmanagedType.I1)]
         public bool found;

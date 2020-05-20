@@ -5,6 +5,9 @@ using System.Runtime.Serialization;
 
 namespace Microsoft.Research.Kuku
 {
+    /// <summary>
+    /// Parameters for creating a Kuku table
+    /// </summary>
     [DataContract]
     public class KukuTableParameters
     {
