@@ -68,6 +68,11 @@ namespace kuku
 
     set<location_type> KukuTable::all_locations(item_type item) const
     {
+        if (is_empty_item(item))
+        {
+            throw invalid_argument("item cannot be the empty item");
+        }
+
         set<location_type> result;
         for (auto lf : loc_funcs_)
         {
