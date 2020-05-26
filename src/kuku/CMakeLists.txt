@@ -19,9 +19,14 @@ install(
         ${CMAKE_CURRENT_LIST_DIR}/internal/blake2-impl.h
         ${CMAKE_CURRENT_LIST_DIR}/internal/config.h
         ${CMAKE_CURRENT_LIST_DIR}/internal/hash.h
+        DESTINATION
+        ${KUKU_INCLUDES_INSTALL_DIR}/kuku/internal
+)
+install(
+    FILES
         ${CMAKE_CURRENT_LIST_DIR}/common.h
         ${CMAKE_CURRENT_LIST_DIR}/kuku.h
         ${CMAKE_CURRENT_LIST_DIR}/locfunc.h
-    DESTINATION
+        DESTINATION
         ${KUKU_INCLUDES_INSTALL_DIR}/kuku
 )
