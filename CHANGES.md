@@ -1,18 +1,15 @@
 # List of Changes
 
-## Version 2.1
-
-### 2.1.0
-- Changed name `KukuDotNet` to `KukuNet`.
-- Improved `README.md`.
-- Added NuGet package.
-
 ## Version 2.0
 
 ### 2.0.0
 - Switched to using faster non-cryptographic hash functions and a faster insertion method.
 - Created .NET Standard wrappers for the public API.
-- Kuku is not a CMake project (with a top-level CMake file)
+- Kuku is not a CMake project (with a top-level CMake file).
+- Kuku now allows any size hash table -- not just a power of two.
+Note the change in the constructor of the `KukuTable` class that now accepts the table size directly, and not its base-2 logarithm.
+- Changed name `KukuDotNet` to `KukuNet`.
+- Added NuGet package.
 
 ## Version 1.1
 
