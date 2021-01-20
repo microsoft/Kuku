@@ -292,3 +292,57 @@ if(KUKU_BUILD_TESTS)
     add_subdirectory(tests/kuku)
     target_link_libraries(kukutest PRIVATE ${KUKU_LIBRARY_NAME} GTest::gtest)
 endif()
+
+#######################################
+# Configure KukuNet and NuGet package #
+#######################################
+
+# Create KukuNet.csproj, KukuNetExamples.csproj and KukuNetTest.csproj
+configure_file(
+    ${CMAKE_CURRENT_LIST_DIR}/dotnet/src/KukuNet.csproj.in
+    ${CMAKE_CURRENT_LIST_DIR}/dotnet/src/KukuNet.csproj
+    @ONLY)
+configure_file(
+    ${CMAKE_CURRENT_LIST_DIR}/dotnet/tests/KukuNetTests.csproj.in
+    ${CMAKE_CURRENT_LIST_DIR}/dotnet/tests/KukuNetTests.csproj
+    @ONLY)
+configure_file(
+    ${CMAKE_CURRENT_LIST_DIR}/dotnet/examples/KukuNetExamples.csproj.in
+    ${CMAKE_CURRENT_LIST_DIR}/dotnet/examples/KukuNetExamples.csproj
+    @ONLY)
+
+# Set the kukuc dynamic library file names to be included in creating
+# the NuGet package. When building a multi-platform NuGet package, the
+# dynamic library paths need to be specified explicitly in the NuGet
+# command. See dotnet/nuget/KukuNet.nuspec.in.
+
+# First create the multi-platform NuSpec file so disable all platform-specific
+# library paths
+unset(KUKU_WINDOWS_KUKU_C_PATH)
+unset(KUKU_LINUX_KUKU_C_PATH)
+unset(KUKU_MACOS_KUKU_C_PATH)
+
+# Create KukuNet-multi.nuspec for a multi-platform NuGet package
+configure_file(
+    ${CMAKE_CURRENT_LIST_DIR}/dotnet/nuget/KukuNet-multi.nuspec.in
+    ${CMAKE_CURRENT_LIST_DIR}/dotnet/nuget/KukuNet-multi.nuspec
+    @ONLY)
+
+set(KUKU_WINDOWS_KUKU_C_PATH "")
+set(KUKU_LINUX_KUKU_C_PATH "")
+set(KUKU_MACOS_KUKU_C_PATH "")
+
+# Create KukuNet.nuspec for a local NuGet pack from KukuNet.nuspec.in
+configure_file(
+    ${CMAKE_CURRENT_LIST_DIR}/dotnet/nuget/KukuNet.nuspec.in
+    ${CMAKE_CURRENT_LIST_DIR}/dotnet/nuget/KukuNet.nuspec
+    @ONLY)
+
+# Supporting local building of NuGet package
+if(WIN32)
+    set(KUKU_WINDOWS_KUKU_C_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/kukuc.dll)
+elseif(UNIX AND NOT APPLE)
+    set(KUKU_LINUX_KUKU_C_PATH ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libkukuc.so)
+elseif(APPLE)
+    set(KUKU_MACOS_KUKU_C_PATH ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libkukuc.dylib)
+endif()

@@ -27,3 +27,11 @@ dotnet/examples/Properties/launchSettings.json
 thirdparty/googletest/
 !thirdparty/googletest/CMakeLists.txt
 *.nupkg
+!dotnet/nuget/*.nuspec.in
+dotnet/nuget/*.nuspec
+!dotnet/src/KukuNet.csproj.in
+dotnet/src/KukuNet.csproj
+!dotnet/tests/KukuNetTest.csproj.in
+dotnet/tests/KukuNetTest.csproj
+!dotnet/examples/KukuNetExamples.csproj.in
+dotnet/examples/KukuNetExamples.csproj

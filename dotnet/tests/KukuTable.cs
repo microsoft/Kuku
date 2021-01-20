@@ -45,9 +45,9 @@ namespace KukuNetTest
                 {
                     TableSize = 1,
                     StashSize = 0,
-                    LocFuncCount = 1,
+                    LocFuncCount = 2,
                     LocFuncSeed = Item.MakeZeroItem(),
-                    MaxProbe = 1,
+                    MaxProbe = 0,
                     EmptyItem = Item.MakeZeroItem()
                 })
             );
@@ -63,12 +63,43 @@ namespace KukuNetTest
                     EmptyItem = Item.MakeZeroItem()
                 }
             );
+
+            table = new KukuTable(
+                new KukuTableParameters
+                {
+                    TableSize = 1,
+                    StashSize = 0,
+                    LocFuncCount = 1,
+                    LocFuncSeed = Item.MakeZeroItem(),
+                    MaxProbe = 1,
+                    EmptyItem = Item.MakeZeroItem()
+                }
+            );
         }
 
         [TestMethod]
         public void Populate1()
         {
             KukuTable ct = new KukuTable(
+                new KukuTableParameters
+                {
+                    TableSize = 1,
+                    StashSize = 0,
+                    LocFuncCount = 1,
+                    LocFuncSeed = Item.MakeZeroItem(),
+                    MaxProbe = 10,
+                    EmptyItem = Item.MakeZeroItem()
+                }
+            );
+
+            Assert.IsTrue(ct.IsEmptyItem(ct[0]));
+            Assert.IsTrue(ct.Insert(Item.MakeItem(1, 0)));
+            Assert.IsFalse(ct.Insert(Item.MakeItem(0, 1)));
+            Utilities.AssertThrows<ArgumentException>(() => ct.Insert(ct.EmptyItem));
+            Utilities.AssertThrows<ArgumentException>(() => ct.Insert(Item.MakeZeroItem()));
+            Assert.IsFalse(ct.IsEmpty(0));
+
+            ct = new KukuTable(
                 new KukuTableParameters
                 {
                     TableSize = 1,
@@ -86,6 +117,30 @@ namespace KukuNetTest
             Utilities.AssertThrows<ArgumentException>(() => ct.Insert(ct.EmptyItem));
             Utilities.AssertThrows<ArgumentException>(() => ct.Insert(Item.MakeZeroItem()));
             Assert.IsFalse(ct.IsEmpty(0));
+
+            ct = new KukuTable(
+                new KukuTableParameters
+                {
+                    TableSize = 2,
+                    StashSize = 0,
+                    LocFuncCount = 1,
+                    LocFuncSeed = Item.MakeZeroItem(),
+                    MaxProbe = 10,
+                    EmptyItem = Item.MakeZeroItem()
+                }
+            );
+
+            Assert.IsTrue(ct.IsEmptyItem(ct[0]));
+            Assert.IsTrue(ct.Insert(Item.MakeItem(1, 0)));
+
+            // Collision
+            Assert.IsFalse(ct.Insert(Item.MakeItem(0, 1)));
+
+            // No collision
+            Assert.IsTrue(ct.Insert(Item.MakeItem(0, 2)));
+
+            Assert.IsFalse(ct.IsEmpty(0));
+            Assert.IsFalse(ct.IsEmpty(1));
         }
 
         [TestMethod]
