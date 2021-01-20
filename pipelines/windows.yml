@@ -5,16 +5,9 @@ steps:
     versionSpec: ${{ parameters.nuget_version }}
 
 - task: NuGetCommand@2
-  displayName: 'NuGet restore from Solution'
-  inputs:
-    command: 'restore'
-    restoreSolution: 'Kuku.sln'
-    feedsToUse: 'select'
-
-- task: NuGetCommand@2
   displayName: 'NuGet restore Configuration Packages'
   inputs:
-    restoreSolution: tools/config/packages.config
+    restoreSolution: config/packages.config
     restoreDirectory: ConfigPackages
 
 - task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@2
@@ -23,6 +16,19 @@ steps:
     toolMajorVersion: 'V2'
     outputFormat: sarif
     debugMode: false
+
+- ${{ if eq(parameters.configuration, 'Release') }}:
+  - task: UseDotNet@2
+    displayName: 'Get .NET Core 2.1 SDK'
+    inputs:
+      packageType: 'sdk'
+      version: '2.1.x'
+
+- task: UseDotNet@2
+  displayName: 'Get .NET Core 3.1 SDK'
+  inputs:
+    packageType: 'sdk'
+    version: '3.1.302'
 
 - ${{ if eq(parameters.configuration, 'Release') }}:
   - task: PowerShell@2
@@ -36,25 +42,19 @@ steps:
               Invoke-WebRequest -Uri "$env:KukuNetSigningCertificate" -OutFile $CertOutFile
           }
 
-- ${{ if eq(parameters.configuration, 'Release') }}:
-  - task: UseDotNet@2
-    displayName: 'Get .NET Core 2.0 SDK'
-    inputs:
-      packageType: 'sdk'
-      version: '2.0.x'
-
-- task: UseDotNet@2
-  displayName: 'Get .NET Core 3.1 SDK'
+- task: CMake@1
+  displayName: 'Configure Kuku'
   inputs:
-    packageType: 'sdk'
-    version: '3.1.x'
+    cmakeArgs: .. -DCMAKE_BUILD_TYPE='${{ parameters.configuration }}' -DKUKU_BUILD_TESTS=ON -DKUKU_BUILD_EXAMPLES=ON -DKUKU_BUILD_KUKU_C=ON
+    workingDirectory: '$(Build.SourcesDirectory)/build'
 
-- task: VSBuild@1
-  displayName: 'Build solution Kuku'
+- task: MSBuild@1
+  displayName: 'Build Kuku'
   inputs:
-    solution: 'Kuku.sln'
+    solution: '$(Build.SourcesDirectory)/build/kuku.sln'
+    msbuildArchitecture: 'x64'
     platform: 'x64'
-    configuration: ${{ parameters.configuration }}
+    configuration: '${{ parameters.configuration }}'
 
 - task: securedevelopmentteam.vss-secure-development-tools.build-task-roslynanalyzers.RoslynAnalyzers@2
   displayName: 'Run Roslyn Analyzers'
@@ -69,6 +69,21 @@ steps:
     platform: 'x64'
     configuration: ${{ parameters.configuration }}
     diagnosticsEnabled: True
+
+- task: NuGetCommand@2
+  displayName: 'NuGet restore from Solution'
+  inputs:
+    command: 'restore'
+    restoreSolution: 'dotnet/KukuNet.sln'
+    feedsToUse: 'select'
+
+- task: MSBuild@1
+  displayName: 'Build KukuNet'
+  inputs:
+    solution: '$(Build.SourcesDirectory)/dotnet/KukuNet.sln'
+    msbuildArchitecture: 'x64'
+    platform: 'x64'
+    configuration: '${{ parameters.configuration }}'
 
 - task: VSTest@2
   displayName: 'VsTest - dotnet tests'
