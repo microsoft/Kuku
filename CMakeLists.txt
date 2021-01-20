@@ -11,7 +11,7 @@ cmake_minimum_required(VERSION 3.12)
 #   4. Kuku C++ tests                             #
 ###################################################
 
-project(Kuku VERSION 2.0.0 LANGUAGES CXX C)
+project(Kuku VERSION 2.1.0 LANGUAGES CXX C)
 
 if(${MSVC})
     message(FATAL_ERROR "Please build using the attached Visual Studio solution/project files.")
@@ -41,27 +41,36 @@ message(STATUS "Kuku debug mode: ${KUKU_DEBUG}")
 
 # Required files and directories
 include(GNUInstallDirs)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${Kuku_SOURCE_DIR}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${Kuku_SOURCE_DIR}/lib)
-set(CMAKE_LIBRARY_RUNTIME_DIRECTORY ${Kuku_SOURCE_DIR}/bin)
-set(KUKU_TARGETS_FILENAME ${Kuku_SOURCE_DIR}/cmake/KukuTargets.cmake)
+
+# Source Tree
+set(KUKU_INCLUDES_DIR ${CMAKE_CURRENT_LIST_DIR}/src)
+set(KUKU_THIRDPARTY_DIR ${CMAKE_CURRENT_LIST_DIR}/thirdparty)
 set(KUKU_CONFIG_IN_FILENAME ${Kuku_SOURCE_DIR}/cmake/KukuConfig.cmake.in)
-set(KUKU_CONFIG_FILENAME ${Kuku_SOURCE_DIR}/cmake/KukuConfig.cmake)
-set(KUKU_CONFIG_VERSION_FILENAME ${Kuku_SOURCE_DIR}/cmake/KukuConfigVersion.cmake)
+set(KUKU_CONFIG_H_IN_FILENAME ${KUKU_INCLUDES_DIR}/kuku/internal/config.h.in)
+
+# Build tree
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${OUTLIB_PATH})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${OUTLIB_PATH})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
+set(KUKU_TARGETS_FILENAME ${CMAKE_CURRENT_BINARY_DIR}/cmake/KukuTargets.cmake)
+set(KUKU_CONFIG_FILENAME ${CMAKE_CURRENT_BINARY_DIR}/cmake/KukuConfig.cmake)
+set(KUKU_CONFIG_VERSION_FILENAME ${CMAKE_CURRENT_BINARY_DIR}/cmake/KukuConfigVersion.cmake)
+set(KUKU_CONFIG_H_FILENAME ${CMAKE_CURRENT_BINARY_DIR}/src/kuku/internal/config.h)
+
+# Install
 set(KUKU_CONFIG_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/Kuku-${Kuku_VERSION_MAJOR}.${Kuku_VERSION_MINOR})
 set(KUKU_INCLUDES_INSTALL_DIR ${CMAKE_INSTALL_INCLUDEDIR}/Kuku-${Kuku_VERSION_MAJOR}.${Kuku_VERSION_MINOR})
-set(KUKU_INCLUDES_BUILD_DIR ${Kuku_SOURCE_DIR}/src)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${Kuku_SOURCE_DIR}/bin)
 
 include(CMakePushCheckState)
 include(CMakeDependentOption)
 include(CheckIncludeFiles)
 include(CheckCXXSourceRuns)
 include(CheckTypeSize)
+include(FetchContent)
 
-##################################
-# Macros for configuring targets #
-##################################
+##################
+# Various macros #
+##################
 
 # Set the C++ language version
 macro(kuku_set_language target)
@@ -92,6 +101,16 @@ macro(kuku_set_include_directories target)
         $<INSTALL_INTERFACE:${KUKU_INCLUDES_INSTALL_DIR}>)
 endmacro()
 
+# Set include directories for build and install interfaces
+macro(kuku_set_include_directories target)
+    target_include_directories(${target} PUBLIC
+        $<BUILD_INTERFACE:${KUKU_INCLUDES_DIR}>
+        $<INSTALL_INTERFACE:${KUKU_INCLUDES_INSTALL_DIR}>)
+    target_include_directories(${target} PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/src/>
+        $<INSTALL_INTERFACE:${KUKU_INCLUDES_INSTALL_DIR}>)
+endmacro()
+
 # Include target to given export
 macro(kuku_install_target target export)
     install(TARGETS ${target} EXPORT ${export}
@@ -100,52 +119,14 @@ macro(kuku_install_target target export)
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endmacro()
 
-#########################
-# External dependencies #
-#########################
-
-set(THIRDPARTY_DIR ${Kuku_SOURCE_DIR}/thirdparty)
-
-# Google Test
-# This follows the example in
-# https://github.com/google/googletest/blob/release-1.10.0/googletest/README.md.
-
-# Download and configure
-if(KUKU_BUILD_TESTS AND NOT MSVC)
-    message(STATUS "Setting up Google Test ...")
-    execute_process(
-        COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
-        OUTPUT_QUIET
-        RESULT_VARIABLE result
-        WORKING_DIRECTORY ${THIRDPARTY_DIR}/googletest)
-    if(result)
-        message(WARNING "Failed to download Google Test (${result}); disabling `KUKU_BUILD_TESTS`")
-    endif()
-    set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
-    mark_as_advanced(BUILD_GMOCK)
-    set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
-    mark_as_advanced(INSTALL_GTEST)
-endif()
-
-# Build
-if(KUKU_BUILD_TESTS AND NOT MSVC)
-    execute_process(COMMAND ${CMAKE_COMMAND} --build .
-        OUTPUT_QUIET
-        RESULT_VARIABLE result
-        WORKING_DIRECTORY ${THIRDPARTY_DIR}/googletest)
-    if(result)
-        message(WARNING "Failed to build Google Test (${result}); disabling `KUKU_BUILD_TESTS`")
-    endif()
-endif()
-
-# Set up the targets
-if(KUKU_BUILD_TESTS AND NOT MSVC)
-    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-    add_subdirectory(
-        ${THIRDPARTY_DIR}/googletest/src
-        ${THIRDPARTY_DIR}/googletest/build
-        EXCLUDE_FROM_ALL)
-endif()
+# Include a file to fetch thirdparty content
+macro(kuku_fetch_thirdparty_content content_file)
+    set(KUKU_FETCHCONTENT_BASE_DIR_OLD ${FETCHCONTENT_BASE_DIR})
+    set(FETCHCONTENT_BASE_DIR ${KUKU_THIRDPARTY_DIR} CACHE STRING "" FORCE)
+    include(${content_file})
+    set(FETCHCONTENT_BASE_DIR ${KUKU_FETCHCONTENT_BASE_DIR_OLD} CACHE STRING "" FORCE)
+    unset(KUKU_FETCHCONTENT_BASE_DIR_OLD)
+endmacro()
 
 ####################
 # Kuku C++ library #
@@ -154,57 +135,76 @@ endif()
 # Should we build also the shared library?
 set(BUILD_SHARED_LIBS_STR "Build shared library")
 option(BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS_STR} OFF)
+
 if(MSVC AND BUILD_SHARED_LIBS)
-    message(WARNING "This build system only supports a static build; disabling `BUILD_SHARED_LIBS`")
-    set(BUILD_SHARED_LIBS OFF CACHE BOOL ${BUILD_SHARED_LIBS_STR} FORCE)
+    message(FATAL_ERROR "This build system only supports a static build")
 endif()
 
 # Always build position-independent-code
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-# Create an object library to compile sources only once
-add_library(kuku_obj OBJECT)
-
 # Add source files to library and header files to install
+set(KUKU_SOURCE_FILES "")
 add_subdirectory(src/kuku)
 
-# Set C++ language version and include directories for the object library
-kuku_set_language(kuku_obj)
-kuku_set_include_directories(kuku_obj)
+# Create the config file
+configure_file(${KUKU_CONFIG_H_IN_FILENAME} ${KUKU_CONFIG_H_FILENAME})
+install(
+    FILES ${KUKU_CONFIG_H_FILENAME}
+    DESTINATION ${KUKU_INCLUDES_INSTALL_DIR}/kuku/internal)
 
-# Always build the static library
-add_library(kuku STATIC $<TARGET_OBJECTS:kuku_obj>)
-kuku_set_version(kuku)
-kuku_set_version_filename(kuku)
-kuku_set_language(kuku)
-kuku_set_include_directories(kuku)
-
-kuku_install_target(kuku KukuTargets)
-
-# Conditionally build the shared library
-if(BUILD_SHARED_LIBS)
-    add_library(kuku_shared SHARED $<TARGET_OBJECTS:kuku_obj>)
-    set_target_properties(kuku_shared PROPERTIES OUTPUT_NAME kuku)
-    kuku_set_version(kuku_shared)
+set(KUKU_LIBRARY_NAME "")
+if(NOT BUILD_SHARED_LIBS)
+    add_library(kuku STATIC ${KUKU_SOURCE_FILES})
+    kuku_set_version_filename(kuku)
+    kuku_set_language(kuku)
+    kuku_set_include_directories(kuku)
+    kuku_set_version(kuku)
+    kuku_install_target(kuku KukuTargets)
+    set(KUKU_LIBRARY_NAME "kuku")
+else()
+    add_library(kuku_shared SHARED ${KUKU_SOURCE_FILES})
     kuku_set_soversion(kuku_shared)
+    set_target_properties(kuku_shared PROPERTIES OUTPUT_NAME kuku)
     kuku_set_language(kuku_shared)
     kuku_set_include_directories(kuku_shared)
+    kuku_set_version(kuku_shared)
     kuku_install_target(kuku_shared KukuTargets)
+    set(KUKU_LIBRARY_NAME "kuku_shared")
+endif()
+
+# Add standard alias targets for Kuku::kuku and Kuku::kuku_shared
+if(TARGET kuku)
+    add_library(Kuku::kuku ALIAS kuku)
+endif()
+if(TARGET kuku_shared)
+    add_library(Kuku::kuku_shared ALIAS kuku_shared)
 endif()
 
 #########################
 # Kuku C export library #
 #########################
 
-# Check that size_t is 8 bytes
-include(CheckTypeSize)
-check_type_size("size_t" SIZET LANGUAGE C)
-
 set(KUKU_BUILD_KUKU_C_OPTION_STR "Build C export library for Kuku")
-cmake_dependent_option(KUKU_BUILD_KUKU_C ${KUKU_BUILD_KUKU_C_OPTION_STR} OFF "${SIZET} EQUAL 8" OFF)
+option(KUKU_BUILD_KUKU_C ${KUKU_BUILD_KUKU_C_OPTION_STR} OFF)
 
 # Create shared Kuku_C library but add no source files yet
 if(KUKU_BUILD_KUKU_C)
+    # Check that size_t is 8 bytes
+    include(CheckTypeSize)
+    check_type_size("size_t" SIZET LANGUAGE C)
+    if(NOT ${SIZET} EQUAL 8)
+        unset(SIZET CACHE)
+        unset(HAVE_SIZET CACHE)
+        message(FATAL_ERROR "Kuku_C requires 64-bit platform")
+    endif()
+    unset(SIZET CACHE)
+    unset(HAVE_SIZET CACHE)
+
+    if(BUILD_SHARED_LIBS)
+        message(FATAL_ERROR "Kuku_C requires `BUILD_SHARED_LIBS=OFF`")
+    endif()
+
     add_library(kukuc SHARED)
 
     # Add source files to library and header files to install
@@ -213,8 +213,15 @@ if(KUKU_BUILD_KUKU_C)
     kuku_set_soversion(kukuc)
     kuku_set_language(kukuc)
     kuku_set_include_directories(kukuc)
-    target_link_libraries(kukuc PUBLIC kuku)
+
+    target_link_libraries(kukuc PUBLIC ${KUKU_LIBRARY_NAME})
+
     kuku_install_target(kukuc KukuTargets)
+endif()
+
+# Add standard alias target for Kuku::kukuc
+if(TARGET kukuc)
+    add_library(Kuku::kukuc ALIAS kukuc)
 endif()
 
 #################################
@@ -263,7 +270,7 @@ option(KUKU_BUILD_EXAMPLES ${KUKU_BUILD_EXAMPLES_OPTION_STR} OFF)
 if(KUKU_BUILD_EXAMPLES)
     add_executable(kukuexamples)
     add_subdirectory(examples)
-    target_link_libraries(kukuexamples PUBLIC kuku)
+    target_link_libraries(kukuexamples PRIVATE ${KUKU_LIBRARY_NAME})
 endif()
 
 ##################
@@ -274,7 +281,13 @@ set(KUKU_BUILD_TESTS_OPTION_STR "Build C++ tests for Kuku")
 option(KUKU_BUILD_TESTS ${KUKU_BUILD_TESTS_OPTION_STR} OFF)
 
 if(KUKU_BUILD_TESTS)
+    list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
+    set(KUKU_THIRDPARTY_DIR ${CMAKE_CURRENT_LIST_DIR}/thirdparty)
+    set(THIRDPARTY_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/thirdparty)
+    kuku_fetch_thirdparty_content(ExternalGTest)
+    add_library(GTest::gtest ALIAS gtest)
+
     add_executable(kukutest)
     add_subdirectory(tests/kuku)
-    target_link_libraries(kukutest PRIVATE kuku gtest)
+    target_link_libraries(kukutest PRIVATE ${KUKU_LIBRARY_NAME} GTest::gtest)
 endif()
