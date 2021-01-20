@@ -53,7 +53,7 @@ namespace kuku
     /**
     The smallest allowed number of hash functions.
     */
-    constexpr std::uint32_t min_loc_func_count = 2;
+    constexpr std::uint32_t min_loc_func_count = 1;
 
     /**
     The largest allowed number of hash functions. This must be a power of two for correct behavior.
