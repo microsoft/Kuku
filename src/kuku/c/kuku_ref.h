@@ -7,26 +7,32 @@
 #include <cstddef>
 #include <cstdint>
 
+// Check that std::size_t is 64 bits
+static_assert(sizeof(std::size_t) == 8, "Require sizeof(std::size_t) == 8");
+
 #ifdef _MSC_VER
+
 // Check that architecture (platform) is x64
 #ifndef _WIN64
 static_assert(false, "Require architecture == x64");
 #endif
-#ifdef KUKU_C_EXPORTS
+
+#if defined(KUKU_C_EXPORTS) || defined(kuku_c_EXPORTS) || defined(kukuc_EXPORTS)
 #define KUKU_C_DECOR extern "C" __declspec(dllexport)
 #else
 #define KUKU_C_DECOR extern "C" __declspec(dllimport)
 #endif
+
 #define KUKU_C_CALL __cdecl
+
 #else // _MSC_VER
+
 #define KUKU_C_DECOR extern "C"
 #define KUKU_C_CALL
+
 #endif // _MSC_VER
 
 #define KUKU_C_FUNC(x) KUKU_C_DECOR x KUKU_C_CALL
-
-// Check that std::size_t is 64 bits
-static_assert(sizeof(std::size_t) == 8, "Require sizeof(std::size_t) == 8");
 
 typedef struct
 {
