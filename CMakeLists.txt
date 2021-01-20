@@ -21,6 +21,15 @@ endif()
 # Global configuration #
 ########################
 
+include(CMakePushCheckState)
+include(CMakeDependentOption)
+include(CheckIncludeFiles)
+include(CheckCXXSourceRuns)
+include(CheckTypeSize)
+include(FetchContent)
+#Extra modules
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
+
 # [Option] CMAKE_BUILD_TYPE
 # Build in Release mode by default; otherwise use selected option
 if(NOT CMAKE_BUILD_TYPE)
@@ -60,13 +69,6 @@ set(KUKU_CONFIG_H_FILENAME ${CMAKE_CURRENT_BINARY_DIR}/src/kuku/internal/config.
 # Install
 set(KUKU_CONFIG_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/Kuku-${Kuku_VERSION_MAJOR}.${Kuku_VERSION_MINOR})
 set(KUKU_INCLUDES_INSTALL_DIR ${CMAKE_INSTALL_INCLUDEDIR}/Kuku-${Kuku_VERSION_MAJOR}.${Kuku_VERSION_MINOR})
-
-include(CMakePushCheckState)
-include(CMakeDependentOption)
-include(CheckIncludeFiles)
-include(CheckCXXSourceRuns)
-include(CheckTypeSize)
-include(FetchContent)
 
 ##################
 # Various macros #
@@ -281,7 +283,6 @@ set(KUKU_BUILD_TESTS_OPTION_STR "Build C++ tests for Kuku")
 option(KUKU_BUILD_TESTS ${KUKU_BUILD_TESTS_OPTION_STR} OFF)
 
 if(KUKU_BUILD_TESTS)
-    list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
     set(KUKU_THIRDPARTY_DIR ${CMAKE_CURRENT_LIST_DIR}/thirdparty)
     set(THIRDPARTY_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/thirdparty)
     kuku_fetch_thirdparty_content(ExternalGTest)
