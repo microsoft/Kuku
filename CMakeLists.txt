@@ -11,6 +11,18 @@ cmake_minimum_required(VERSION 3.12)
 #   4. Kuku C++ tests                             #
 ###################################################
 
+# [option] CMAKE_BUILD_TYPE (default: "Release")
+# Build in one of the following modes: Release, Debug, MiniSizeRel, or RelWithDebInfo.
+# Most generators recognize these and can set the compiler flags accordingly. We set
+# the build type here before creating the project to prevent the CMake generator from
+# overriding our default of "Release".
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
+        "Release" "Debug" "MinSizeRel" "RelWithDebInfo")
+endif()
+message(STATUS "Build type (CMAKE_BUILD_TYPE): ${CMAKE_BUILD_TYPE}")
+
 project(Kuku VERSION 2.1.0 LANGUAGES CXX C)
 
 ########################
@@ -26,16 +38,12 @@ include(FetchContent)
 #Extra modules
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
 
-# [Option] CMAKE_BUILD_TYPE
-# Build in Release mode by default; otherwise use selected option
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
-        "Release" "Debug" "MinSizeRel" "RelWithDebInfo")
-endif()
-message(STATUS "Build type (CMAKE_BUILD_TYPE): ${CMAKE_BUILD_TYPE}")
+# Always build position-independent-code
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-# [Flag] KUKU_DEBUG
+# Make the install target depend on the all target (required by vcpkg)
+set(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY OFF)
+
 # In Debug mode, enable KUKU_DEBUG
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     set(KUKU_DEBUG ON)
@@ -133,13 +141,9 @@ endmacro()
 # Should we build also the shared library?
 set(BUILD_SHARED_LIBS_STR "Build shared library")
 option(BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS_STR} OFF)
-
-if(MSVC AND BUILD_SHARED_LIBS)
-    message(FATAL_ERROR "This build system only supports a static build")
+if(WIN32 AND BUILD_SHARED_LIBS)
+    message(FATAL_ERROR "On Windows only static build is supported; set `BUILD_SHARED_LIBS=OFF`")
 endif()
-
-# Always build position-independent-code
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # Add source files to library and header files to install
 set(KUKU_SOURCE_FILES "")
@@ -293,6 +297,17 @@ endif()
 # Configure KukuNet and NuGet package #
 #######################################
 
+# In Windows we will set the Kuku_C library path according to the CMake generator
+set(KUKU_WINDOWS_KUKU_C_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+get_property(KUKU_IS_MULTI_CONFIG_GENERATOR GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+if(KUKU_IS_MULTI_CONFIG_GENERATOR)
+    # Is this the Visual Studio generator? If so, the output path will contain the configuration.
+    # We shall use CMAKE_BUILD_TYPE here, which by default will be "Release". The user has the
+    # option of changing this by explicitly specifying CMAKE_BUILD_TYPE, which multi-config
+    # generators otherwise ignore.
+    set(KUKU_WINDOWS_KUKU_C_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE})
+endif()
+
 # Create KukuNet.csproj, KukuNetExamples.csproj and KukuNetTest.csproj
 configure_file(
     ${CMAKE_CURRENT_LIST_DIR}/dotnet/src/KukuNet.csproj.in
@@ -312,33 +327,27 @@ configure_file(
 # dynamic library paths need to be specified explicitly in the NuGet
 # command. See dotnet/nuget/KukuNet.nuspec.in.
 
-# First create the multi-platform NuSpec file so disable all platform-specific
-# library paths
-unset(KUKU_WINDOWS_KUKU_C_PATH)
-unset(KUKU_LINUX_KUKU_C_PATH)
-unset(KUKU_MACOS_KUKU_C_PATH)
-
 # Create KukuNet-multi.nuspec for a multi-platform NuGet package
 configure_file(
     ${CMAKE_CURRENT_LIST_DIR}/dotnet/nuget/KukuNet-multi.nuspec.in
     ${CMAKE_CURRENT_LIST_DIR}/dotnet/nuget/KukuNet-multi.nuspec
     @ONLY)
 
-set(KUKU_WINDOWS_KUKU_C_PATH "")
-set(KUKU_LINUX_KUKU_C_PATH "")
-set(KUKU_MACOS_KUKU_C_PATH "")
+set(NUGET_WINDOWS_KUKU_C_PATH "")
+set(NUGET_LINUX_KUKU_C_PATH "")
+set(NUGET_MACOS_KUKU_C_PATH "")
+
+# Supporting local building of NuGet package
+if(WIN32)
+    set(NUGET_WINDOWS_KUKU_C_PATH ${KUKU_WINDOWS_KUKU_C_DIRECTORY}/kukuc.dll)
+elseif(UNIX AND NOT APPLE)
+    set(NUGET_LINUX_KUKU_C_PATH ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libkukuc.so)
+elseif(APPLE)
+    set(NUGET_MACOS_KUKU_C_PATH ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libkukuc.dylib)
+endif()
 
 # Create KukuNet.nuspec for a local NuGet pack from KukuNet.nuspec.in
 configure_file(
     ${CMAKE_CURRENT_LIST_DIR}/dotnet/nuget/KukuNet.nuspec.in
     ${CMAKE_CURRENT_LIST_DIR}/dotnet/nuget/KukuNet.nuspec
     @ONLY)
-
-# Supporting local building of NuGet package
-if(WIN32)
-    set(KUKU_WINDOWS_KUKU_C_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/kukuc.dll)
-elseif(UNIX AND NOT APPLE)
-    set(KUKU_LINUX_KUKU_C_PATH ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libkukuc.so)
-elseif(APPLE)
-    set(KUKU_MACOS_KUKU_C_PATH ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libkukuc.dylib)
-endif()

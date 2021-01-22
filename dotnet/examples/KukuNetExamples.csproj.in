@@ -9,7 +9,7 @@
     <Copyright>Microsoft Corporation 2020</Copyright>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Platform)'=='AnyCPU'">
+  <PropertyGroup>
     <PlatformTarget>x64</PlatformTarget>
     <OutputPath>@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/dotnet/$(Configuration)</OutputPath>
   </PropertyGroup>
@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <KukuCBinaryFiles Condition="$([MSBuild]::IsOsPlatform(Windows))" Include="@CMAKE_RUNTIME_OUTPUT_DIRECTORY@\$(Configuration)\kukuc.dll" />
+    <KukuCBinaryFiles Condition="$([MSBuild]::IsOsPlatform(Windows))" Include="@KUKU_WINDOWS_KUKU_C_DIRECTORY@\kukuc.dll" />
     <KukuCBinaryFiles Condition="$([MSBuild]::IsOsPlatform(Linux))" Include="@CMAKE_LIBRARY_OUTPUT_DIRECTORY@/libkukuc.so.*" />
     <KukuCBinaryFiles Condition="$([MSBuild]::IsOsPlatform(OSX))" Include="@CMAKE_LIBRARY_OUTPUT_DIRECTORY@/libkukuc.*.dylib" />
   </ItemGroup>

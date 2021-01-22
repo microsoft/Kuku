@@ -23,11 +23,11 @@
   </metadata>
   <files>
     <file src="KukuNet.targets" target="build/Microsoft.Research.Kuku.targets" />
-    <file src="KUKU_WINDOWS_KUKU_C_PATH" target="runtimes/win10-x64" />
-    <file src="KUKU_LINUX_KUKU_C_PATH" target="runtimes/linux-x64" />
-    <file src="KUKU_MACOS_KUKU_C_PATH" target="runtimes/macos-x64" />
-    <file src="../../lib/dotnet/$configuration$/netstandard2.0/KukuNet.dll" target="lib/netstandard2.0/" />
-    <file src="../../lib/dotnet/$configuration$/KukuNet.xml" target="lib/netstandard2.0/" />
+    <file src="@NUGET_WINDOWS_KUKU_C_PATH@" target="runtimes/win10-x64" />
+    <file src="@NUGET_LINUX_KUKU_C_PATH@" target="runtimes/linux-x64" />
+    <file src="@NUGET_MACOS_KUKU_C_PATH@" target="runtimes/macos-x64" />
+    <file src="@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/dotnet/$configuration$/netstandard2.0/KukuNet.dll" target="lib/netstandard2.0/" />
+    <file src="@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/dotnet/$configuration$/KukuNet.xml" target="lib/netstandard2.0/" />
     <file src="../../LICENSE" target="LICENSE" />
   </files>
 </package>
