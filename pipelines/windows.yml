@@ -216,7 +216,7 @@ steps:
   displayName: 'Run BinSkim'
   inputs:
     InputType: Basic
-    AnalyzeTarget: '$(Build.ArtifactStagingDirectory)\bin\x64\${{ parameters.path }}\*.exe'
+    AnalyzeTarget: '$(Build.ArtifactStagingDirectory)\**\${{ parameters.configuration }}\**\?(*.exe|*.dll)'
     AnalyzeSymPath: '**\bin\**\*.pdb'
   enabled: true
 
