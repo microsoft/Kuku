@@ -106,7 +106,7 @@ steps:
     displayName: 'ESRP Add Strong Name'
     inputs:
       ConnectedServiceName: 'Kuku ESRP'
-      FolderPath: lib/dotnet/${{ parameters.configuration }}/netstandard2.0
+      FolderPath: build/bin/dotnet/${{ parameters.configuration }}/netstandard2.0
       Pattern: 'KukuNet.dll'
       signConfigType: inlineSignParams
       inlineOperation: |
@@ -132,7 +132,7 @@ steps:
     displayName: 'ESRP CodeSigning .NET Standard 2.0'
     inputs:
       ConnectedServiceName: 'Kuku ESRP'
-      FolderPath: lib/dotnet/${{ parameters.configuration }}/netstandard2.0
+      FolderPath: build/bin/dotnet/${{ parameters.configuration }}/netstandard2.0
       Pattern: 'KukuNet.dll'
       signConfigType: inlineSignParams
       inlineOperation: |
@@ -164,7 +164,7 @@ steps:
     displayName: 'ESRP CodeSigning native'
     inputs:
       ConnectedServiceName: 'Kuku ESRP'
-      FolderPath: lib/x64/${{ parameters.configuration }}
+      FolderPath: build/bin/${{ parameters.configuration }}
       Pattern: 'kukuc.dll'
       signConfigType: inlineSignParams
       inlineOperation: |
