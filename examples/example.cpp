@@ -20,13 +20,17 @@ void print_table(const KukuTable &table)
     table_size_type col_count = 8;
     for (table_size_type i = 0; i < table.table_size(); i++)
     {
-        cout << setw(5) << i << ": " << setw(5) << table.table(i) << ((i % col_count == col_count - 1) ? "\n" : "\t");
+        const auto &item = table.table(i);
+        cout << setw(5)
+            << i << ": " << setw(5) << get_high_word(item) << "," << get_low_word(item)
+            << ((i % col_count == col_count - 1) ? "\n" : "\t");
     }
 
     cout << endl << endl << "Stash: " << endl;
     for (table_size_type i = 0; i < table.stash().size(); i++)
     {
-        cout << i << ": " << table.stash(i) << endl;
+        const auto &item = table.stash(i);
+        cout << i << ": " << get_high_word(item) << "," << get_low_word(item) << endl;
     }
     cout << endl;
 }
@@ -66,7 +70,8 @@ int main(int argc, char *argv[])
                 cout << "Insertion failed: round_counter = " << round_counter << ", i = " << i << endl;
                 cout << "Inserted successfully " << round_counter * 20 + i << " items" << endl;
                 cout << "Fill rate: " << table.fill_rate() << endl;
-                cout << "Leftover item: " << table.leftover_item() << endl << endl;
+                const auto &item = table.leftover_item();
+                cout << "Leftover item: " << get_high_word(item) << "," << get_low_word(item) << endl << endl;
                 break;
             }
         }
@@ -86,7 +91,7 @@ int main(int argc, char *argv[])
         cout << "Query item: ";
         char hw[64];
         char lw[64];
-        cin.getline(hw, 10, ' ');
+        cin.getline(hw, 10, ',');
         cin.getline(lw, 10, '\n');
         item_type item = make_item(static_cast<uint64_t>(atoi(lw)), static_cast<uint64_t>(atoi(hw)));
         QueryResult res = table.query(item);

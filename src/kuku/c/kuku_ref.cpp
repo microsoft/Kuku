@@ -45,16 +45,16 @@ KUKU_C_FUNC(void) KukuTable_EmptyItem(void *kuku_table, uint64_t *item)
 {
     auto ptr = reinterpret_cast<kuku::KukuTable *>(kuku_table);
     kuku::item_type kuku_item = ptr->empty_item();
-    item[0] = kuku_item[0];
-    item[1] = kuku_item[1];
+    item[0] = kuku::get_low_word(kuku_item);
+    item[1] = kuku::get_high_word(kuku_item);
 }
 
 KUKU_C_FUNC(void) KukuTable_LeftoverItem(void *kuku_table, uint64_t *item)
 {
     auto ptr = reinterpret_cast<kuku::KukuTable *>(kuku_table);
     kuku::item_type kuku_item = ptr->leftover_item();
-    item[0] = kuku_item[0];
-    item[1] = kuku_item[1];
+    item[0] = kuku::get_low_word(kuku_item);
+    item[1] = kuku::get_high_word(kuku_item);
 }
 
 KUKU_C_FUNC(double) KukuTable_FillRate(void *kuku_table)
@@ -73,8 +73,8 @@ KUKU_C_FUNC(void) KukuTable_Table(void *kuku_table, uint32_t index, uint64_t *it
 {
     auto ptr = reinterpret_cast<kuku::KukuTable *>(kuku_table);
     kuku::item_type kuku_item = ptr->table(index);
-    item[0] = kuku_item[0];
-    item[1] = kuku_item[1];
+    item[0] = kuku::get_low_word(kuku_item);
+    item[1] = kuku::get_high_word(kuku_item);
 }
 
 KUKU_C_FUNC(uint32_t) KukuTable_TableSize(void *kuku_table)
@@ -87,8 +87,8 @@ KUKU_C_FUNC(void) KukuTable_Stash(void *kuku_table, uint32_t index, uint64_t *it
 {
     auto ptr = reinterpret_cast<kuku::KukuTable *>(kuku_table);
     kuku::item_type kuku_item = ptr->stash(index);
-    item[0] = kuku_item[0];
-    item[1] = kuku_item[1];
+    item[0] = kuku::get_low_word(kuku_item);
+    item[1] = kuku::get_high_word(kuku_item);
 }
 
 KUKU_C_FUNC(uint32_t) KukuTable_StashSize(void *kuku_table)
@@ -125,16 +125,16 @@ KUKU_C_FUNC(void) KukuTable_ClearTable(void *kuku_table)
 KUKU_C_FUNC(void) Common_SetRandomItem(uint64_t *item)
 {
     kuku::item_type kuku_item = kuku::make_random_item();
-    item[0] = kuku_item[0];
-    item[1] = kuku_item[1];
+    item[0] = kuku::get_low_word(kuku_item);
+    item[1] = kuku::get_high_word(kuku_item);
 }
 
 KUKU_C_FUNC(void) Common_IncrementItem(uint64_t *item)
 {
     kuku::item_type kuku_item = kuku::make_item(item[0], item[1]);
     kuku::increment_item(kuku_item);
-    item[0] = kuku_item[0];
-    item[1] = kuku_item[1];
+    item[0] = kuku::get_low_word(kuku_item);
+    item[1] = kuku::get_high_word(kuku_item);
 }
 
 KUKU_C_FUNC(uint32_t) Common_MinTableSize()

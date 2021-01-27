@@ -14,9 +14,8 @@
 #endif
 #include <array>
 #include <cstdint>
-#include <stdexcept>
-#include <cstring>
 #include <cstddef>
+#include <stdexcept>
 
 namespace kuku
 {
@@ -39,22 +38,22 @@ namespace kuku
         inline location_type operator ()(item_type item) const noexcept
         {
             return
-                random_array_[0 * block_value_count_ + static_cast<std::size_t>(item[0] & 0x00000000000000FFULL)] ^
-                random_array_[1 * block_value_count_ + static_cast<std::size_t>((item[0] & 0x000000000000FF00ULL) >> 8)] ^
-                random_array_[2 * block_value_count_ + static_cast<std::size_t>((item[0] & 0x0000000000FF0000ULL) >> 16)] ^
-                random_array_[3 * block_value_count_ + static_cast<std::size_t>((item[0] & 0x00000000FF000000ULL) >> 24)] ^
-                random_array_[4 * block_value_count_ + static_cast<std::size_t>((item[0] & 0x000000FF00000000ULL) >> 32)] ^
-                random_array_[5 * block_value_count_ + static_cast<std::size_t>((item[0] & 0x0000FF0000000000ULL) >> 40)] ^
-                random_array_[6 * block_value_count_ + static_cast<std::size_t>((item[0] & 0x00FF000000000000ULL) >> 48)] ^
-                random_array_[7 * block_value_count_ + static_cast<std::size_t>((item[0] & 0xFF00000000000000ULL) >> 56)] ^
-                random_array_[8 * block_value_count_ + static_cast<std::size_t>(item[1] & 0x00000000000000FFULL)] ^
-                random_array_[9 * block_value_count_ + static_cast<std::size_t>((item[1] & 0x000000000000FF00ULL) >> 8)] ^
-                random_array_[10 * block_value_count_ + static_cast<std::size_t>((item[1] & 0x0000000000FF0000ULL) >> 16)] ^
-                random_array_[11 * block_value_count_ + static_cast<std::size_t>((item[1] & 0x00000000FF000000ULL) >> 24)] ^
-                random_array_[12 * block_value_count_ + static_cast<std::size_t>((item[1] & 0x000000FF00000000ULL) >> 32)] ^
-                random_array_[13 * block_value_count_ + static_cast<std::size_t>((item[1] & 0x0000FF0000000000ULL) >> 40)] ^
-                random_array_[14 * block_value_count_ + static_cast<std::size_t>((item[1] & 0x00FF000000000000ULL) >> 48)] ^
-                random_array_[15 * block_value_count_ + static_cast<std::size_t>((item[1] & 0xFF00000000000000ULL) >> 56)];
+                random_array_[0 * block_value_count_ + static_cast<std::size_t>(item[0])] ^
+                random_array_[1 * block_value_count_ + static_cast<std::size_t>(item[1])] ^
+                random_array_[2 * block_value_count_ + static_cast<std::size_t>(item[2])] ^
+                random_array_[3 * block_value_count_ + static_cast<std::size_t>(item[3])] ^
+                random_array_[4 * block_value_count_ + static_cast<std::size_t>(item[4])] ^
+                random_array_[5 * block_value_count_ + static_cast<std::size_t>(item[5])] ^
+                random_array_[6 * block_value_count_ + static_cast<std::size_t>(item[6])] ^
+                random_array_[7 * block_value_count_ + static_cast<std::size_t>(item[7])] ^
+                random_array_[8 * block_value_count_ + static_cast<std::size_t>(item[8])] ^
+                random_array_[9 * block_value_count_ + static_cast<std::size_t>(item[9])] ^
+                random_array_[10 * block_value_count_ + static_cast<std::size_t>(item[10])] ^
+                random_array_[11 * block_value_count_ + static_cast<std::size_t>(item[11])] ^
+                random_array_[12 * block_value_count_ + static_cast<std::size_t>(item[12])] ^
+                random_array_[13 * block_value_count_ + static_cast<std::size_t>(item[13])] ^
+                random_array_[14 * block_value_count_ + static_cast<std::size_t>(item[14])] ^
+                random_array_[15 * block_value_count_ + static_cast<std::size_t>(item[15])];
         }
 
     private:

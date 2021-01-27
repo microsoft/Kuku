@@ -6,6 +6,7 @@
 
 - Improved CMake build system.
 - Added support for using only a single hash function (not really cuckoo hashing). 
+- In the C++ library `item_type` is now an array of `unsigned char`.
 
 ## Version 2.0
 

@@ -28,7 +28,7 @@ namespace kuku
     /**
     The type that represents a 128-bit item that can be added to the hash table.
     */
-    using item_type = std::array<std::uint64_t, 2>;
+    using item_type = std::array<unsigned char, 16>;
 
     /**
     The type that represents a location in the hash table.
@@ -70,7 +70,39 @@ namespace kuku
     inline std::uint64_t random_uint64()
     {
         std::random_device rd;
-        return (static_cast<std::uint64_t>(rd()) << 32) + static_cast<std::uint64_t>(rd());
+        return (static_cast<std::uint64_t>(rd()) << 32) | static_cast<std::uint64_t>(rd());
+    }
+
+    /**
+    Return a reference to the low-word of the item.
+    */
+    inline std::uint64_t &get_low_word(item_type &item)
+    {
+        return *reinterpret_cast<std::uint64_t*>(item.data());
+    }
+
+    /**
+    Return a reference to the high-word of the item.
+    */
+    inline std::uint64_t &get_high_word(item_type &item)
+    {
+        return *reinterpret_cast<std::uint64_t*>(item.data() + 8);
+    }
+
+    /**
+    Return a reference to the low-word of the item.
+    */
+    inline std::uint64_t get_low_word(const item_type &item)
+    {
+        return *reinterpret_cast<const std::uint64_t*>(item.data());
+    }
+
+    /**
+    Return a reference to the high-word of the item.
+    */
+    inline std::uint64_t get_high_word(const item_type &item)
+    {
+        return *reinterpret_cast<const std::uint64_t*>(item.data() + 8);
     }
 
     /**
@@ -81,7 +113,7 @@ namespace kuku
     */
     inline void set_item(const unsigned char *in, item_type &destination) noexcept
     {
-        std::copy_n(in, bytes_per_item, reinterpret_cast<unsigned char *>(destination.data()));
+        std::copy_n(in, bytes_per_item, destination.data());
     }
 
     /**
@@ -105,8 +137,8 @@ namespace kuku
     */
     inline void set_item(std::uint64_t low_word, std::uint64_t high_word, item_type &destination) noexcept
     {
-        destination[0] = low_word;
-        destination[1] = high_word;
+        get_low_word(destination) = low_word;
+        get_high_word(destination) = high_word;
     }
 
     /**
@@ -117,7 +149,9 @@ namespace kuku
     */
     inline item_type make_item(std::uint64_t low_word, std::uint64_t high_word) noexcept
     {
-        return { low_word, high_word };
+        item_type item;
+        set_item(low_word, high_word, item);
+        return item;
     }
 
     /**
@@ -125,7 +159,7 @@ namespace kuku
     */
     inline item_type make_zero_item() noexcept
     {
-        return make_item(0, 0);
+        return item_type{};
     }
 
     /**
@@ -135,16 +169,7 @@ namespace kuku
     */
     inline void set_zero_item(item_type &destination) noexcept
     {
-        destination[0] = 0;
-        destination[1] = 0;
-    }
-
-    /**
-    Creates a hash table item and sets its value to all one-bits.
-    */
-    inline item_type make_all_ones_item() noexcept
-    {
-        return make_item(~std::uint64_t(0), ~std::uint64_t(0));
+        destination = item_type{};
     }
 
     /**
@@ -154,8 +179,18 @@ namespace kuku
     */
     inline void set_all_ones_item(item_type &destination) noexcept
     {
-        destination[0] = ~std::uint64_t(0);
-        destination[1] = ~std::uint64_t(0);
+        get_low_word(destination) = ~std::uint64_t(0);
+        get_high_word(destination) = ~std::uint64_t(0);
+    }
+
+    /**
+    Creates a hash table item and sets its value to all one-bits.
+    */
+    inline item_type make_all_ones_item() noexcept
+    {
+        item_type item;
+        set_all_ones_item(item);
+        return item;
     }
 
     /**
@@ -165,7 +200,7 @@ namespace kuku
     */
     inline bool is_zero_item(const item_type &in) noexcept
     {
-        return !(in[0] | in[1]);
+        return !(get_low_word(in) | get_high_word(in));
     }
 
     /**
@@ -175,7 +210,7 @@ namespace kuku
     */
     inline bool is_all_ones_item(const item_type &in) noexcept
     {
-        return !(~in[0] | ~in[1]);
+        return !(~get_low_word(in) | ~get_high_word(in));
     }
 
     /**
@@ -186,7 +221,7 @@ namespace kuku
     */
     inline bool are_equal_item(const item_type &in1, const item_type &in2) noexcept
     {
-        return (in1[0] == in2[0]) && (in1[1] == in2[1]);
+        return (get_low_word(in1) == get_low_word(in2)) && (get_high_word(in1) == get_high_word(in2));
     }
 
     /**
@@ -196,8 +231,7 @@ namespace kuku
     */
     inline void set_random_item(item_type &destination) noexcept
     {
-        destination[0] = random_uint64();
-        destination[1] = random_uint64();
+        set_item(random_uint64(), random_uint64(), destination);
     }
 
     /**
@@ -217,7 +251,7 @@ namespace kuku
     */
     inline void increment_item(item_type &in) noexcept
     {
-        in[0] += 1;
-        in[1] += !in[0] ? 1 : 0;
+        get_low_word(in) += 1;
+        get_high_word(in) += !get_low_word(in) ? 1 : 0;
     }
 } // namespace kuku
