@@ -218,6 +218,11 @@ if(KUKU_BUILD_KUKU_C)
 
     target_link_libraries(kukuc PUBLIC ${KUKU_LIBRARY_NAME})
 
+    # Ensure PDB is generated for shared library
+    if(MSVC)
+        target_link_options(kukuc PUBLIC /DEBUG)
+    endif()
+
     kuku_install_target(kukuc KukuTargets)
 endif()
 
