@@ -48,6 +48,25 @@ steps:
     cmakeArgs: .. -DCMAKE_BUILD_TYPE='${{ parameters.configuration }}' -DKUKU_BUILD_TESTS=ON -DKUKU_BUILD_EXAMPLES=ON -DKUKU_BUILD_KUKU_C=ON
     workingDirectory: '$(Build.SourcesDirectory)/build'
 
+- ${{ if eq(parameters.configuration, 'Release') }}:
+  - task: CmdLine@2
+    displayName: 'Create build properties for Release'
+    inputs:
+      script: |
+        setlocal ENABLEDELAYEDEXPANSION
+        set outfile=Directory.build.props
+        echo|set /p="<Project>" > %outfile%
+        echo|set /p="  <ItemDefinitionGroup>" >> %outfile%
+        echo|set /p="    <ClCompile>" >> %outfile%
+        echo|set /p="      <ControlFlowGuard>Guard</ControlFlowGuard>" >> %outfile%
+        echo|set /p="    </ClCompile>" >> %outfile%
+        echo|set /p="    <Link>" >> %outfile%
+        echo|set /p="      <AdditionalOptions>%%(AdditionalOptions) /guard:cf </AdditionalOptions>" >> %outfile%
+        echo|set /p="    </Link>" >> %outfile%
+        echo|set /p="  </ItemDefinitionGroup>" >> %outfile%
+        echo|set /p="</Project>" >> %outfile%
+      workingDirectory: '$(Build.SourcesDirectory)/build'
+
 - task: MSBuild@1
   displayName: 'Build Kuku'
   inputs:
