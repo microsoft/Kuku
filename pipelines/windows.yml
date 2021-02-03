@@ -216,7 +216,7 @@ steps:
   displayName: 'Run BinSkim'
   inputs:
     InputType: Basic
-    AnalyzeTarget: '$(Build.ArtifactStagingDirectory)\**\${{ parameters.configuration }}\**\?(*.exe|*.dll)'
+    AnalyzeTarget: '$(Build.ArtifactStagingDirectory)\**\${{ parameters.configuration }}\**\kukuc.dll'
     AnalyzeSymPath: '**\bin\**\*.pdb'
   enabled: true
 
