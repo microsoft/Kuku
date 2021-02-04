@@ -1,4 +1,7 @@
 <Project>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'" Label="Configuration">
+    <SpectreMitigation>Spectre</SpectreMitigation>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
     <ClCompile>
       <ControlFlowGuard>Guard</ControlFlowGuard>
