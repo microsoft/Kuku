@@ -164,6 +164,14 @@ if(NOT BUILD_SHARED_LIBS)
     kuku_set_version(kuku)
     kuku_install_target(kuku KukuTargets)
     set(KUKU_LIBRARY_NAME "kuku")
+
+    if (MSVC AND KUKU_SECURE_COMPILE_OPTIONS)
+        target_link_options(kuku PUBLIC /DEBUG)
+
+        # Control Flow Guard / Spectre
+        target_compile_options(kuku PUBLIC /guard:cf)
+        target_compile_options(kuku PUBLIC /Qspectre)
+    endif()
 else()
     add_library(kuku_shared SHARED ${KUKU_SOURCE_FILES})
     kuku_set_soversion(kuku_shared)
@@ -218,16 +226,14 @@ if(KUKU_BUILD_KUKU_C)
 
     target_link_libraries(kukuc PUBLIC ${KUKU_LIBRARY_NAME})
 
-    # Ensure PDB is generated for shared library
-    if(MSVC)
+    if(MSVC AND KUKU_SECURE_COMPILE_OPTIONS)
         target_link_options(kukuc PUBLIC /DEBUG)
 
-        # Control Flow Guard
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /guard:cf")
-        SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} /guard:cf /DYNAMICBASE")
-
-        # Spectre mitigations
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Qspectre")
+        # Control Flow Guard / Spectre
+        target_compile_options(kukuc PUBLIC /guard:cf)
+        target_compile_options(kukuc PUBLIC /Qspectre)
+        target_link_options(kukuc PUBLIC /guard:cf)
+        target_link_options(kukuc PUBLIC /DYNAMICBASE)
     endif()
 
     kuku_install_target(kukuc KukuTargets)
