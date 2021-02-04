@@ -221,6 +221,13 @@ if(KUKU_BUILD_KUKU_C)
     # Ensure PDB is generated for shared library
     if(MSVC)
         target_link_options(kukuc PUBLIC /DEBUG)
+
+        # Control Flow Guard
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /guard:cf")
+        SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} /guard:cf /DYNAMICBASE")
+
+        # Spectre mitigations
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Qspectre")
     endif()
 
     kuku_install_target(kukuc KukuTargets)
