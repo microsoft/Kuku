@@ -212,7 +212,7 @@ namespace kuku
         When the insert function fails to insert a hash table item, there is a leftover item that could not be inserted
         into the table. This function will return the empty item if insertion never failed, and otherwise it will return
         the latest leftover item. Note that due to how the random walk insertion process works, the leftover item is
-        usually not the same one that insert was called with.  
+        usually not the same one that insert was called with.
         */
         inline item_type leftover_item() const noexcept
         {
