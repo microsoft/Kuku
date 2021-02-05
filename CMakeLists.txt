@@ -35,7 +35,13 @@ include(CheckIncludeFiles)
 include(CheckCXXSourceRuns)
 include(CheckTypeSize)
 include(FetchContent)
-#Extra modules
+
+mark_as_advanced(FETCHCONTENT_BASE_DIR)
+mark_as_advanced(FETCHCONTENT_FULLY_DISCONNECTED)
+mark_as_advanced(FETCHCONTENT_UPDATES_DISCONNECTED)
+mark_as_advanced(FETCHCONTENT_QUIET)
+
+# Extra modules
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
 
 # Always build position-independent-code

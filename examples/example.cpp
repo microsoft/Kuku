@@ -45,8 +45,8 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    int table_size = atoi(argv[1]);
-    table_size_type stash_size = static_cast<size_t>(atoi(argv[2]));
+    auto table_size = static_cast<table_size_type>(atoi(argv[1]));
+    auto stash_size = static_cast<table_size_type>(atoi(argv[2]));
     uint8_t loc_func_count = static_cast<uint8_t>(atoi(argv[3]));
     item_type loc_func_seed = make_random_item();
     uint64_t max_probe = static_cast<uint64_t>(atoi(argv[4]));

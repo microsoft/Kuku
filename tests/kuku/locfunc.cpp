@@ -14,7 +14,7 @@ namespace kuku_tests
     TEST(LocFuncTests, Create)
     {
         ASSERT_THROW(LocFunc(0, make_item(0, 0)), invalid_argument);
-        ASSERT_THROW(LocFunc(-1, make_item(0, 0)), invalid_argument);
+        ASSERT_THROW(LocFunc(max_table_size + 1, make_item(0, 0)), invalid_argument);
         ASSERT_THROW(LocFunc(0, make_item(1, 1)), invalid_argument);
     }
 
