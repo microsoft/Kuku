@@ -56,7 +56,7 @@ steps:
           command: 'pack'
           packagesToPack: '$(Build.ArtifactStagingDirectory)\windows-drop\dotnet\nuget\KukuNet-multi.nuspec'
           packDestination: '$(Build.ArtifactStagingDirectory)\windows-drop\dotnet\nuget\Release'
-          buildProperties: 'Configuration=Release;NUGET_WINDOWS_KUKU_C_PATH=$(Build.ArtifactStagingDirectory)\windows-drop\lib\x64\Release\kukuc.dll;NUGET_LINUX_KUKU_C_PATH=$(Build.ArtifactStagingDirectory)\windows-drop\lib\libkukuc.so;NUGET_MACOS_KUKU_C_PATH=$(Build.ArtifactStagingDirectory)\windows-drop\lib\libkukuc.dylib'
+          buildProperties: 'Configuration=Release;NUGET_WINDOWS_KUKU_C_PATH=$(Build.ArtifactStagingDirectory)\windows-drop\build\bin\Release\kukuc.dll;NUGET_LINUX_KUKU_C_PATH=$(Build.ArtifactStagingDirectory)\windows-drop\lib\libkukuc.so;NUGET_MACOS_KUKU_C_PATH=$(Build.ArtifactStagingDirectory)\windows-drop\lib\libkukuc.dylib'
 
     - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
       displayName: 'ESRP CodeSigning NuGet package'
