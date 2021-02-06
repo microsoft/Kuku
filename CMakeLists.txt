@@ -58,6 +58,11 @@ else()
 endif()
 message(STATUS "Kuku debug mode: ${KUKU_DEBUG}")
 
+# Enable security-related compile options (MSVC only)
+set(KUKU_SECURE_COMPILE_OPTIONS_OPTIONS_STR "Enable Control Flow Guard and Specte mitigations (MSVC only)")
+option(KUKU_SECURE_COMPILE_OPTIONS ${KUKU_SECURE_COMPILE_OPTIONS_OPTIONS_STR} OFF)
+mark_as_advanced(KUKU_SECURE_COMPILE_OPTIONS)
+
 # Required files and directories
 include(GNUInstallDirs)
 
@@ -131,6 +136,24 @@ macro(kuku_install_target target export)
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endmacro()
 
+# Add secure compile options
+macro(kuku_set_secure_compile_options target scope)
+    if(KUKU_SECURE_COMPILE_OPTIONS)
+        if(MSVC)
+            # Build debug symbols for static analysis tools
+            target_link_options(${target} ${scope} /DEBUG)
+
+            # Control Flow Guard / Spectre
+            target_compile_options(${target} ${scope} /guard:cf)
+            target_compile_options(${target} ${scope} /Qspectre)
+            target_link_options(${target} ${scope} /guard:cf)
+            target_link_options(${target} ${scope} /DYNAMICBASE)
+        else()
+            message(FATAL_ERROR "KUKU_SECURE_COMPILE_OPTIONS is supported only on MSVC")
+        endif()
+    endif()
+endmacro()
+
 # Include a file to fetch thirdparty content
 macro(kuku_fetch_thirdparty_content content_file)
     set(KUKU_FETCHCONTENT_BASE_DIR_OLD ${FETCHCONTENT_BASE_DIR})
@@ -171,13 +194,8 @@ if(NOT BUILD_SHARED_LIBS)
     kuku_install_target(kuku KukuTargets)
     set(KUKU_LIBRARY_NAME "kuku")
 
-    if (MSVC AND KUKU_SECURE_COMPILE_OPTIONS)
-        target_link_options(kuku PUBLIC /DEBUG)
-
-        # Control Flow Guard / Spectre
-        target_compile_options(kuku PUBLIC /guard:cf)
-        target_compile_options(kuku PUBLIC /Qspectre)
-    endif()
+    # Set secure compile options if KUKU_SECURE_COMPILE_OPTIONS is ON; only supported on MSVC
+    kuku_set_secure_compile_options(kuku PUBLIC)
 else()
     add_library(kuku_shared SHARED ${KUKU_SOURCE_FILES})
     kuku_set_soversion(kuku_shared)
@@ -232,15 +250,8 @@ if(KUKU_BUILD_KUKU_C)
 
     target_link_libraries(kukuc PUBLIC ${KUKU_LIBRARY_NAME})
 
-    if(MSVC AND KUKU_SECURE_COMPILE_OPTIONS)
-        target_link_options(kukuc PUBLIC /DEBUG)
-
-        # Control Flow Guard / Spectre
-        target_compile_options(kukuc PUBLIC /guard:cf)
-        target_compile_options(kukuc PUBLIC /Qspectre)
-        target_link_options(kukuc PUBLIC /guard:cf)
-        target_link_options(kukuc PUBLIC /DYNAMICBASE)
-    endif()
+    # Set secure compile options if KUKU_SECURE_COMPILE_OPTIONS is ON; only supported on MSVC
+    kuku_set_secure_compile_options(kukuc PUBLIC)
 
     kuku_install_target(kukuc KukuTargets)
 endif()
