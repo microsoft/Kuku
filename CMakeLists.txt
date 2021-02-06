@@ -138,19 +138,15 @@ endmacro()
 
 # Add secure compile options
 macro(kuku_set_secure_compile_options target scope)
-    if(KUKU_SECURE_COMPILE_OPTIONS)
-        if(MSVC)
-            # Build debug symbols for static analysis tools
-            target_link_options(${target} ${scope} /DEBUG)
+    if(MSVC)
+        # Build debug symbols for static analysis tools
+        target_link_options(${target} ${scope} /DEBUG)
 
-            # Control Flow Guard / Spectre
-            target_compile_options(${target} ${scope} /guard:cf)
-            target_compile_options(${target} ${scope} /Qspectre)
-            target_link_options(${target} ${scope} /guard:cf)
-            target_link_options(${target} ${scope} /DYNAMICBASE)
-        else()
-            message(FATAL_ERROR "KUKU_SECURE_COMPILE_OPTIONS is supported only on MSVC")
-        endif()
+        # Control Flow Guard / Spectre
+        target_compile_options(${target} ${scope} /guard:cf)
+        target_compile_options(${target} ${scope} /Qspectre)
+        target_link_options(${target} ${scope} /guard:cf)
+        target_link_options(${target} ${scope} /DYNAMICBASE)
     endif()
 endmacro()
 
@@ -195,7 +191,11 @@ if(NOT BUILD_SHARED_LIBS)
     set(KUKU_LIBRARY_NAME "kuku")
 
     # Set secure compile options if KUKU_SECURE_COMPILE_OPTIONS is ON; only supported on MSVC
-    kuku_set_secure_compile_options(kuku PUBLIC)
+    if(KUKU_SECURE_COMPILE_OPTIONS)
+        kuku_set_secure_compile_options(kuku PUBLIC)
+    endif()
+
+# Build only a shared library
 else()
     add_library(kuku_shared SHARED ${KUKU_SOURCE_FILES})
     kuku_set_soversion(kuku_shared)
