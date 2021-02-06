@@ -59,7 +59,7 @@ endif()
 message(STATUS "Kuku debug mode: ${KUKU_DEBUG}")
 
 # Enable security-related compile options (MSVC only)
-set(KUKU_SECURE_COMPILE_OPTIONS_OPTIONS_STR "Enable Control Flow Guard and Specte mitigations (MSVC only)")
+set(KUKU_SECURE_COMPILE_OPTIONS_OPTIONS_STR "Enable Control Flow Guard and Spectre mitigations (MSVC only)")
 option(KUKU_SECURE_COMPILE_OPTIONS ${KUKU_SECURE_COMPILE_OPTIONS_OPTIONS_STR} OFF)
 mark_as_advanced(KUKU_SECURE_COMPILE_OPTIONS)
 
@@ -249,9 +249,6 @@ if(KUKU_BUILD_KUKU_C)
     kuku_set_include_directories(kukuc)
 
     target_link_libraries(kukuc PUBLIC ${KUKU_LIBRARY_NAME})
-
-    # Set secure compile options if KUKU_SECURE_COMPILE_OPTIONS is ON; only supported on MSVC
-    kuku_set_secure_compile_options(kukuc PUBLIC)
 
     kuku_install_target(kukuc KukuTargets)
 endif()
