@@ -18,9 +18,10 @@ namespace kuku
         for (uint32_t i = 0; i < loc_func_count(); i++)
         {
             auto loc = location(item, i);
-            if (are_equal_item(table_[loc], item))
-            {
-                return { loc, i };
+            for(int bucketIndex = 0; bucketIndex < bucketSize; ++bucketIndex){
+                if (are_equal_item(table_[loc + bucketIndex], item)) {
+                    return { loc + bucketIndex, i };
+                }
             }
         }
 
