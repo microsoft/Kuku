@@ -5,6 +5,7 @@
 
 #include "kuku/common.h"
 #include "kuku/internal/hash.h"
+#include<iostream>
 #include <stdexcept>
 
 namespace kuku
@@ -27,7 +28,7 @@ namespace kuku
         @param[in] bucketSize Count within each bucket
         @throws std::invalid_argument if the table_size is larger or smaller than allowed
         */
-        LocFunc(table_size_type table_size, item_type seed, table_size_type bucketCount, table_size_type bucketSize) : table_size_(table_size), hf_(seed), bucketCount(bucketCount), bucketSize(bucketSize)
+        LocFunc(table_size_type table_size, item_type seed, size_t bucketCount, table_size_type bucketSize) : table_size_(table_size), hf_(seed), bucketCount(bucketCount), bucketSize(bucketSize)
         {
             if (table_size < min_table_size || table_size > max_table_size)
             {
@@ -56,11 +57,16 @@ namespace kuku
         */
         inline location_type operator()(item_type item) const noexcept
         {
+            std::cout << "Hash " << hf_(item) << std::endl;
+            std::cout << "BucketSize " << bucketCount << std::endl;
+            std::cout << "BucketCount " << bucketSize << std::endl;
             return (hf_(item) % bucketCount) * bucketSize;
         }
 
     private:
-        table_size_type table_size_, bucketCount, bucketSize;
+        table_size_type table_size_, bucketSize;
+
+        size_t bucketCount;
 
         HashFunc hf_;
     };

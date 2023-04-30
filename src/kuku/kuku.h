@@ -38,7 +38,7 @@ namespace kuku
         */
         KukuTable(
             table_size_type table_size, table_size_type stash_size, std::uint32_t loc_func_count,
-            item_type loc_func_seed, std::uint64_t max_probe, item_type empty_item, size_t bucketCount);
+            item_type loc_func_seed, std::uint64_t max_probe, item_type empty_item, table_size_type bucket_size);
 
         /**
         Adds a single item to the hash table using random walk cuckoo hashing. The return value indicates whether
@@ -234,7 +234,7 @@ namespace kuku
 
         KukuTable &operator=(const KukuTable &assign) = delete;
 
-        void generate_loc_funcs(std::uint32_t loc_func_count, item_type seed);
+        void generate_loc_funcs(std::uint32_t loc_func_count, item_type seed, size_t, table_size_type);
 
         /*
         Swap an item in the table with a given item.
