@@ -61,9 +61,6 @@ int main(int argc, char *argv[])
         cout << "Inserted " << round_counter * 20 << " items" << endl;
         cout << "Fill rate: " << table.fill_rate() << endl;
 
-        char c;
-        cin.get(c);
-
         for (uint64_t i = 0; i < 20; i++)
         {
             cout << " " << i ; 
