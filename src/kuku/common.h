@@ -11,7 +11,7 @@
 #undef KUKU_DEBUG
 #endif
 #else
-#include "kuku/internal/config.h.in"
+#include "kuku/internal/config.h"
 #endif
 
 #include <algorithm>

@@ -101,7 +101,7 @@ namespace kuku
         loc_funcs_.clear();
         while (loc_func_count--)
         {
-            loc_funcs_.emplace_back(table_size_, seed);
+            loc_funcs_.emplace_back(table_size_, seed, bucket_count_, bucket_size_);
             increment_item(seed);
         }
     }
