@@ -14,7 +14,7 @@ ostream &operator<<(ostream &stream, item_type item)
     stream << item[1] << " " << item[0];
     return stream;
 }
-
+//Print table command borrowed from microsoft's example file
 void print_table(const KukuTable &table)
 {
     table_size_type col_count = 8;
@@ -37,26 +37,67 @@ void print_table(const KukuTable &table)
 
 int main(int argc, char *argv[])
 {
-    if (argc != 6)
-    {
-        cout << "Usage: ./example table_size stash_size loc_func_count max_probe bucket_size" << endl;
-        cout << "E.g., ./example 256 2 4 100 4" << endl;
+    /* Tables will have the following properties
+     * 1000000 available indexes 
+     * no stash allowed
+     * bucketSizes between 2 and 5
+     * between 2 and 5 hash functions
+     * a limit of 100 swaps before the table declares an error, this results in 
+     * rehashing
+     */
+    table_size_type tableSizes = 80;
+    table_size_type stashSizes = 0;
+    table_size_type bucketSizes[] = {2, 3, 4, 5};
+    uint8_t hashFunctions[] = {2, 3, 4, 5};
+    uint64_t swapLimit = 100;
+    uint64_t insertions = 20;
 
-        return 0;
+    const int bucketListLength = 5, hashListLength = 5;
+    double fillRates[bucketListLength][hashListLength];
+
+    for(int bucketIndex = 0; bucketIndex < bucketListLength; ++bucketIndex) {
+        for(int hashIndex = 0; hashIndex < hashListLength; ++hashIndex) {
+            fillRates[bucketIndex][hashIndex] = get_fill_rate(tableSizes, stashSizes, bucketSizes[bucketIndex], hashFunctions[hashIndex], swapLimit, insertions);
+        }
+    }
+    //printf the fill rates
+    for(int bucketIndex = 0; bucketIndex < bucketListLength; ++bucketIndex) {
+        for(int hashIndex = 0; hashIndex < hashListLength; ++hashIndex) {
+            cout << "Buckets : " << bucketSizes[bucketIndex] << ", Hash Count : " << hashFunctions[hashIndex] << ", Fill Rates : " << fillRates[bucketIndex][hashIndex] << endl;
+        }
     }
 
-    auto table_size = static_cast<table_size_type>(atoi(argv[1]));
-    auto stash_size = static_cast<table_size_type>(atoi(argv[2]));
-    uint8_t loc_func_count = static_cast<uint8_t>(atoi(argv[3]));
+    return 0;
+}
+
+double get_fill_rate(
+    table_size_type table_size, 
+    table_size_type stash_size, 
+    table_size_type bucketSize,
+    uint8_t loc_func_count, 
+    uint64_t max_probe,
+    uint64_t insertions
+    ) {
     item_type loc_func_seed = make_random_item();
-    uint64_t max_probe = static_cast<uint64_t>(atoi(argv[4]));
-    auto bucketSize = static_cast<table_size_type>(atoi(argv[5]));
     item_type empty_item = make_item(0, 0);
 
     KukuTable table(table_size, stash_size, loc_func_count, loc_func_seed, max_probe, empty_item, bucketSize);
 
     uint64_t round_counter = 0;
-    while (true)
+
+    for(uint64_t inserted = 0; inserted < insertions; ++inserted) {
+        if (!table.insert(make_item(inserted + 1, (inserted + 1) % 20 ))) {
+            cout << "Insert Failed on Insertion " << inserted << endl;
+            cout << "Fill rate: " << table.fill_rate() << endl;
+            const auto &item = table.leftover_item();
+            cout << "Leftover item: " << get_high_word(item) << "," << get_low_word(item) << endl << endl;
+            break;
+        }
+        
+    }
+    print_table(table);
+/* Old insertion method
+    while (false)
     {
         cout << "Inserted " << round_counter * 20 << " items" << endl;
         cout << "Fill rate: " << table.fill_rate() << endl;
@@ -74,18 +115,16 @@ int main(int argc, char *argv[])
                 break;
             }
         }
-        cout << endl;
-
-        print_table(table);
-
+    
         if (!table.is_empty_item(table.leftover_item()))
         {
             break;
         }
 
         round_counter++;
-    }
+    } */
 
+/* Option to Query items
     while (true)
     {
         cout << "Query item: ";
@@ -103,6 +142,6 @@ int main(int argc, char *argv[])
             cout << "Hash function index: " << res.loc_func_index() << endl << endl;
         }
     }
-
-    return 0;
+ */
+    return table.fill_rate();
 }
