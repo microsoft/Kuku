@@ -19,7 +19,6 @@ namespace kuku
         for (uint32_t i = 0; i < loc_func_count(); i++)
         {
             auto loc = location(item, i);
-            cout << "Searching " << loc << endl;
             //search the bucket
             for(int bucketIndex = 0; bucketIndex < bucket_size_; ++bucketIndex){
                 if (are_equal_item(table_[loc + bucketIndex], item)) {
@@ -113,7 +112,6 @@ namespace kuku
     bool KukuTable::insert(item_type item)
     {
         // Check if the item is already inserted or is the empty item
-        cout << "Query: " << item.empty() << endl;
         if (query(item))
         {
             return false;

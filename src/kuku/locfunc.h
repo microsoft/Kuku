@@ -57,9 +57,6 @@ namespace kuku
         */
         inline location_type operator()(item_type item) const noexcept
         {
-            std::cout << "Hash " << hf_(item) << std::endl;
-            std::cout << "BucketSize " << bucketCount << std::endl;
-            std::cout << "BucketCount " << bucketSize << std::endl;
             return (hf_(item) % bucketCount) * bucketSize;
         }
 
