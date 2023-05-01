@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <iostream>
 #include <kuku/kuku.h>
+#include <sys/time.h>
 
 using namespace std;
 using namespace kuku;
@@ -82,7 +83,9 @@ double get_fill_rate(
     KukuTable table(table_size, stash_size, loc_func_count, loc_func_seed, max_probe, empty_item, bucketSize);
 
     uint64_t insertions_failed = 0;
-
+    struct timeval time;
+    gettimeofday(&time, NULL);
+    double startTime = (double) time.tv_sec + (double) time.tv_usec * 0.000001;
     for(uint64_t inserted = 0; inserted < insertions; ++inserted) {
         if (!table.insert(make_item(inserted + 1, (inserted + 1) % 20 ))) {
             insertions_failed++;
@@ -90,7 +93,9 @@ double get_fill_rate(
         }   
  
     }
-    cout << "Buckets : " << bucketSize << ", Hash Count : " << (int) loc_func_count << ", Fill Rates : " << table.fill_rate() << ", Failed Insertions : " << insertions_failed << endl;
+    gettimeofday(&time, NULL);
+    double totalTime = ((double) time.tv_sec + (double) time.tv_usec * 0.000001) - startTime;
+    cout << "Buckets : " << bucketSize << ", Hash Count : " << (int) loc_func_count << ", Fill Rates : " << table.fill_rate() << ", Wall Time : " << totalTime << endl;
         
     return table.fill_rate();
 }
