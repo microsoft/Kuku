@@ -31,7 +31,7 @@ namespace kuku
         @param[in] loc_func_seed The 128-bit seed for the location functions, represented as a hash table item
         @param[in] max_probe The maximum number of random walk steps taken in attempting to insert an item
         @param[in] empty_item A hash table item that represents an empty location in the table
-        @param[in] bucketCount amount of buckets used in the hash table
+        @param[in] bucket_size size of buckets used in the hash table
         @throws std::invalid_argument if loc_func_count is too large or too small
         @throws std::invalid_argument if table_size is too large or too small
         @throws std::invalid_argument if max_probe is zero
