@@ -114,6 +114,7 @@ namespace kuku
         // Check if the item is already inserted or is the empty item
         if (query(item))
         {
+            std::cout << "CONTAINS!\n";
             return false;
         }
 
@@ -135,8 +136,9 @@ namespace kuku
             }
 
             // Swap in the current item and in next round try the popped out item
-            //TODO swap out the bucket head 
-            item = swap(item, location(item, static_cast<uint32_t>(u_(gen_))));
+            //u_(gen_) picks a random hash function to swap items out with
+            // by adding a random number between 0 and bucket_size, we can pick out bucket items randomly
+            item = swap(item, (rand() % bucket_size_) + location(item, static_cast<uint32_t>(u_(gen_))));
         }
 
         // level reached zero; try stash

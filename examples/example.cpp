@@ -36,6 +36,7 @@ void print_table(const KukuTable &table)
         }
         cout << endl;
     }
+    cout << endl;
 }
 
 double get_fill_rate(table_size_type, table_size_type, table_size_type, uint8_t, uint64_t, uint64_t);
@@ -45,17 +46,17 @@ int main(int argc, char *argv[])
     /* Tables will have the following properties
      * 1000000 available indexes 
      * no stash allowed
-     * bucketSizes between 2 and 5
+     * bucketSizes between 1 and 5
      * between 2 and 5 hash functions
      * a limit of 100 swaps before the table declares an error, this results in 
      * rehashing
      */
-    table_size_type tableSizes = 1000000;
+    table_size_type tableSizes = 4000000;
     table_size_type stashSizes = 0;
     table_size_type bucketSizes[] = {1, 2, 3, 4, 5};
     uint8_t hashFunctions[] = {2, 3, 4, 5};
-    uint64_t swapLimit = 100;
-    uint64_t insertions = 1000000;
+    uint64_t swapLimit = 10;
+    uint64_t insertions = 4000000;
 
     const int bucketListLength = 5, hashListLength = 4;
     double fillRates[bucketListLength][hashListLength];
@@ -64,11 +65,12 @@ int main(int argc, char *argv[])
         for(int hashIndex = 0; hashIndex < hashListLength; ++hashIndex) {
             fillRates[bucketIndex][hashIndex] = get_fill_rate(tableSizes, stashSizes, bucketSizes[bucketIndex], hashFunctions[hashIndex], swapLimit, insertions);
         }
+        cout<< endl;
     }
 
     return 0;
 }
-
+//creates and outputs various data on the hash table
 double get_fill_rate(
         table_size_type table_size, 
         table_size_type stash_size, 
@@ -87,7 +89,7 @@ double get_fill_rate(
     gettimeofday(&time, NULL);
     double startTime = (double) time.tv_sec + (double) time.tv_usec * 0.000001;
     for(uint64_t inserted = 0; inserted < insertions; ++inserted) {
-        if (!table.insert(make_item(inserted + 1, (inserted + 1) % 20 ))) {
+        if (!table.insert(make_item(inserted + 1, (uint64_t) rand() ))) {
             insertions_failed++;
             continue;
         }   
@@ -95,7 +97,7 @@ double get_fill_rate(
     }
     gettimeofday(&time, NULL);
     double totalTime = ((double) time.tv_sec + (double) time.tv_usec * 0.000001) - startTime;
-    cout << "Buckets : " << bucketSize << ", Hash Count : " << (int) loc_func_count << ", Fill Rates : " << table.fill_rate() << ", Wall Time : " << totalTime << endl;
-        
+    cout << "Bucket Size : " << bucketSize << ", Hash Count : " << (int) loc_func_count << ", Fill Rates : " << table.fill_rate() << ", Percent Failed : " << (double) insertions_failed / insertions <<", Wall Time : " << totalTime << endl;
+    //if(loc_func_count == 2 && bucketSize == 3) {print_table(table);};   
     return table.fill_rate();
 }
