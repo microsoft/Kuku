@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 #include "kuku/kuku.h"
+#include<iostream>
 
 using namespace std;
 
@@ -18,9 +19,11 @@ namespace kuku
         for (uint32_t i = 0; i < loc_func_count(); i++)
         {
             auto loc = location(item, i);
-            if (are_equal_item(table_[loc], item))
-            {
-                return { loc, i };
+            //search the bucket
+            for(int bucketIndex = 0; bucketIndex < bucket_size_; ++bucketIndex){
+                if (are_equal_item(table_[loc + bucketIndex], item)) {
+                    return { loc + bucketIndex, i };
+                }
             }
         }
 
@@ -39,9 +42,9 @@ namespace kuku
 
     KukuTable::KukuTable(
         table_size_type table_size, table_size_type stash_size, uint32_t loc_func_count, item_type loc_func_seed,
-        uint64_t max_probe, item_type empty_item)
+        uint64_t max_probe, item_type empty_item, table_size_type bucket_size )
         : table_size_(table_size), stash_size_(stash_size), loc_func_seed_(loc_func_seed), max_probe_(max_probe),
-          empty_item_(empty_item), leftover_item_(empty_item_), inserted_items_(0), gen_(random_uint64())
+          empty_item_(empty_item), leftover_item_(empty_item_), inserted_items_(0), gen_(random_uint64()), bucket_size_(bucket_size)
     {
         if (loc_func_count < min_loc_func_count || loc_func_count > max_loc_func_count)
         {
@@ -59,8 +62,13 @@ namespace kuku
         // Allocate the hash table
         table_.resize(table_size_, empty_item_);
 
+        bucket_count_ = table_size_ / bucket_size_;
+
         // Create the location (hash) functions
-        generate_loc_funcs(loc_func_count, loc_func_seed_);
+        generate_loc_funcs(loc_func_count, loc_func_seed_, bucket_count_, bucket_size_);
+
+        //determine size of buckets
+        
 
         // Set up the distribution for location function sampling
         u_ = std::uniform_int_distribution<uint32_t>(0, loc_func_count - 1);
@@ -91,12 +99,12 @@ namespace kuku
         inserted_items_ = 0;
     }
 
-    void KukuTable::generate_loc_funcs(uint32_t loc_func_count, item_type seed)
+    void KukuTable::generate_loc_funcs(uint32_t loc_func_count, item_type seed, size_t bucketCount, table_size_type bucketSize)
     {
         loc_funcs_.clear();
         while (loc_func_count--)
         {
-            loc_funcs_.emplace_back(table_size_, seed);
+            loc_funcs_.emplace_back(table_size_, seed, bucketCount, bucketSize);
             increment_item(seed);
         }
     }
@@ -106,6 +114,7 @@ namespace kuku
         // Check if the item is already inserted or is the empty item
         if (query(item))
         {
+            std::cout << "CONTAINS!\n";
             return false;
         }
 
@@ -116,16 +125,20 @@ namespace kuku
             for (uint32_t i = 0; i < loc_func_count(); i++)
             {
                 location_type loc = location(item, i);
-                if (is_empty_item(table_[loc]))
-                {
-                    table_[loc] = item;
-                    inserted_items_++;
-                    return true;
+                for(int bucketIndex = 0; bucketIndex < bucket_size_; ++bucketIndex) {
+                if (is_empty_item(table_[loc + bucketIndex]))
+                    {
+                        table_[loc + bucketIndex] = item;
+                        inserted_items_++;
+                        return true;
+                    }
                 }
             }
 
             // Swap in the current item and in next round try the popped out item
-            item = swap(item, location(item, static_cast<uint32_t>(u_(gen_))));
+            //u_(gen_) picks a random hash function to swap items out with
+            // by adding a random number between 0 and bucket_size, we can pick out bucket items randomly
+            item = swap(item, (rand() % bucket_size_) + location(item, static_cast<uint32_t>(u_(gen_))));
         }
 
         // level reached zero; try stash
