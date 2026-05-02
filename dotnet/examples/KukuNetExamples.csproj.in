@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Authors>Microsoft Research</Authors>
     <Company>Microsoft Corporation</Company>
     <Description>.NET wrapper examples for Kuku</Description>
@@ -10,7 +10,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <PlatformTarget>x64</PlatformTarget>
     <OutputPath>@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/dotnet/$(Configuration)</OutputPath>
   </PropertyGroup>
 
@@ -20,7 +19,7 @@
 
   <ItemGroup>
     <KukuCBinaryFiles Condition="$([MSBuild]::IsOsPlatform(Windows))" Include="@KUKU_WINDOWS_KUKU_C_DIRECTORY@\kukuc.dll" />
-    <KukuCBinaryFiles Condition="$([MSBuild]::IsOsPlatform(Linux))" Include="@CMAKE_LIBRARY_OUTPUT_DIRECTORY@/libkukuc.so.*" />
+    <KukuCBinaryFiles Condition="$([MSBuild]::IsOsPlatform(Linux))" Include="@CMAKE_LIBRARY_OUTPUT_DIRECTORY@/libkukuc.so*" />
     <KukuCBinaryFiles Condition="$([MSBuild]::IsOsPlatform(OSX))" Include="@CMAKE_LIBRARY_OUTPUT_DIRECTORY@/libkukuc.*.dylib" />
   </ItemGroup>
 

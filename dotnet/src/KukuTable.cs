@@ -4,16 +4,17 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 
 namespace Microsoft.Research.Kuku
 {
     /// <summary>
-    /// The KukuTable class represents a cockoo hash table. It includes information about the location functions (hash
+    /// The KukuTable class represents a cuckoo hash table. It includes information about the location functions (hash
     /// functions) and holds the items inserted into the table.
     /// </summary>
-    public class KukuTable
+    public class KukuTable : IDisposable
     {
-        private readonly IntPtr _unmanagedkukuTable;
+        private IntPtr _unmanagedkukuTable;
 
         /// <summary>Returns a <see cref="KukuTableTable"/> instance referring to the hash table.</summary>
         public KukuTableTable Table { get; }
@@ -59,8 +60,50 @@ namespace Microsoft.Research.Kuku
                 parameters.MaxProbe,
                 emptyItemData);
 
+            // KukuTable_Create returns IntPtr.Zero if the native constructor threw (e.g., bad
+            // arguments slipped through, or allocation failed). Surface as a managed exception
+            // rather than letting subsequent native calls dereference null.
+            if (IntPtr.Zero == _unmanagedkukuTable)
+            {
+                throw new InvalidOperationException("Failed to create native KukuTable");
+            }
+
             Table = new KukuTableTable(this);
             Stash = new KukuTableStash(this);
+        }
+
+        /// <summary>Releases the native KukuTable allocation.</summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>Releases the native KukuTable allocation. Override to release additional resources.</summary>
+        /// <param name="disposing">True when called from <see cref="Dispose()"/>; false from the finalizer.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            // Atomically swap out the handle so a Dispose/finalizer race can never
+            // call KukuTable_Destroy twice on the same pointer.
+            IntPtr handle = Interlocked.Exchange(ref _unmanagedkukuTable, IntPtr.Zero);
+            if (IntPtr.Zero != handle)
+            {
+                NativeMethods.KukuTable_Destroy(handle);
+            }
+        }
+
+        /// <summary>Finalizer; ensures the native handle is freed if Dispose was not called.</summary>
+        ~KukuTable()
+        {
+            Dispose(false);
+        }
+
+        private void ThrowIfDisposed()
+        {
+            if (IntPtr.Zero == _unmanagedkukuTable)
+            {
+                throw new ObjectDisposedException(nameof(KukuTable));
+            }
         }
 
         /// <summary>
@@ -72,6 +115,7 @@ namespace Microsoft.Research.Kuku
         /// <exception cref="ArgumentException">if the given item is the empty item for this hash table</exception>
         public bool Insert(Item item)
         {
+            ThrowIfDisposed();
             if (null == item)
             {
                 throw new ArgumentNullException($"{nameof(item)} cannot be null");
@@ -91,6 +135,7 @@ namespace Microsoft.Research.Kuku
         /// <exception cref="ArgumentException">if the given item is the empty item for this hash table</exception>
         public QueryResult Query(Item item)
         {
+            ThrowIfDisposed();
             if (null == item)
             {
                 throw new ArgumentNullException($"{nameof(item)} cannot be null");
@@ -110,6 +155,7 @@ namespace Microsoft.Research.Kuku
         /// <exception cref="ArgumentNullException">if item is null</exception>
         public bool IsEmptyItem(Item item)
         {
+            ThrowIfDisposed();
             if (null == item)
             {
                 throw new ArgumentNullException($"{nameof(item)} cannot be null");
@@ -132,6 +178,7 @@ namespace Microsoft.Research.Kuku
         {
             get
             {
+                ThrowIfDisposed();
                 ulong[] data = new ulong[2];
                 NativeMethods.KukuTable_EmptyItem(_unmanagedkukuTable, data);
                 return Item.MakeItem((data[0], data[1]));
@@ -141,6 +188,7 @@ namespace Microsoft.Research.Kuku
         /// <summary>Clears the hash table by filling every location with the empty item.</summary>
         public void ClearTable()
         {
+            ThrowIfDisposed();
             NativeMethods.KukuTable_ClearTable(_unmanagedkukuTable);
         }
 
@@ -155,6 +203,7 @@ namespace Microsoft.Research.Kuku
         {
             get
             {
+                ThrowIfDisposed();
                 var data = new ulong[2];
                 NativeMethods.KukuTable_LeftoverItem(_unmanagedkukuTable, data);
                 return Item.MakeItem((data[0], data[1]));
@@ -162,10 +211,16 @@ namespace Microsoft.Research.Kuku
         }
 
         /// <summary>Returns the current fill rate of the hash table and stash.</summary>
-        public double FillRate => NativeMethods.KukuTable_FillRate(_unmanagedkukuTable);
+        public double FillRate
+        {
+            get { ThrowIfDisposed(); return NativeMethods.KukuTable_FillRate(_unmanagedkukuTable); }
+        }
 
         /// <summary>Returns the number of location functions used by the hash table.</summary>
-        public uint LocFuncCount => NativeMethods.KukuTable_LocFuncCount(_unmanagedkukuTable);
+        public uint LocFuncCount
+        {
+            get { ThrowIfDisposed(); return NativeMethods.KukuTable_LocFuncCount(_unmanagedkukuTable); }
+        }
 
         /// <summary>Returns a location that a given hash table item may be placed at.</summary>
         /// <param name="item">The hash table item for which the location is to be obtained</param>
@@ -175,6 +230,7 @@ namespace Microsoft.Research.Kuku
         /// <exception cref="ArgumentException">if the given item is the empty item for this hash table</exception>
         public uint Location(Item item, uint locFuncIndex)
         {
+            ThrowIfDisposed();
             if (null == item)
             {
                 throw new ArgumentNullException($"{nameof(item)} cannot be null");
@@ -198,6 +254,7 @@ namespace Microsoft.Research.Kuku
         /// <exception cref="ArgumentException">if the given item is the empty item for this hash table</exception>
         public HashSet<uint> AllLocations(Item item)
         {
+            ThrowIfDisposed();
             if (null == item)
             {
                 throw new ArgumentNullException($"{nameof(item)} cannot be null");
@@ -209,7 +266,8 @@ namespace Microsoft.Research.Kuku
 
             ulong[] data = new ulong[2] { item.Data.Item1, item.Data.Item2 };
             uint[] locations = new uint[LocFuncCount];
-            NativeMethods.KukuTable_AllLocations(_unmanagedkukuTable, data, locations, out uint count);
+            uint count = (uint)locations.Length;
+            NativeMethods.KukuTable_AllLocations(_unmanagedkukuTable, data, locations, ref count);
 
             HashSet<uint> result = new HashSet<uint>();
             for (uint i = 0; i < count; i++)
@@ -226,6 +284,7 @@ namespace Microsoft.Research.Kuku
         {
             get
             {
+                ThrowIfDisposed();
                 if (index >= TableSize)
                 {
                     throw new ArgumentOutOfRangeException($"{nameof(index)} is out of range");
@@ -238,16 +297,20 @@ namespace Microsoft.Research.Kuku
         }
 
         /// <summary>Returns the size of the hash table.</summary>
-        public uint TableSize => NativeMethods.KukuTable_TableSize(_unmanagedkukuTable);
+        public uint TableSize
+        {
+            get { ThrowIfDisposed(); return NativeMethods.KukuTable_TableSize(_unmanagedkukuTable); }
+        }
 
         /// <summary>Returns a reference to a specific location in the stash.</summary>
         /// <param name="index">The index in the stash</param>
         /// <exception cref="ArgumentOutOfRangeException">if index is out of range</exception>
         public Item StashItem(uint index)
         {
-            if (index > TableSize)
+            ThrowIfDisposed();
+            if (index >= StashSize)
             {
-                throw new ArgumentOutOfRangeException("index is out of range");
+                throw new ArgumentOutOfRangeException(nameof(index), "index is out of range");
             }
 
             var data = new ulong[2];
@@ -256,7 +319,10 @@ namespace Microsoft.Research.Kuku
         }
 
         /// <summary>Returns the size of the stash for the hash table.</summary>
-        public uint StashSize => NativeMethods.KukuTable_StashSize(_unmanagedkukuTable);
+        public uint StashSize
+        {
+            get { ThrowIfDisposed(); return NativeMethods.KukuTable_StashSize(_unmanagedkukuTable); }
+        }
 
         /// <summary>Gives access to the hash table associated with a <see cref="KukuTable"/> instance.</summary>
         /// <remarks>
@@ -296,8 +362,8 @@ namespace Microsoft.Research.Kuku
 
                 for (uint i = 0; i < size; ++i)
                 {
-                    sb.Append(string.Format(
-                        string.Join(",", this[i]) + ((i % columns == columns - 1) ? "\n" : "\t")));
+                    sb.Append(string.Join(",", this[i]));
+                    sb.Append((i % columns == columns - 1) ? "\n" : "\t");
                 }
                 return sb.ToString();
             }

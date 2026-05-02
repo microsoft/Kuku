@@ -29,7 +29,7 @@ namespace kuku
         {
             if (are_equal_item(stash_[loc], item))
             {
-                return { loc, ~uint32_t(0) };
+                return { loc, ~static_cast<uint32_t>(0) };
             }
         }
 
@@ -41,7 +41,7 @@ namespace kuku
         table_size_type table_size, table_size_type stash_size, uint32_t loc_func_count, item_type loc_func_seed,
         uint64_t max_probe, item_type empty_item)
         : table_size_(table_size), stash_size_(stash_size), loc_func_seed_(loc_func_seed), max_probe_(max_probe),
-          empty_item_(empty_item), leftover_item_(empty_item_), inserted_items_(0), gen_(random_uint64())
+          empty_item_(empty_item), leftover_item_(empty_item_), gen_(random_uint64())
     {
         if (loc_func_count < min_loc_func_count || loc_func_count > max_loc_func_count)
         {
@@ -81,11 +81,9 @@ namespace kuku
         return result;
     }
 
-    void KukuTable::clear_table()
+    void KukuTable::clear_table() noexcept
     {
-        size_t sz = table_.size();
-        table_.resize(0);
-        table_.resize(sz, empty_item_);
+        std::fill(table_.begin(), table_.end(), empty_item_);
         stash_.clear();
         leftover_item_ = empty_item_;
         inserted_items_ = 0;
@@ -135,10 +133,8 @@ namespace kuku
             inserted_items_++;
             return true;
         }
-        else
-        {
-            leftover_item_ = item;
-            return false;
-        }
+
+        leftover_item_ = item;
+        return false;
     }
 } // namespace kuku

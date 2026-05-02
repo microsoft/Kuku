@@ -28,17 +28,21 @@ namespace kuku_tests
                 LocFunc lf(ts, seed);
                 LocFunc lf2(ts, seed);
 
+                // 10k trials keeps the 3σ band well inside the 0.05 tolerance even for
+                // the smallest table sizes (where p = 1/ts has the highest variance).
+                // 1k trials produced an occasional CI flake; 10k is statistically safe.
                 uint64_t zeros = 0;
-                uint64_t total = 1000;
+                uint64_t total = 10000;
                 for (uint64_t i = 0; i < total; i++)
                 {
                     item_type bl;
                     set_random_item(bl);
                     ASSERT_TRUE(lf(bl) == lf2(bl));
-                    zeros += (lf(bl) == size_t(0));
+                    zeros += static_cast<uint64_t>(lf(bl) == static_cast<size_t>(0));
                 }
                 ASSERT_TRUE(
-                    abs(static_cast<double>(zeros) / static_cast<double>(total) - 1 / static_cast<double>(ts)) < 0.05);
+                    abs((static_cast<double>(zeros) / static_cast<double>(total)) -
+                        (1.0 / static_cast<double>(ts))) < 0.05);
             }
         }
     }

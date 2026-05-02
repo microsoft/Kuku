@@ -17,7 +17,7 @@ namespace KukuNetExample
 
         static void RunExample(KukuTableParameters parameters)
         {
-            var kukuTable = new KukuTable(parameters);
+            using var kukuTable = new KukuTable(parameters);
 
             ulong roundCounter = 0;
             while (true)

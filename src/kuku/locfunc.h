@@ -40,11 +40,8 @@ namespace kuku
         */
         LocFunc(const LocFunc &copy) = default;
 
-        /**
-        Assigns this location function to be equal to a given location function.
-
-        @param[in] assign The location function to assign from
-        */
+        // Assignment is deleted because HashFunc holds a large array seeded once at construction;
+        // copy-construction (used when LocFunc is stored in std::vector) is sufficient.
         LocFunc &operator=(const LocFunc &assign) = delete;
 
         /**
@@ -52,7 +49,7 @@ namespace kuku
 
         @param[in] item The hash table item for which to compute the location
         */
-        inline location_type operator()(item_type item) const noexcept
+        location_type operator()(item_type item) const noexcept
         {
             return hf_(item) % table_size_;
         }

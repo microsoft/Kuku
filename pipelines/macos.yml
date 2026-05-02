@@ -1,0 +1,94 @@
+steps:
+# The Microsoft-hosted agent's preinstalled vcpkg clone is whatever was current
+# when the agent image was built; our manifest's builtin-baseline may be a
+# newer commit that the agent doesn't have yet. Fetch first so vcpkg can
+# resolve the baseline regardless of how new it is.
+- script: |
+    git -C "$(VCPKG_INSTALLATION_ROOT)" fetch --quiet origin
+  displayName: 'Update vcpkg refs'
+
+# Build x86_64 first with tests + .NET assets enabled. We run native and .NET
+# tests against the x86_64 binary because Microsoft-hosted macos-latest runners
+# may be Intel; x86_64 binaries run natively there and via Rosetta on arm64
+# runners. Building x86_64 last (rather than arm64 last) also ensures the
+# CMAKE_LIBRARY_OUTPUT_DIRECTORY substitution that the .NET csproj.in
+# templates capture points at build-x64/lib, where we land the lipo'd dylib.
+- task: CMake@1
+  displayName: 'Configure Kuku for arm64'
+  inputs:
+    workingDirectory: '$(Build.SourcesDirectory)'
+    cmakeArgs: >-
+      -S .
+      -B build-arm64
+      -DCMAKE_OSX_ARCHITECTURES=arm64
+      -DCMAKE_BUILD_TYPE=${{ parameters.configuration }}
+      -DCMAKE_TOOLCHAIN_FILE=$(VCPKG_INSTALLATION_ROOT)/scripts/buildsystems/vcpkg.cmake
+      -DVCPKG_TARGET_TRIPLET=arm64-osx
+      -DKUKU_BUILD_KUKU_C=ON
+
+- script: |
+    cmake --build build-arm64 --parallel
+  displayName: 'Build Kuku native (arm64)'
+
+- task: CMake@1
+  displayName: 'Configure Kuku for x86_64'
+  inputs:
+    workingDirectory: '$(Build.SourcesDirectory)'
+    cmakeArgs: >-
+      -S .
+      -B build-x64
+      -DCMAKE_OSX_ARCHITECTURES=x86_64
+      -DCMAKE_BUILD_TYPE=${{ parameters.configuration }}
+      -DCMAKE_TOOLCHAIN_FILE=$(VCPKG_INSTALLATION_ROOT)/scripts/buildsystems/vcpkg.cmake
+      -DVCPKG_TARGET_TRIPLET=x64-osx
+      -DKUKU_BUILD_TESTS=ON
+      -DKUKU_BUILD_KUKU_C=ON
+      -DKUKU_BUILD_EXAMPLES=ON
+
+- script: |
+    cmake --build build-x64 --parallel
+  displayName: 'Build Kuku native (x86_64)'
+
+- script: |
+    cd $BUILD_SOURCESDIRECTORY
+    ./build-x64/bin/kukutest
+  displayName: 'Run native unit tests'
+
+# Replace the x86_64-only dylib at build-x64/lib/libkukuc.dylib with a
+# universal (lipo-merged) one. The .NET test csproj's PostBuild copy task
+# pulls from build-x64/lib (per the configure_file substitution captured by
+# the last CMake configure above), so .NET tests will load the fat dylib too.
+- script: |
+    cd $BUILD_SOURCESDIRECTORY
+    lipo -create -output build-x64/lib/libkukuc.dylib.fat \
+        build-x64/lib/libkukuc.dylib \
+        build-arm64/lib/libkukuc.dylib
+    mv build-x64/lib/libkukuc.dylib.fat build-x64/lib/libkukuc.dylib
+    lipo -info build-x64/lib/libkukuc.dylib
+  displayName: 'Create universal (fat) dylib'
+
+- task: UseDotNet@2
+  displayName: 'Get .NET 10 SDK'
+  inputs:
+    packageType: 'sdk'
+    version: '10.0.x'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Run dotnet unit tests'
+  inputs:
+    command: test
+    projects: '**/KukuNetTests.csproj'
+    arguments: '--configuration ${{ parameters.configuration }} --verbosity detailed'
+
+- task: CopyFiles@2
+  displayName: 'Copy fat dylib to staging'
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)/build-x64/lib'
+    Contents: 'libkukuc.dylib'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/lib'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: ${{ parameters.artifactName }}

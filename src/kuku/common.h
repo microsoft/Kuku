@@ -43,12 +43,12 @@ namespace kuku
     /**
     The smallest allowed table size.
     */
-    constexpr table_size_type min_table_size = table_size_type(1);
+    constexpr table_size_type min_table_size = static_cast<table_size_type>(1);
 
     /**
     The largest allowed table size.
     */
-    constexpr table_size_type max_table_size = table_size_type(1) << 30;
+    constexpr table_size_type max_table_size = static_cast<table_size_type>(1) << 30U;
 
     /**
     The smallest allowed number of hash functions.
@@ -56,9 +56,14 @@ namespace kuku
     constexpr std::uint32_t min_loc_func_count = 1;
 
     /**
-    The largest allowed number of hash functions. This must be a power of two for correct behavior.
+    The largest allowed number of hash functions. This must be a power of two: QueryResult::found()
+    masks loc_func_index against (max_loc_func_count - 1) to detect the "not found" sentinel
+    (max_loc_func_count itself), which is only correct when max_loc_func_count is a power of two.
     */
     constexpr std::uint32_t max_loc_func_count = 32;
+    static_assert(
+        (max_loc_func_count & (max_loc_func_count - 1)) == 0,
+        "max_loc_func_count must be a power of two for QueryResult::found() to work");
 
     constexpr int bytes_per_uint64 = sizeof(std::uint64_t);
 
@@ -70,39 +75,48 @@ namespace kuku
     inline std::uint64_t random_uint64()
     {
         std::random_device rd;
-        return (static_cast<std::uint64_t>(rd()) << 32) | static_cast<std::uint64_t>(rd());
+        return (static_cast<std::uint64_t>(rd()) << 32U) | static_cast<std::uint64_t>(rd());
     }
 
     /**
-    Return a reference to the low-word of the item.
+    Returns the low 64-bit word of the item.
+
+    Uses std::memcpy to avoid strict-aliasing/alignment UB: item_type is
+    std::array<unsigned char, 16> with alignment 1, so reinterpret_cast<uint64_t*>
+    on item.data() can be misaligned on strict-alignment targets (e.g., some ARM).
     */
-    inline std::uint64_t &get_low_word(item_type &item)
+    inline std::uint64_t get_low_word(const item_type &item) noexcept
     {
-        return *reinterpret_cast<std::uint64_t*>(item.data());
+        std::uint64_t value{};
+        std::memcpy(&value, item.data(), sizeof(value));
+        return value;
     }
 
     /**
-    Return a reference to the high-word of the item.
+    Returns the high 64-bit word of the item. See get_low_word for the rationale
+    behind the std::memcpy-based implementation.
     */
-    inline std::uint64_t &get_high_word(item_type &item)
+    inline std::uint64_t get_high_word(const item_type &item) noexcept
     {
-        return *reinterpret_cast<std::uint64_t*>(item.data() + 8);
+        std::uint64_t value{};
+        std::memcpy(&value, item.data() + bytes_per_uint64, sizeof(value));
+        return value;
     }
 
     /**
-    Return a reference to the low-word of the item.
+    Stores a 64-bit value into the low word of the item.
     */
-    inline std::uint64_t get_low_word(const item_type &item)
+    inline void set_low_word(std::uint64_t value, item_type &destination) noexcept
     {
-        return *reinterpret_cast<const std::uint64_t*>(item.data());
+        std::memcpy(destination.data(), &value, sizeof(value));
     }
 
     /**
-    Return a reference to the high-word of the item.
+    Stores a 64-bit value into the high word of the item.
     */
-    inline std::uint64_t get_high_word(const item_type &item)
+    inline void set_high_word(std::uint64_t value, item_type &destination) noexcept
     {
-        return *reinterpret_cast<const std::uint64_t*>(item.data() + 8);
+        std::memcpy(destination.data() + bytes_per_uint64, &value, sizeof(value));
     }
 
     /**
@@ -113,7 +127,7 @@ namespace kuku
     */
     inline void set_item(const unsigned char *in, item_type &destination) noexcept
     {
-        std::copy_n(in, bytes_per_item, destination.data());
+        std::memcpy(destination.data(), in, bytes_per_item);
     }
 
     /**
@@ -137,8 +151,8 @@ namespace kuku
     */
     inline void set_item(std::uint64_t low_word, std::uint64_t high_word, item_type &destination) noexcept
     {
-        get_low_word(destination) = low_word;
-        get_high_word(destination) = high_word;
+        set_low_word(low_word, destination);
+        set_high_word(high_word, destination);
     }
 
     /**
@@ -179,8 +193,7 @@ namespace kuku
     */
     inline void set_all_ones_item(item_type &destination) noexcept
     {
-        get_low_word(destination) = ~std::uint64_t(0);
-        get_high_word(destination) = ~std::uint64_t(0);
+        destination.fill(static_cast<unsigned char>(0xFF));
     }
 
     /**
@@ -204,7 +217,7 @@ namespace kuku
     }
 
     /**
-    Returns whether a given has table item has all one-bits.
+    Returns whether a given hash table item has all one-bits.
 
     @param[in] in The hash table item to test
     */
@@ -229,15 +242,18 @@ namespace kuku
 
     @param[out] destination The hash table item whose value is to be set
     */
-    inline void set_random_item(item_type &destination) noexcept
+    inline void set_random_item(item_type &destination)
     {
         set_item(random_uint64(), random_uint64(), destination);
     }
 
     /**
     Creates a random hash table item.
+
+    @throws std::exception derived if the underlying std::random_device fails (rare; possible on
+    locked-down systems where /dev/urandom is unavailable, etc.).
     */
-    inline item_type make_random_item() noexcept
+    inline item_type make_random_item()
     {
         item_type out;
         set_random_item(out);
@@ -251,7 +267,9 @@ namespace kuku
     */
     inline void increment_item(item_type &in) noexcept
     {
-        get_low_word(in) += 1;
-        get_high_word(in) += !get_low_word(in) ? 1 : 0;
+        std::uint64_t low_word = get_low_word(in) + 1;
+        std::uint64_t high_word = get_high_word(in) + (low_word == 0 ? 1 : 0);
+        set_low_word(low_word, in);
+        set_high_word(high_word, in);
     }
 } // namespace kuku

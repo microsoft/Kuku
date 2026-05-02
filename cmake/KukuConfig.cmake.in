@@ -11,7 +11,7 @@
 #   Kuku_VERSION : The full version number
 #   Kuku_VERSION_MAJOR : The major version number
 #   Kuku_VERSION_MINOR : The minor version number
-#   Kuku_VERSION_PATH : The patch version number
+#   Kuku_VERSION_PATCH : The patch version number
 #   Kuku_BUILD_TYPE : The build type (e.g., "Release" or "Debug")
 #   Kuku_DEBUG : Set to non-zero value if Kuku is compiled with extra debugging code
 

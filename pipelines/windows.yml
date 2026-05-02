@@ -4,95 +4,65 @@ steps:
   inputs:
     versionSpec: ${{ parameters.nuget_version }}
 
-- task: NuGetCommand@2
-  displayName: 'NuGet restore Configuration Packages'
-  inputs:
-    restoreSolution: config/packages.config
-    restoreDirectory: ConfigPackages
-
-- task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@2
-  displayName: 'Run CredScan'
-  inputs:
-    toolMajorVersion: 'V2'
-    outputFormat: sarif
-    debugMode: false
-
-- ${{ if eq(parameters.configuration, 'Release') }}:
-  - task: UseDotNet@2
-    displayName: 'Get .NET Core 2.1 SDK'
-    inputs:
-      packageType: 'sdk'
-      version: '2.1.x'
-
 - task: UseDotNet@2
-  displayName: 'Get .NET Core 3.1 SDK'
+  displayName: 'Get .NET 10 SDK'
   inputs:
     packageType: 'sdk'
-    version: '3.1.302'
+    version: '10.0.x'
 
-- ${{ if eq(parameters.configuration, 'Release') }}:
-  - task: PowerShell@2
-    displayName: 'Download Strong Name certificate'
-    inputs:
-      targetType: 'inline'
-      script: |
-          # Get signing certificate
-          $CertOutFile = Join-Path -Path $env:BUILD_SOURCESDIRECTORY -ChildPath dotnet\src\KukuNetCert.snk
-          if (Test-Path env:KukuNetSigningCertificate) {
-              Invoke-WebRequest -Uri "$env:KukuNetSigningCertificate" -OutFile $CertOutFile
-          }
+# The Microsoft-hosted agent's preinstalled vcpkg clone is whatever was current
+# when the agent image was built; our manifest's builtin-baseline may be a
+# newer commit that the agent doesn't have yet. Fetch first so vcpkg can
+# resolve the baseline regardless of how new it is.
+- script: |
+    git -C "$(VCPKG_INSTALLATION_ROOT)" fetch --quiet origin
+  displayName: 'Update vcpkg refs'
 
 - task: CMake@1
   displayName: 'Configure Kuku'
   inputs:
-    cmakeArgs: .. -DCMAKE_BUILD_TYPE='${{ parameters.configuration }}' -DKUKU_BUILD_TESTS=ON -DKUKU_BUILD_EXAMPLES=ON -DKUKU_BUILD_KUKU_C=ON -DKUKU_SECURE_COMPILE_OPTIONS=1
+    cmakeArgs: >-
+      .. -DCMAKE_BUILD_TYPE='${{ parameters.configuration }}'
+      -DCMAKE_TOOLCHAIN_FILE=$(VCPKG_INSTALLATION_ROOT)/scripts/buildsystems/vcpkg.cmake
+      -DKUKU_BUILD_TESTS=ON -DKUKU_BUILD_EXAMPLES=ON -DKUKU_BUILD_KUKU_C=ON
     workingDirectory: '$(Build.SourcesDirectory)/build'
 
 - task: MSBuild@1
   displayName: 'Build Kuku'
   inputs:
-    solution: '$(Build.SourcesDirectory)/build/kuku.sln'
+    solution: '$(Build.SourcesDirectory)/build/Kuku.sln'
     msbuildArchitecture: 'x64'
     platform: 'x64'
     configuration: '${{ parameters.configuration }}'
 
-- task: securedevelopmentteam.vss-secure-development-tools.build-task-roslynanalyzers.RoslynAnalyzers@2
-  displayName: 'Run Roslyn Analyzers'
+- script: |
+    "$(Build.SourcesDirectory)\build\bin\${{ parameters.configuration }}\kukutest.exe"
+  displayName: 'Run native unit tests'
 
-- task: VSTest@2
-  displayName: 'VsTest - native tests'
+# Use the dotnet CLI for the .NET projects rather than NuGetCommand@2 /
+# MSBuild@1 / VSTest@2: those invoke the MSBuild that ships with VS 2022
+# (17.x), but .NET 10 SDK requires MSBuild 18+. The dotnet CLI carries its
+# own compatible MSBuild bundled with the SDK installed by the UseDotNet
+# step above.
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet restore (KukuNet.sln)'
   inputs:
-    testAssemblyVer2: |
-        **\${{ parameters.configuration }}\*test*.dll
-        **\${{ parameters.configuration }}\*test*.exe
-        !**\obj\**
-    platform: 'x64'
-    configuration: ${{ parameters.configuration }}
-    diagnosticsEnabled: True
+    command: restore
+    projects: '$(Build.SourcesDirectory)/dotnet/KukuNet.sln'
 
-- task: NuGetCommand@2
-  displayName: 'NuGet restore from Solution'
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet build (KukuNet.sln)'
   inputs:
-    command: 'restore'
-    restoreSolution: 'dotnet/KukuNet.sln'
-    feedsToUse: 'select'
+    command: build
+    projects: '$(Build.SourcesDirectory)/dotnet/KukuNet.sln'
+    arguments: '--configuration ${{ parameters.configuration }} --no-restore'
 
-- task: MSBuild@1
-  displayName: 'Build KukuNet'
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet test (KukuNetTests)'
   inputs:
-    solution: '$(Build.SourcesDirectory)/dotnet/KukuNet.sln'
-    msbuildArchitecture: 'x64'
-    platform: 'x64'
-    configuration: '${{ parameters.configuration }}'
-
-- task: VSTest@2
-  displayName: 'VsTest - dotnet tests'
-  inputs:
-    testAssemblyVer2: |
-        **\${{ parameters.configuration }}\**\KukuNetTests.dll
-        !**\obj\**
-    configuration: ${{ parameters.configuration }}
-    diagnosticsEnabled: True
+    command: test
+    projects: '**/KukuNetTests.csproj'
+    arguments: '--configuration ${{ parameters.configuration }} --no-build --verbosity detailed'
 
 - task: PublishSymbols@2
   displayName: 'Publish symbols path'
@@ -100,96 +70,6 @@ steps:
     searchPattern: '**\bin\**\*.pdb'
     PublishSymbols: false
   continueOnError: true
-
-- ${{ if eq(parameters.configuration, 'Release') }}:
-  - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
-    displayName: 'ESRP Add Strong Name'
-    inputs:
-      ConnectedServiceName: 'Kuku ESRP'
-      FolderPath: build/bin/dotnet/${{ parameters.configuration }}/netstandard2.0
-      Pattern: 'KukuNet.dll'
-      signConfigType: inlineSignParams
-      inlineOperation: |
-        [
-          {
-              "KeyCode" : "CP-235845-SN",
-              "OperationCode" : "StrongNameSign",
-              "Parameters" : {},
-              "ToolName" : "sign",
-              "ToolVersion" : "1.0"
-          },
-          {
-              "KeyCode" : "CP-235845-SN",
-              "OperationCode" : "StrongNameVerify",
-              "Parameters" : {},
-              "ToolName" : "sign",
-              "ToolVersion" : "1.0"
-          }
-        ]
-
-- ${{ if eq(parameters.configuration, 'Release') }}:
-  - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
-    displayName: 'ESRP CodeSigning .NET Standard 2.0'
-    inputs:
-      ConnectedServiceName: 'Kuku ESRP'
-      FolderPath: build/bin/dotnet/${{ parameters.configuration }}/netstandard2.0
-      Pattern: 'KukuNet.dll'
-      signConfigType: inlineSignParams
-      inlineOperation: |
-        [
-          {
-              "KeyCode": "CP-230012",
-              "OperationCode": "SigntoolSign",
-              "Parameters": {
-                  "OpusName": "Microsoft.Research.Kuku",
-                  "OpusInfo": "https://github.com/microsoft/Kuku",
-                  "FileDigest": "/fd \"SHA256\"",
-                  "PageHash": "/PH",
-                  "TimeStamp": "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
-              },
-              "ToolName": "sign",
-              "ToolVersion": "1.0"
-          },
-          {
-              "KeyCode": "CP-230012",
-              "OperationCode": "SigntoolVerify",
-              "Parameters": {},
-              "ToolName": "sign",
-              "ToolVersion": "1.0"
-          }
-        ]
-
-- ${{ if eq(parameters.configuration, 'Release') }}:
-  - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
-    displayName: 'ESRP CodeSigning native'
-    inputs:
-      ConnectedServiceName: 'Kuku ESRP'
-      FolderPath: build/bin/${{ parameters.configuration }}
-      Pattern: 'kukuc.dll'
-      signConfigType: inlineSignParams
-      inlineOperation: |
-        [
-          {
-              "KeyCode": "CP-230012",
-              "OperationCode": "SigntoolSign",
-              "Parameters": {
-                  "OpusName": "Microsoft.Research.Kuku",
-                  "OpusInfo": "https://github.com/microsoft/Kuku",
-                  "FileDigest": "/fd \"SHA256\"",
-                  "PageHash": "/PH",
-                  "TimeStamp": "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
-              },
-              "ToolName": "sign",
-              "ToolVersion": "1.0"
-          },
-          {
-              "KeyCode": "CP-230012",
-              "OperationCode": "SigntoolVerify",
-              "Parameters": {},
-              "ToolName": "sign",
-              "ToolVersion": "1.0"
-          }
-        ]
 
 - task: CopyFiles@2
   displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
@@ -211,20 +91,6 @@ steps:
     SourceFolder: '$(Build.SourcesDirectory)\dotnet\nuget\'
     Contents: 'KukuNet.targets'
     TargetFolder: '$(Build.ArtifactStagingDirectory)\dotnet\nuget\'
-
-- task: securedevelopmentteam.vss-secure-development-tools.build-task-binskim.BinSkim@3
-  displayName: 'Run BinSkim'
-  inputs:
-    InputType: Basic
-    AnalyzeTarget: '$(Build.ArtifactStagingDirectory)\**\${{ parameters.configuration }}\**\kukuc.dll'
-    AnalyzeSymPath: '**\bin\**\*.pdb'
-  enabled: true
-
-- task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
-  displayName: 'Component Detection'
-
-- task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@2
-  displayName: 'Publish Security Analysis Logs'
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: drop'

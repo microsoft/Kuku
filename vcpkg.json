@@ -1,0 +1,17 @@
+{
+  "name": "kuku",
+  "version": "3.0.0",
+  "description": "Cuckoo hashing library",
+  "license": "MIT",
+  "homepage": "https://github.com/microsoft/Kuku",
+  "dependencies": [],
+  "features": {
+    "tests": {
+      "description": "Build the test suite.",
+      "dependencies": [
+        "gtest"
+      ]
+    }
+  },
+  "builtin-baseline": "003cb58a3c2cd943c348901481fca78d665308e2"
+}

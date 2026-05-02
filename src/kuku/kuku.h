@@ -16,7 +16,7 @@ namespace kuku
     class QueryResult;
 
     /**
-    The KukuTable class represents a cockoo hash table. It includes information about the location functions (hash
+    The KukuTable class represents a cuckoo hash table. It includes information about the location functions (hash
     functions) and holds the items inserted into the table.
     */
     class KukuTable
@@ -46,7 +46,7 @@ namespace kuku
         @param[in] item The hash table item to insert
         @throws std::invalid_argument if the given item is the empty item for this hash table
         */
-        bool insert(item_type item);
+        [[nodiscard]] bool insert(item_type item);
 
         /**
         Queries for the presence of a given item in the hash table and stash.
@@ -54,7 +54,7 @@ namespace kuku
         @param[in] item The hash table item to query
         @throws std::invalid_argument if the given item is the empty item for this hash table
         */
-        QueryResult query(item_type item) const;
+        [[nodiscard]] QueryResult query(item_type item) const;
 
         /**
         Returns a location that a given hash table item may be placed at.
@@ -64,7 +64,7 @@ namespace kuku
         @throws std::out_of_range if loc_func_index is out of range
         @throws std::invalid_argument if the given item is the empty item for this hash table
         */
-        inline location_type location(item_type item, std::uint32_t loc_func_index) const
+        [[nodiscard]] location_type location(item_type item, std::uint32_t loc_func_index) const
         {
             if (loc_func_index >= loc_funcs_.size())
             {
@@ -82,17 +82,17 @@ namespace kuku
 
         @throws std::invalid_argument if the given item is the empty item for this hash table
         */
-        std::set<location_type> all_locations(item_type item) const;
+        [[nodiscard]] std::set<location_type> all_locations(item_type item) const;
 
         /**
         Clears the hash table by filling every location with the empty item.
         */
-        void clear_table();
+        void clear_table() noexcept;
 
         /**
         Returns the number of location functions used by the hash table.
         */
-        inline std::uint32_t loc_func_count() const noexcept
+        [[nodiscard]] std::uint32_t loc_func_count() const noexcept
         {
             return static_cast<std::uint32_t>(loc_funcs_.size());
         }
@@ -100,7 +100,7 @@ namespace kuku
         /**
         Returns a reference to the hash table.
         */
-        inline const std::vector<item_type> &table() const noexcept
+        [[nodiscard]] const std::vector<item_type> &table() const noexcept
         {
             return table_;
         }
@@ -111,7 +111,7 @@ namespace kuku
         @param[in] index The index in the hash table
         @throws std::out_of_range if index is out of range
         */
-        inline const item_type &table(location_type index) const
+        [[nodiscard]] const item_type &table(location_type index) const
         {
             if (index >= table_size_)
             {
@@ -123,7 +123,7 @@ namespace kuku
         /**
         Returns a reference to the stash.
         */
-        inline const std::vector<item_type> &stash() const noexcept
+        [[nodiscard]] const std::vector<item_type> &stash() const noexcept
         {
             return stash_;
         }
@@ -131,16 +131,22 @@ namespace kuku
         /**
         Returns a reference to a specific location in the stash.
 
+        For indices in the range [stash().size(), stash_size()), this returns a reference to the
+        empty item rather than throwing — the stash is logically full of empty slots up to its
+        configured maximum size, even before items have been pushed into it. Callers that want to
+        distinguish "really stashed" from "padded empty" should iterate over stash() directly, or
+        compare the return against empty_item().
+
         @param[in] index The index in the stash
-        @throws std::out_of_range if index is out of range
+        @throws std::out_of_range if index is greater than or equal to stash_size()
         */
-        inline const item_type &stash(location_type index) const
+        [[nodiscard]] const item_type &stash(location_type index) const
         {
             if (index >= stash_size_)
             {
                 throw std::out_of_range("index is out of range");
             }
-            if (index >= stash_.size() && index < stash_size_)
+            if (index >= stash_.size())
             {
                 return empty_item_;
             }
@@ -150,7 +156,7 @@ namespace kuku
         /**
         Returns the size of the hash table.
         */
-        inline table_size_type table_size() const noexcept
+        [[nodiscard]] table_size_type table_size() const noexcept
         {
             return table_size_;
         }
@@ -158,7 +164,7 @@ namespace kuku
         /**
         Returns the size of the stash.
         */
-        inline table_size_type stash_size() const noexcept
+        [[nodiscard]] table_size_type stash_size() const noexcept
         {
             return stash_size_;
         }
@@ -166,7 +172,7 @@ namespace kuku
         /**
         Returns the 128-bit seed used for the location functions, represented as a hash table item.
         */
-        inline item_type loc_func_seed() const noexcept
+        [[nodiscard]] item_type loc_func_seed() const noexcept
         {
             return loc_func_seed_;
         }
@@ -174,7 +180,7 @@ namespace kuku
         /**
         Returns the maximum number of random walk steps taken in attempting to insert an item.
         */
-        inline std::uint64_t max_probe() const noexcept
+        [[nodiscard]] std::uint64_t max_probe() const noexcept
         {
             return max_probe_;
         }
@@ -182,7 +188,7 @@ namespace kuku
         /**
         Returns the hash table item that represents an empty location in the table.
         */
-        inline const item_type &empty_item() const noexcept
+        [[nodiscard]] const item_type &empty_item() const noexcept
         {
             return empty_item_;
         }
@@ -193,7 +199,7 @@ namespace kuku
         @param[in] index The index in the hash table
         @throws std::out_of_range if index is out of range
         */
-        inline bool is_empty(location_type index) const noexcept
+        [[nodiscard]] bool is_empty(location_type index) const
         {
             return is_empty_item(table(index));
         }
@@ -203,7 +209,7 @@ namespace kuku
 
         @param[in] item The item to compare to the empty item
         */
-        inline bool is_empty_item(const item_type &item) const noexcept
+        [[nodiscard]] bool is_empty_item(const item_type &item) const noexcept
         {
             return are_equal_item(item, empty_item_);
         }
@@ -214,7 +220,7 @@ namespace kuku
         the latest leftover item. Note that due to how the random walk insertion process works, the leftover item is
         usually not the same one that insert was called with.
         */
-        inline item_type leftover_item() const noexcept
+        [[nodiscard]] item_type leftover_item() const noexcept
         {
             return leftover_item_;
         }
@@ -222,23 +228,23 @@ namespace kuku
         /**
         Returns the current fill rate of the hash table and stash.
         */
-        inline double fill_rate() const noexcept
+        [[nodiscard]] double fill_rate() const noexcept
         {
             return static_cast<double>(inserted_items_) /
                    (static_cast<double>(table_size()) + static_cast<double>(stash_size_));
         }
 
-    private:
         KukuTable(const KukuTable &copy) = delete;
 
         KukuTable &operator=(const KukuTable &assign) = delete;
 
+    private:
         void generate_loc_funcs(std::uint32_t loc_func_count, item_type seed);
 
         /*
         Swap an item in the table with a given item.
         */
-        inline item_type swap(item_type item, location_type location) noexcept
+        item_type swap(item_type item, location_type location) noexcept
         {
             item_type old_item = table_[location];
             table_[location] = item;
@@ -294,7 +300,7 @@ namespace kuku
         /*
         The number of items that have been inserted to table or stash.
         */
-        table_size_type inserted_items_;
+        table_size_type inserted_items_ = 0;
 
         /*
         Randomness source for location function sampling.
@@ -323,7 +329,7 @@ namespace kuku
         /**
         Returns the hash table or stash location represented by this QueryResult.
         */
-        inline location_type location() const noexcept
+        [[nodiscard]] location_type location() const noexcept
         {
             return location_;
         }
@@ -333,7 +339,7 @@ namespace kuku
         when in_stash() is true. A value equal to max_loc_func_count indicates the item was not found in the table or
         stash.
         */
-        inline std::uint32_t loc_func_index() const noexcept
+        [[nodiscard]] std::uint32_t loc_func_index() const noexcept
         {
             return loc_func_index_;
         }
@@ -341,7 +347,7 @@ namespace kuku
         /**
         Returns whether the queried item was found in the stash.
         */
-        inline bool in_stash() const noexcept
+        [[nodiscard]] bool in_stash() const noexcept
         {
             return !~loc_func_index_;
         }
@@ -349,7 +355,7 @@ namespace kuku
         /**
         Returns whether the queried item was found in the hash table or in the stash.
         */
-        inline bool found() const noexcept
+        [[nodiscard]] bool found() const noexcept
         {
             return !(loc_func_index_ & ~(max_loc_func_count - 1)) || in_stash();
         }
@@ -357,7 +363,7 @@ namespace kuku
         /**
         Returns whether the queried item was found in the hash table or in the stash.
         */
-        inline operator bool() const noexcept
+        operator bool() const noexcept
         {
             return found();
         }
@@ -376,6 +382,8 @@ namespace kuku
 
         location_type location_ = 0;
 
-        std::uint32_t loc_func_index_ = 0;
+        // Initialized to the "not found" sentinel so a default-constructed QueryResult reports
+        // !found() — anything < max_loc_func_count would falsely report a hit at slot 0.
+        std::uint32_t loc_func_index_ = max_loc_func_count;
     };
 } // namespace kuku

@@ -19,12 +19,9 @@ namespace KukuNetTest
         /// <summary>
         /// Assert that an exception of the given type is thrown.
         ///
-        /// This is a workaround for a unit testing issue in VS 2019.
-        /// When running unit tests a couple of them fail because of a FileNotFoundException being thrown instead
-        /// of the expected exception. The FileNotFoundException is thrown in the boundary between a .Net call
-        /// and a native method, so there is not really much we can do to fix it. As a workaround this method
-        /// works as Assert.ThrowsException, but allows FileNotFoundException as well, and outputs a warning when
-        /// it is found.
+        /// Historically VS 2019 sometimes surfaced a spurious FileNotFoundException at the managed/native
+        /// boundary in place of the expected exception. We tolerate that here for compatibility (warns
+        /// rather than fails) — tests on modern .NET runtimes do not exercise that path.
         /// </summary>
         /// <typeparam name="T">Expected exception type</typeparam>
         /// <param name="action">Function to run that should throw an exception</param>
@@ -38,12 +35,9 @@ namespace KukuNetTest
         /// <summary>
         /// Assert that an exception of the given type is thrown.
         ///
-        /// This is a workaround for a unit testing issue in VS 2019.
-        /// When running unit tests a couple of them fail because of a FileNotFoundException being thrown instead
-        /// of the expected exception. The FileNotFoundException is thrown in the boundary between a .Net call
-        /// and a native method, so there is not really much we can do to fix it. As a workaround this method
-        /// works as Assert.ThrowsException, but allows FileNotFoundException as well, and outputs a warning when
-        /// it is found.
+        /// Historically VS 2019 sometimes surfaced a spurious FileNotFoundException at the managed/native
+        /// boundary in place of the expected exception. We tolerate that here for compatibility (warns
+        /// rather than fails) — tests on modern .NET runtimes do not exercise that path.
         /// </summary>
         /// <typeparam name="T">Expected exception type</typeparam>
         /// <param name="action">Action to run that should throw an exception</param>

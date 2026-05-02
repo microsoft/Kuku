@@ -1,4 +1,5 @@
-# This defines a pipeline to build on Windows, Linux, and macOS in Release mode.
+# Release pipeline: builds on Windows + Linux + macOS, then assembles the
+# multi-platform NuGet package. Manual-trigger only; not run on push.
 
 trigger: none
 
@@ -21,4 +22,4 @@ stages:
     - template: jobs.yml
       parameters:
         debug: false
-        name: Nuget
+        name: NuGet

@@ -1,0 +1,59 @@
+steps:
+# The Microsoft-hosted agent's preinstalled vcpkg clone is whatever was current
+# when the agent image was built; our manifest's builtin-baseline may be a
+# newer commit that the agent doesn't have yet. Fetch first so vcpkg can
+# resolve the baseline regardless of how new it is.
+- script: |
+    git -C "$(VCPKG_INSTALLATION_ROOT)" fetch --quiet origin
+  displayName: 'Update vcpkg refs'
+
+- task: CMake@1
+  displayName: 'Configure Kuku'
+  inputs:
+    workingDirectory: '$(Build.SourcesDirectory)'
+    cmakeArgs: >-
+      -S .
+      -B build
+      -DCMAKE_BUILD_TYPE=${{ parameters.configuration }}
+      -DCMAKE_TOOLCHAIN_FILE=$(VCPKG_INSTALLATION_ROOT)/scripts/buildsystems/vcpkg.cmake
+      -DKUKU_BUILD_TESTS=ON
+      -DKUKU_BUILD_KUKU_C=ON
+      -DKUKU_BUILD_EXAMPLES=ON
+
+- script: |
+    cd $BUILD_SOURCESDIRECTORY
+    cmake --build build --parallel
+  displayName: 'Build Kuku'
+
+- script: |
+    cd $BUILD_SOURCESDIRECTORY
+    ./build/bin/kukutest
+  displayName: 'Run native unit tests'
+
+- task: UseDotNet@2
+  displayName: 'Get .NET 10 SDK'
+  inputs:
+    packageType: 'sdk'
+    version: '10.0.x'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Run dotnet unit tests'
+  inputs:
+    command: test
+    projects: '**/KukuNetTests.csproj'
+    arguments: '--configuration ${{ parameters.configuration }} --verbosity detailed'
+
+# Copy with -L so the symlink chain (libkukuc.so → libkukuc.so.3.0 →
+# libkukuc.so.3.0.0) collapses into a single real file at the destination.
+# CopyFiles@2 stumbles on multi-level symlinks (ENOTDIR while scandir-ing the
+# resolved target), and the NuGet package only needs the unversioned name.
+- script: |
+    mkdir -p "$(Build.ArtifactStagingDirectory)/lib"
+    cp -L "$(Build.SourcesDirectory)/build/lib/libkukuc.so" "$(Build.ArtifactStagingDirectory)/lib/libkukuc.so"
+  displayName: 'Stage native library'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: ${{ parameters.artifactName }}

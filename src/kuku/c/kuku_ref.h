@@ -10,6 +10,11 @@
 // Check that std::size_t is 64 bits
 static_assert(sizeof(std::size_t) == 8, "Require sizeof(std::size_t) == 8");
 
+// The C ABI exposes table sizes/locations as uint32_t. If table_size_type ever
+// changes, the C ABI silently truncates without this assertion.
+static_assert(sizeof(kuku::table_size_type) == sizeof(uint32_t), "table_size_type must be 32 bits for the C ABI");
+static_assert(sizeof(kuku::location_type) == sizeof(uint32_t), "location_type must be 32 bits for the C ABI");
+
 #ifdef _MSC_VER
 
 // Check that architecture (platform) is x64
@@ -34,18 +39,20 @@ static_assert(false, "Require architecture == x64");
 
 #define KUKU_C_FUNC(x) KUKU_C_DECOR x KUKU_C_CALL
 
-typedef struct
+struct QueryResultData
 {
     bool found;
     bool in_stash;
     uint32_t location;
     uint32_t loc_func_index;
-} QueryResultData;
+};
 
 KUKU_C_FUNC(void *)
 KukuTable_Create(
     uint32_t table_size, uint32_t stash_size, uint32_t loc_func_count, uint64_t *loc_func_seed, uint64_t max_probe,
     uint64_t *empty_item);
+
+KUKU_C_FUNC(void) KukuTable_Destroy(void *kuku_table);
 
 KUKU_C_FUNC(bool) KukuTable_Insert(void *kuku_table, uint64_t *item);
 

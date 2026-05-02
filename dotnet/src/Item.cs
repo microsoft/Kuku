@@ -60,7 +60,7 @@ namespace Microsoft.Research.Kuku
         /// <summary>Returns whether a given hash table item is zero.</summary>
         public bool IsZeroItem() => Data == (0, 0);
 
-        /// <summary>Returns whether a given has table item has all one-bits.</summary>
+        /// <summary>Returns whether a given hash table item has all one-bits.</summary>
         public bool IsAllOnesItem() => Data == (~(ulong)0, ~(ulong)0);
 
         /// <summary>Returns whether two hash table items are equal.</summary>
@@ -69,7 +69,7 @@ namespace Microsoft.Research.Kuku
 
         /// <summary>Returns whether two hash table items are equal.</summary>
         /// <param name="other">An item to be compared with this item</param>
-        public bool Equals(Item other) => Data == other.Data;
+        public bool Equals(Item other) => other != null && Data == other.Data;
 
         /// <summary>Returns the hash code for this item.</summary>
         public override int GetHashCode()
@@ -104,7 +104,7 @@ namespace Microsoft.Research.Kuku
         /// <summary>Returns the item as a formatted string with high and low words separated by a comma.</summary>
         public override string ToString()
         {
-            return string.Format($"{Data.Item1},{Data.Item2}");
+            return $"{Data.Item1},{Data.Item2}";
         }
 
         private Item((ulong, ulong) data) => Data = data;

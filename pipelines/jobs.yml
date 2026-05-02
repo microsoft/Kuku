@@ -13,12 +13,12 @@ jobs:
     steps:
     - template: windows.yml
       parameters:
-        nuget_version: '5.4.0'
+        nuget_version: '6.14.0'
         ${{ if eq(parameters.debug, 'true') }}:
-          configuration: 'debug'
+          configuration: 'Debug'
           path: 'Debug'
         ${{ if eq(parameters.debug, 'false') }}:
-          configuration: 'release'
+          configuration: 'Release'
           path: 'Release'
 
 - ${{ if eq(parameters.name, 'Linux') }}:
@@ -27,7 +27,7 @@ jobs:
     pool:
       vmImage: 'ubuntu-latest'
     steps:
-    - template: nix.yml
+    - template: linux.yml
       parameters:
         artifactName: linux-drop
         ${{ if eq(parameters.debug, 'true') }}:
@@ -41,7 +41,7 @@ jobs:
     pool:
       vmImage: 'macos-latest'
     steps:
-    - template: nix.yml
+    - template: macos.yml
       parameters:
         artifactName: macos-drop
         ${{ if eq(parameters.debug, 'true') }}:
@@ -49,15 +49,13 @@ jobs:
         ${{ if eq(parameters.debug, 'false') }}:
           configuration: 'Release'
 
-- ${{ if eq(parameters.name, 'Nuget') }}:
+- ${{ if eq(parameters.name, 'NuGet') }}:
   - job: ${{ parameters.name }}
     displayName: ${{ parameters.name }}
-    dependsOn: [Windows, Linux, macOs]
+    dependsOn: [Windows, Linux, macOS]
     pool:
       vmImage: 'windows-latest'
     steps:
     - template: nuget.yml
       parameters:
-        nuget_version: '5.4.0'
-        configuration: 'release'
-        path: 'Release'
+        nuget_version: '6.14.0'

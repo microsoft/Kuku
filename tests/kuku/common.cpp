@@ -3,6 +3,7 @@
 
 #include "kuku/common.h"
 #include "gtest/gtest.h"
+#include <array>
 #include <cmath>
 #include <cstdint>
 
@@ -35,9 +36,9 @@ namespace kuku_tests
         ASSERT_EQ(0xF00FF00FF00FF00F, get_low_word(bl));
         ASSERT_EQ(0xBABABABABABABABA, get_high_word(bl));
 
-        unsigned char data[bytes_per_item]{ 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-                                            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 };
-        set_item(data, bl);
+        std::array<unsigned char, bytes_per_item> data{ 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+                                                        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 };
+        set_item(data.data(), bl);
         ASSERT_EQ(0x0706050403020100, get_low_word(bl));
         ASSERT_EQ(0x0706050403020100, get_high_word(bl));
     }

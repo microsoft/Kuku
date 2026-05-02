@@ -5,9 +5,9 @@
 
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <KukuCBinaryFiles Condition="$([MSBuild]::IsOsPlatform('Windows'))" Include="$(MSBuildThisFileDirectory)../runtimes/win10-x64/kukuc.dll" />
-    <KukuCBinaryFiles Condition="$([MSBuild]::IsOsPlatform('Linux'))" Include="$(MSBuildThisFileDirectory)../runtimes/linux-x64/libkukuc.so*" />
-    <KukuCBinaryFiles Condition="$([MSBuild]::IsOsPlatform('OSX'))" Include="$(MSBuildThisFileDirectory)../runtimes/macos-x64/libkukuc*.dylib" />
+    <KukuCBinaryFiles Condition="$([MSBuild]::IsOsPlatform('Windows'))" Include="$(MSBuildThisFileDirectory)../runtimes/win-x64/native/kukuc.dll" />
+    <KukuCBinaryFiles Condition="$([MSBuild]::IsOsPlatform('Linux'))" Include="$(MSBuildThisFileDirectory)../runtimes/linux-x64/native/libkukuc.so*" />
+    <KukuCBinaryFiles Condition="$([MSBuild]::IsOsPlatform('OSX'))" Include="$(MSBuildThisFileDirectory)../runtimes/osx/native/libkukuc*.dylib" />
   </ItemGroup>
   <ItemGroup>
     <None Include="@(KukuCBinaryFiles)">
