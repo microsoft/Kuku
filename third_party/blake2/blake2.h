@@ -12,13 +12,6 @@
    More information about the BLAKE2 hash function can be found at
    https://blake2.net.
 */
-
-/*
-Minor modifications to the original file have been made and marked
-as `EDIT: ...`. The sole purpose of these edits is to silence misleading
-warnings in Visual Studio.
-*/
-
 #ifndef BLAKE2_H
 #define BLAKE2_H
 
@@ -143,9 +136,6 @@ extern "C" {
   } blake2xb_state;
 
   /* Padded structs result in a compile-time error */
-  /*
-  EDIT: explicit cast to int
-  */
   enum {
     BLAKE2_DUMMY_1 = 1/(int)(sizeof(blake2s_param) == BLAKE2S_OUTBYTES),
     BLAKE2_DUMMY_2 = 1/(int)(sizeof(blake2b_param) == BLAKE2B_OUTBYTES)

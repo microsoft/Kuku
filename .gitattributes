@@ -1,0 +1,20 @@
+# Without this file, line endings depend on each contributor's core.autocrlf
+# setting, which is how two files came to be stored with CRLF while the other
+# seventy-odd were stored with LF.
+
+# Normalize every text file to LF in the repository. Working-tree endings still
+# follow the platform, so this changes nothing for Windows editors.
+* text=auto
+
+# Shell scripts must keep LF in the WORKING TREE as well, not just in the
+# repository. A CR at the end of the shebang line makes the kernel look for an
+# interpreter literally named "/bin/bash\r", and the script dies with
+# "cannot execute: required file not found" (exit 127). scripts/clang-format-all.sh
+# was reproducibly unrunnable under Linux and WSL for exactly this reason.
+*.sh text eol=lf
+
+# The vendored BLAKE2 sources are kept byte-identical to their upstream revision,
+# and that property is checked by diffing against upstream. Upstream uses LF, so
+# pin LF in the working tree too; otherwise the comparison spuriously fails on a
+# Windows checkout.
+third_party/blake2/* text eol=lf

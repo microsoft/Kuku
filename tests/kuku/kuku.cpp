@@ -11,13 +11,24 @@ using namespace std;
 
 namespace kuku_tests
 {
+    // Where these tests use fixed location function seeds and empty item sentinels, the values are
+    // deliberate: they keep those test parameters deterministic. Tests that need a nonzero
+    // sentinel use the all-ones item rather than a randomly generated item. A constant seed is not
+    // a usage example: production protocols whose items can be influenced by an untrusted party
+    // must follow the seed rules documented on the KukuTable constructor. This does not make the
+    // tests replayable: the cuckoo walk draws from an internal generator seeded from
+    // random_uint64(), which no API can fix.
+
     TEST(KukuTableTests, Create)
     {
         ASSERT_THROW(KukuTable(0, 0, 2, make_zero_item(), 1, make_zero_item()), invalid_argument);
         ASSERT_THROW(KukuTable(1, 0, 0, make_zero_item(), 1, make_zero_item()), invalid_argument);
         ASSERT_THROW(KukuTable(1, 0, 2, make_zero_item(), 0, make_zero_item()), invalid_argument);
+        ASSERT_THROW(KukuTable(1, max_stash_size + 1, 2, make_zero_item(), 1, make_zero_item()), invalid_argument);
         ASSERT_NO_THROW(KukuTable(min_table_size, 0, 2, make_zero_item(), 1, make_zero_item()));
         ASSERT_NO_THROW(KukuTable(1, 0, min_loc_func_count, make_zero_item(), 1, make_zero_item()));
+        ASSERT_NO_THROW(KukuTable(1, min_stash_size, 2, make_zero_item(), 1, make_zero_item()));
+        ASSERT_NO_THROW(KukuTable(1, max_stash_size, 2, make_zero_item(), 1, make_zero_item()));
     }
 
     TEST(KukuTableTests, Populate1)
@@ -87,7 +98,7 @@ namespace kuku_tests
 
     TEST(KukuTableTests, Populate3)
     {
-        KukuTable ct(1U << 10U, 0, 2, make_zero_item(), 10, make_random_item());
+        KukuTable ct(1U << 10U, 0, 2, make_zero_item(), 10, make_all_ones_item());
         for (location_type i = 0; i < ct.table_size(); i++)
         {
             ASSERT_TRUE(ct.is_empty(i));
@@ -99,7 +110,7 @@ namespace kuku_tests
         ASSERT_TRUE(ct.insert(make_item(1, 1)));
         ASSERT_TRUE(ct.insert(make_item(2, 2)));
 
-        // Fails
+        // A duplicate insertion fails.
         ASSERT_FALSE(ct.insert(make_item(2, 2)));
 
         ASSERT_THROW((void)ct.insert(ct.empty_item()), invalid_argument);
@@ -121,7 +132,7 @@ namespace kuku_tests
 
     TEST(KukuTableTests, Fill1)
     {
-        KukuTable ct(1U << 10U, 0, 2, make_zero_item(), 100, make_random_item());
+        KukuTable ct(1U << 10U, 0, 2, make_zero_item(), 100, make_all_ones_item());
         vector<item_type> inserted_items;
         for (int i = 0; i < 100; i++)
         {
@@ -137,7 +148,7 @@ namespace kuku_tests
 
     TEST(KukuTableTests, Fill2)
     {
-        KukuTable ct((1U << 10U) - 1, 0, 4, make_zero_item(), 100, make_random_item());
+        KukuTable ct((1U << 10U) - 1, 0, 4, make_zero_item(), 100, make_all_ones_item());
         vector<item_type> inserted_items;
         for (int i = 0; i < 600; i++)
         {
@@ -153,7 +164,7 @@ namespace kuku_tests
 
     TEST(KukuTableTests, Fill3)
     {
-        KukuTable ct((1U << 10U) + 1, 4, 2, make_zero_item(), 100, make_random_item());
+        KukuTable ct((1U << 10U) + 1, 4, 2, make_zero_item(), 100, make_all_ones_item());
         vector<item_type> inserted_items;
         for (int i = 0; i < 950; i++)
         {
@@ -172,6 +183,48 @@ namespace kuku_tests
         {
             ASSERT_TRUE(ct.query(b));
         }
+    }
+
+    TEST(KukuTableTests, InsertFailureIsAtomic)
+    {
+        // A one-slot table with a single location function and no stash: every probe of the random
+        // walk necessarily swaps the one occupant, so the walk revisits the same location on every
+        // step. max_probe is ODD on purpose. After an even number of swaps the slot would hold its
+        // original item again, and an implementation that does not roll back would pass this test
+        // by coincidence; with an odd max_probe the old, non-atomic behavior leaves the caller's
+        // item in the slot and reports the earlier occupant as the leftover item.
+        KukuTable ct(1, 0, 1, make_zero_item(), 3, make_all_ones_item());
+
+        item_type first = make_item(1, 0);
+        item_type second = make_item(0, 1);
+
+        ASSERT_TRUE(ct.insert(first));
+        ASSERT_TRUE(are_equal_item(first, ct.table(0)));
+
+        // The table is full and there is no stash, so this insertion cannot succeed.
+        ASSERT_FALSE(ct.insert(second));
+
+        // The table is exactly what it was before the failing call.
+        ASSERT_TRUE(are_equal_item(first, ct.table(0)));
+        ASSERT_TRUE(ct.query(first));
+        ASSERT_FALSE(ct.query(second));
+        ASSERT_EQ(0U, ct.stash().size());
+        ASSERT_DOUBLE_EQ(1.0, ct.fill_rate());
+
+        // The leftover item is the caller's own item, not the earlier occupant.
+        ASSERT_TRUE(are_equal_item(second, ct.leftover_item()));
+    }
+
+    TEST(KukuTableTests, LeftoverItemIsNotUpdatedByDuplicateInsert)
+    {
+        KukuTable ct(1U << 10U, 0, 2, make_zero_item(), 10, make_all_ones_item());
+
+        item_type item = make_item(1, 0);
+        ASSERT_TRUE(ct.insert(item));
+
+        // A duplicate insertion returns false without touching the leftover item.
+        ASSERT_FALSE(ct.insert(item));
+        ASSERT_TRUE(are_equal_item(ct.empty_item(), ct.leftover_item()));
     }
 
     TEST(KukuTableTests, Locations)
@@ -265,7 +318,7 @@ namespace kuku_tests
     {
         KukuTable ct(8, 2, 2, make_zero_item(), 10, make_zero_item());
 
-        // Fill a few entries, including one that lands in the stash.
+        // Fill a few entries in the table and, if needed, the stash.
         size_t inserted = 0;
         for (uint64_t i = 1; i < 32 && inserted < 6; i++)
         {
@@ -298,5 +351,29 @@ namespace kuku_tests
         QueryResult result;
         ASSERT_FALSE(result.found());
         ASSERT_FALSE(static_cast<bool>(result));
+        ASSERT_FALSE(result.location_if_found().has_value());
+    }
+
+    TEST(KukuTableTests, QueryResultLocationIfFound)
+    {
+        // A one-slot table: the only possible hit is at location 0, which is also the value that
+        // location() reports for a miss. Only location_if_found() distinguishes the two cases.
+        KukuTable ct(1, 0, 1, make_zero_item(), 1, make_all_ones_item());
+
+        item_type present = make_item(1, 0);
+        item_type absent = make_item(0, 1);
+        ASSERT_TRUE(ct.insert(present));
+
+        QueryResult hit = ct.query(present);
+        ASSERT_TRUE(hit.found());
+        ASSERT_FALSE(hit.in_stash());
+        ASSERT_EQ(0U, hit.location());
+        ASSERT_TRUE(hit.location_if_found().has_value());
+        ASSERT_EQ(hit.location(), hit.location_if_found().value());
+
+        QueryResult miss = ct.query(absent);
+        ASSERT_FALSE(miss.found());
+        ASSERT_EQ(0U, miss.location());
+        ASSERT_FALSE(miss.location_if_found().has_value());
     }
 } // namespace kuku_tests

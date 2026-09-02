@@ -8,8 +8,6 @@ packages/
 build/
 out/
 vcpkg_installed/
-thirdparty/
-src/kuku/internal/config.h
 **/compile_commands.json
 **/install_manifest.txt
 **/CMakeCache.txt
@@ -20,14 +18,3 @@ src/kuku/internal/config.h
 *.exe
 .vscode/settings.json
 .vscode/launch.json
-*.nupkg
-!dotnet/nuget/*.nuspec.in
-dotnet/nuget/*.nuspec
-!dotnet/src/KukuNet.csproj.in
-dotnet/src/KukuNet.csproj
-!dotnet/tests/KukuNetTests.csproj.in
-dotnet/tests/KukuNetTests.csproj
-!dotnet/examples/KukuNetExamples.csproj.in
-dotnet/examples/KukuNetExamples.csproj
-dotnet/src/Properties/launchSettings.json
-dotnet/examples/Properties/launchSettings.json

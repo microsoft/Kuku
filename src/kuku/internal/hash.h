@@ -4,17 +4,10 @@
 #pragma once
 
 #include "kuku/common.h"
-#ifdef _MSC_VER
-#   pragma warning(push)
-#   pragma warning(disable: 4804)
-#endif
 #include "kuku/internal/blake2.h"
-#ifdef _MSC_VER
-#   pragma warning(pop)
-#endif
 #include <array>
-#include <cstdint>
 #include <cstddef>
+#include <cstdint>
 #include <stdexcept>
 
 namespace kuku
@@ -25,18 +18,20 @@ namespace kuku
         HashFunc(item_type seed)
         {
             if (blake2xb(
-                random_array_.data(),
-                random_array_size_ * sizeof(location_type),
-                seed.data(),
-                sizeof(seed),
-                nullptr, 0) != 0)
+                    random_array_.data(), random_array_size_ * sizeof(location_type), seed.data(), sizeof(seed),
+                    nullptr, 0) != 0)
             {
                 throw std::runtime_error("blake2xb failed");
             }
         }
 
-        location_type operator ()(item_type item) const noexcept
+        location_type operator()(item_type item) const noexcept
         {
+            // clang-format off
+            // Deliberately one entry per input byte. This is the tabulation lookup, and the
+            // one-per-line alignment is what makes the 16 blocks and their indices checkable
+            // at a glance; letting the formatter pack them to the column limit would obscure
+            // exactly the thing a reader needs to verify.
             return
                 random_array_[(0 * block_value_count_) + static_cast<std::size_t>(item[0])] ^
                 random_array_[(1 * block_value_count_) + static_cast<std::size_t>(item[1])] ^
@@ -54,6 +49,7 @@ namespace kuku
                 random_array_[(13 * block_value_count_) + static_cast<std::size_t>(item[13])] ^
                 random_array_[(14 * block_value_count_) + static_cast<std::size_t>(item[14])] ^
                 random_array_[(15 * block_value_count_) + static_cast<std::size_t>(item[15])];
+            // clang-format on
         }
 
     private:
@@ -65,9 +61,6 @@ namespace kuku
 
         static constexpr std::size_t random_array_size_ = block_value_count_ * block_count_;
 
-        static constexpr std::uint32_t block_mask_ =
-            static_cast<std::uint32_t>(block_value_count_ - 1);
-
         std::array<location_type, random_array_size_> random_array_{};
     };
-}
+} // namespace kuku

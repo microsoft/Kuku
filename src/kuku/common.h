@@ -3,22 +3,12 @@
 
 #pragma once
 
-// Include kuku/config.h only on platforms with CMake configuration (not MSVC).
-#ifdef _MSC_VER
-#ifdef _DEBUG
-#define KUKU_DEBUG
-#else
-#undef KUKU_DEBUG
-#endif
-#else
-#include "kuku/internal/config.h"
-#endif
-
 #include <algorithm>
 #include <array>
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <limits>
 #include <random>
 #include <stdexcept>
 #include <utility>
@@ -29,6 +19,32 @@ namespace kuku
     The type that represents a 128-bit item that can be added to the hash table.
     */
     using item_type = std::array<unsigned char, 16>;
+
+    // Kuku's table layout is defined only for LITTLE-ENDIAN targets.
+    //
+    // An item is 16 raw bytes, and those raw bytes are what BLAKE2xb hashes. Several places
+    // reinterpret them as integers using the native byte order: the word accessors below,
+    // increment_item, and HashFunc, which lets BLAKE2xb write its output directly into an
+    // array of location_type. On a big-endian target each of those reinterpretations yields
+    // different values, so the derived location functions - and hence the table layout -
+    // differ from a little-endian peer's.
+    //
+    // The failure mode is what makes this worth a hard error. A big-endian build would not
+    // crash or produce a visibly wrong answer: it would compile, pass every test, and simply
+    // disagree with a little-endian peer about where items live. For a library whose
+    // consumers are two-party protocols that must agree on placement, a silent divergence is
+    // the worst available outcome, so the assumption fails loudly at compile time instead.
+    //
+    // MSVC defines no __BYTE_ORDER__, but every architecture it targets - x86, x64, ARM,
+    // ARM64 - is little-endian, so there is nothing to check there. Compilers defining
+    // neither macro fall through to the configure-time check in CMakeLists.txt.
+#if defined(__BYTE_ORDER__) && defined(__ORDER_LITTLE_ENDIAN__)
+    static_assert(
+        __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__,
+        "Kuku's table layout is defined only for little-endian targets. On a big-endian "
+        "target Kuku would build and pass its tests while computing a different table layout "
+        "from its little-endian peers.");
+#endif
 
     /**
     The type that represents a location in the hash table.
@@ -51,19 +67,68 @@ namespace kuku
     constexpr table_size_type max_table_size = static_cast<table_size_type>(1) << 30U;
 
     /**
+    The smallest allowed stash size. A stash is optional, so zero is valid.
+    */
+    constexpr table_size_type min_stash_size = static_cast<table_size_type>(0);
+
+    /**
+    The largest allowed stash size.
+
+    A query that does not find an item in the table scans the entire stash linearly, so an
+    unbounded stash degrades the table into a linear search and, because the stash grows one
+    item at a time up to stash_size, an unbounded value is also a memory-exhaustion hazard.
+
+    The bound is set from the measured point at which a stash scan costs as much as probing the
+    table. In this implementation one stash comparison costs roughly 0.6 ns while probing the
+    table costs roughly 28 ns for three location functions over a small table and roughly 60-67
+    ns over a large one, putting the crossover between about 45 and 110 entries for the common
+    configuration. 128 is the next power of two above that crossover. It is also more than an
+    order of magnitude larger than any stash size seen in practice, and it bounds the stash at
+    128 * 16 = 2 KiB, small enough to reserve outright.
+    */
+    constexpr table_size_type max_stash_size = static_cast<table_size_type>(1) << 7U;
+
+    static_assert(
+        max_stash_size <= max_table_size,
+        "max_stash_size must not exceed max_table_size, so that a stash index returned in a "
+        "QueryResult is always within the range of a table location");
+
+    static_assert(
+        static_cast<std::uint64_t>(max_table_size) + static_cast<std::uint64_t>(max_stash_size) <=
+            static_cast<std::uint64_t>((std::numeric_limits<table_size_type>::max)()),
+        "max_table_size + max_stash_size must fit in table_size_type so that the inserted item "
+        "counter cannot wrap");
+
+    /**
     The smallest allowed number of hash functions.
     */
     constexpr std::uint32_t min_loc_func_count = 1;
 
     /**
-    The largest allowed number of hash functions. This must be a power of two: QueryResult::found()
-    masks loc_func_index against (max_loc_func_count - 1) to detect the "not found" sentinel
-    (max_loc_func_count itself), which is only correct when max_loc_func_count is a power of two.
+    The largest allowed number of hash functions.
+
+    This must be a power of two, for the following reason. QueryResult packs three different things
+    into one std::uint32_t field, loc_func_index_:
+
+        0 .. max_loc_func_count - 1   the index of the location function that found the item
+        max_loc_func_count            the "not found in the table or the stash" sentinel
+        ~std::uint32_t(0)             the "found in the stash" sentinel
+
+    QueryResult::found() has to separate the first row from the second, which it does by testing
+    loc_func_index_ against ~(max_loc_func_count - 1), the mask of every bit above the largest
+    valid index. That mask is only the correct discriminator when max_loc_func_count is a power of
+    two, hence the static_assert below. The third row fails that test as well, which is why found()
+    ORs in in_stash() to rescue it. No fourth value can occur: the two-argument QueryResult
+    constructor is private and KukuTable is its only friend, so the only other way to obtain a
+    QueryResult is the public default constructor, which initializes loc_func_index_ to the
+    not-found sentinel of the second row.
     */
     constexpr std::uint32_t max_loc_func_count = 32;
     static_assert(
         (max_loc_func_count & (max_loc_func_count - 1)) == 0,
         "max_loc_func_count must be a power of two for QueryResult::found() to work");
+    static_assert(
+        max_loc_func_count != ~static_cast<std::uint32_t>(0), "the not-found and in-stash sentinels must be distinct");
 
     constexpr int bytes_per_uint64 = sizeof(std::uint64_t);
 

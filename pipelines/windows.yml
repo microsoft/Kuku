@@ -1,15 +1,4 @@
 steps:
-- task: NuGetToolInstaller@1
-  displayName: 'Use NuGet'
-  inputs:
-    versionSpec: ${{ parameters.nuget_version }}
-
-- task: UseDotNet@2
-  displayName: 'Get .NET 10 SDK'
-  inputs:
-    packageType: 'sdk'
-    version: '10.0.x'
-
 # The Microsoft-hosted agent's preinstalled vcpkg clone is whatever was current
 # when the agent image was built; our manifest's builtin-baseline may be a
 # newer commit that the agent doesn't have yet. Fetch first so vcpkg can
@@ -18,82 +7,29 @@ steps:
     git -C "$(VCPKG_INSTALLATION_ROOT)" fetch --quiet origin
   displayName: 'Update vcpkg refs'
 
-- task: CMake@1
-  displayName: 'Configure Kuku'
-  inputs:
-    cmakeArgs: >-
-      .. -DCMAKE_BUILD_TYPE='${{ parameters.configuration }}'
-      -DCMAKE_TOOLCHAIN_FILE=$(VCPKG_INSTALLATION_ROOT)/scripts/buildsystems/vcpkg.cmake
-      -DKUKU_BUILD_TESTS=ON -DKUKU_BUILD_EXAMPLES=ON -DKUKU_BUILD_KUKU_C=ON
-    workingDirectory: '$(Build.SourcesDirectory)/build'
-
-- task: MSBuild@1
-  displayName: 'Build Kuku'
-  inputs:
-    solution: '$(Build.SourcesDirectory)/build/Kuku.sln'
-    msbuildArchitecture: 'x64'
-    platform: 'x64'
-    configuration: '${{ parameters.configuration }}'
+# Driven through CMakePresets.json, like the other platforms, so there is a single
+# definition of how Kuku is built. Note that this also means CI now builds with the
+# x64-windows-static-md triplet that the preset specifies; the hand-written invocation this
+# replaced used the default triplet, so CI was validating a configuration that no developer
+# following the README would actually get.
+#
+# The Visual Studio generator is multi-configuration, so the configuration is selected by
+# the build and test presets rather than at configure time. See linux.yml for why
+# warnings-as-errors is passed here rather than being baked into the preset.
+- script: |
+    cmake --preset win-vs2022-x64 -DCMAKE_COMPILE_WARNING_AS_ERROR=ON
+  displayName: 'Configure Kuku (preset)'
+  env:
+    VCPKG_ROOT: $(VCPKG_INSTALLATION_ROOT)
 
 - script: |
-    "$(Build.SourcesDirectory)\build\bin\${{ parameters.configuration }}\kukutest.exe"
-  displayName: 'Run native unit tests'
+    cmake --build --preset win-vs2022-x64-${{ parameters.presetSuffix }}
+  displayName: 'Build Kuku'
+  env:
+    VCPKG_ROOT: $(VCPKG_INSTALLATION_ROOT)
 
-# Use the dotnet CLI for the .NET projects rather than NuGetCommand@2 /
-# MSBuild@1 / VSTest@2: those invoke the MSBuild that ships with VS 2022
-# (17.x), but .NET 10 SDK requires MSBuild 18+. The dotnet CLI carries its
-# own compatible MSBuild bundled with the SDK installed by the UseDotNet
-# step above.
-- task: DotNetCoreCLI@2
-  displayName: 'dotnet restore (KukuNet.sln)'
-  inputs:
-    command: restore
-    projects: '$(Build.SourcesDirectory)/dotnet/KukuNet.sln'
-
-- task: DotNetCoreCLI@2
-  displayName: 'dotnet build (KukuNet.sln)'
-  inputs:
-    command: build
-    projects: '$(Build.SourcesDirectory)/dotnet/KukuNet.sln'
-    arguments: '--configuration ${{ parameters.configuration }} --no-restore'
-
-- task: DotNetCoreCLI@2
-  displayName: 'dotnet test (KukuNetTests)'
-  inputs:
-    command: test
-    projects: '**/KukuNetTests.csproj'
-    arguments: '--configuration ${{ parameters.configuration }} --no-build --verbosity detailed'
-
-- task: PublishSymbols@2
-  displayName: 'Publish symbols path'
-  inputs:
-    searchPattern: '**\bin\**\*.pdb'
-    PublishSymbols: false
-  continueOnError: true
-
-- task: CopyFiles@2
-  displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
-  inputs:
-    SourceFolder: '$(Build.SourcesDirectory)'
-    Contents: '**\${{ parameters.configuration }}\**\?(*.exe|*.dll|*.lib|*.xml)'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)'
-
-- task: CopyFiles@2
-  displayName: 'Copy Nuspec File to: $(Build.ArtifactStagingDirectory)'
-  inputs:
-    SourceFolder: '$(Build.SourcesDirectory)\dotnet\nuget\'
-    Contents: 'KukuNet-multi.nuspec'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)\dotnet\nuget\'
-
-- task: CopyFiles@2
-  displayName: 'Copy Targets File to: $(Build.ArtifactStagingDirectory)'
-  inputs:
-    SourceFolder: '$(Build.SourcesDirectory)\dotnet\nuget\'
-    Contents: 'KukuNet.targets'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)\dotnet\nuget\'
-
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: drop'
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    artifactName: windows-drop
+- script: |
+    ctest --preset win-vs2022-x64-${{ parameters.presetSuffix }}
+  displayName: 'Run unit tests (ctest)'
+  env:
+    VCPKG_ROOT: $(VCPKG_INSTALLATION_ROOT)

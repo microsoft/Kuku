@@ -1,2 +1,31 @@
-This software uses the BLAKE2 library (https://github.com/BLAKE2/BLAKE2)
-The BLAKE2 library is licensed under CC0 Universal, version 1.0. You can find a copy of this license at https://creativecommons.org/publicdomain/zero/1.0/legalcode
+THIRD-PARTY SOFTWARE NOTICES AND INFORMATION
+
+This software incorporates components from the projects listed below. The original copyright notices
+and the licenses under which Microsoft received such components are set forth below and are provided for
+informational purposes only. Microsoft reserves all rights not expressly granted herein, whether by
+implication, estoppel or otherwise.
+
+This software includes parts of the BLAKE2 library (https://github.com/BLAKE2/BLAKE2), namely the
+BLAKE2b and BLAKE2xb reference C implementations and their headers, found in third_party/blake2. The
+exact upstream revision is recorded in third_party/blake2/cgmanifest.json.
+
+BLAKE2 NOTICES AND INFORMATION BEGIN HERE
+===============================================================================
+BLAKE2 reference source code package - reference C implementations
+
+Copyright 2012, Samuel Neves <sneves@dei.uc.pt>.  You may use this under the
+terms of the CC0, the OpenSSL Licence, or the Apache Public License 2.0, at
+your option.  The terms of these licenses can be found at:
+
+- CC0 1.0 Universal : http://creativecommons.org/publicdomain/zero/1.0
+- OpenSSL license   : https://www.openssl.org/source/license.html
+- Apache 2.0        : http://www.apache.org/licenses/LICENSE-2.0
+
+More information about the BLAKE2 hash function can be found at
+https://blake2.net.
+===============================================================================
+END OF BLAKE2 NOTICES AND INFORMATION
+
+Of the three options offered above, Microsoft received and redistributes these files under CC0
+Universal, version 1.0. You can find a copy of this license at
+https://creativecommons.org/publicdomain/zero/1.0/legalcode

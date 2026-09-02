@@ -25,18 +25,28 @@
             "displayName": "Windows VS 2022 (x64)",
             "inherits": "base",
             "generator": "Visual Studio 17 2022",
-            "architecture": { "value": "x64", "strategy": "set" },
+            "architecture": {
+                "value": "x64",
+                "strategy": "set"
+            },
             "cacheVariables": {
                 "VCPKG_TARGET_TRIPLET": "x64-windows-static-md",
                 "VCPKG_HOST_TRIPLET": "x64-windows-static-md"
             },
-            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" }
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
         },
         {
             "name": "win-vs2022-arm64",
             "displayName": "Windows VS 2022 (arm64)",
             "inherits": "win-vs2022-x64",
-            "architecture": { "value": "ARM64", "strategy": "set" },
+            "architecture": {
+                "value": "ARM64",
+                "strategy": "set"
+            },
             "cacheVariables": {
                 "VCPKG_TARGET_TRIPLET": "arm64-windows-static-md",
                 "VCPKG_HOST_TRIPLET": "arm64-windows-static-md"
@@ -50,7 +60,11 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug"
             },
-            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" }
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
         },
         {
             "name": "linux-release",
@@ -71,7 +85,11 @@
                 "VCPKG_TARGET_TRIPLET": "arm64-osx",
                 "VCPKG_HOST_TRIPLET": "arm64-osx"
             },
-            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Darwin" }
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Darwin"
+            }
         },
         {
             "name": "macos-arm64-release",
@@ -98,6 +116,18 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
             }
+        },
+        {
+            "name": "win-vs2026-x64",
+            "displayName": "Windows VS 2026 (x64)",
+            "inherits": "win-vs2022-x64",
+            "generator": "Visual Studio 18 2026"
+        },
+        {
+            "name": "win-vs2026-arm64",
+            "displayName": "Windows VS 2026 (arm64)",
+            "inherits": "win-vs2022-arm64",
+            "generator": "Visual Studio 18 2026"
         }
     ],
     "buildPresets": [
@@ -105,61 +135,257 @@
             "name": "win-vs2022-x64-debug",
             "configurePreset": "win-vs2022-x64",
             "configuration": "Debug",
-            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" }
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
         },
         {
             "name": "win-vs2022-x64-release",
             "configurePreset": "win-vs2022-x64",
             "configuration": "Release",
-            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" }
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
         },
         {
             "name": "win-vs2022-arm64-debug",
             "configurePreset": "win-vs2022-arm64",
             "configuration": "Debug",
-            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" }
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
         },
         {
             "name": "win-vs2022-arm64-release",
             "configurePreset": "win-vs2022-arm64",
             "configuration": "Release",
-            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" }
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
         },
         {
             "name": "linux-debug",
             "configurePreset": "linux-debug",
             "jobs": 0,
-            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" }
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
         },
         {
             "name": "linux-release",
             "configurePreset": "linux-release",
             "jobs": 0,
-            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" }
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
         },
         {
             "name": "macos-arm64-debug",
             "configurePreset": "macos-arm64-debug",
             "jobs": 0,
-            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Darwin" }
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Darwin"
+            }
         },
         {
             "name": "macos-arm64-release",
             "configurePreset": "macos-arm64-release",
             "jobs": 0,
-            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Darwin" }
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Darwin"
+            }
         },
         {
             "name": "macos-x64-debug",
             "configurePreset": "macos-x64-debug",
             "jobs": 0,
-            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Darwin" }
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Darwin"
+            }
         },
         {
             "name": "macos-x64-release",
             "configurePreset": "macos-x64-release",
             "jobs": 0,
-            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Darwin" }
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Darwin"
+            }
+        },
+        {
+            "name": "win-vs2026-x64-debug",
+            "configurePreset": "win-vs2026-x64",
+            "configuration": "Debug",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "win-vs2026-x64-release",
+            "configurePreset": "win-vs2026-x64",
+            "configuration": "Release",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "win-vs2026-arm64-debug",
+            "configurePreset": "win-vs2026-arm64",
+            "configuration": "Debug",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "win-vs2026-arm64-release",
+            "configurePreset": "win-vs2026-arm64",
+            "configuration": "Release",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "test-base",
+            "hidden": true,
+            "output": {
+                "outputOnFailure": true
+            },
+            "execution": {
+                "noTestsAction": "error"
+            }
+        },
+        {
+            "name": "win-vs2022-x64-debug",
+            "configurePreset": "win-vs2022-x64",
+            "configuration": "Debug",
+            "inherits": "test-base",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "win-vs2022-x64-release",
+            "configurePreset": "win-vs2022-x64",
+            "configuration": "Release",
+            "inherits": "test-base",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "win-vs2026-x64-debug",
+            "configurePreset": "win-vs2026-x64",
+            "configuration": "Debug",
+            "inherits": "test-base",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "win-vs2026-x64-release",
+            "configurePreset": "win-vs2026-x64",
+            "configuration": "Release",
+            "inherits": "test-base",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "linux-debug",
+            "configurePreset": "linux-debug",
+            "inherits": "test-base",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "linux-release",
+            "configurePreset": "linux-release",
+            "inherits": "test-base",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "macos-arm64-debug",
+            "configurePreset": "macos-arm64-debug",
+            "inherits": "test-base",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Darwin"
+            }
+        },
+        {
+            "name": "macos-arm64-release",
+            "configurePreset": "macos-arm64-release",
+            "inherits": "test-base",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Darwin"
+            }
+        },
+        {
+            "name": "macos-x64-debug",
+            "configurePreset": "macos-x64-debug",
+            "inherits": "test-base",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Darwin"
+            }
+        },
+        {
+            "name": "macos-x64-release",
+            "configurePreset": "macos-x64-release",
+            "inherits": "test-base",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Darwin"
+            }
         }
     ]
 }

@@ -1,4 +1,8 @@
-# This file selects the correct job definition based on system and buildType.
+# This file selects the correct job definition for the requested platform and build configuration.
+#
+# Each platform template drives the build through CMakePresets.json, so what is passed down
+# is the preset suffix rather than a CMake build type. It is spelled out here rather than
+# derived from the configuration name so that the mapping is explicit and greppable.
 
 parameters:
   debug: 'false'
@@ -13,13 +17,10 @@ jobs:
     steps:
     - template: windows.yml
       parameters:
-        nuget_version: '6.14.0'
         ${{ if eq(parameters.debug, 'true') }}:
-          configuration: 'Debug'
-          path: 'Debug'
+          presetSuffix: 'debug'
         ${{ if eq(parameters.debug, 'false') }}:
-          configuration: 'Release'
-          path: 'Release'
+          presetSuffix: 'release'
 
 - ${{ if eq(parameters.name, 'Linux') }}:
   - job: ${{ parameters.name }}
@@ -29,11 +30,10 @@ jobs:
     steps:
     - template: linux.yml
       parameters:
-        artifactName: linux-drop
         ${{ if eq(parameters.debug, 'true') }}:
-          configuration: 'Debug'
+          presetSuffix: 'debug'
         ${{ if eq(parameters.debug, 'false') }}:
-          configuration: 'Release'
+          presetSuffix: 'release'
 
 - ${{ if eq(parameters.name, 'macOS') }}:
   - job: ${{ parameters.name }}
@@ -43,19 +43,7 @@ jobs:
     steps:
     - template: macos.yml
       parameters:
-        artifactName: macos-drop
         ${{ if eq(parameters.debug, 'true') }}:
-          configuration: 'Debug'
+          presetSuffix: 'debug'
         ${{ if eq(parameters.debug, 'false') }}:
-          configuration: 'Release'
-
-- ${{ if eq(parameters.name, 'NuGet') }}:
-  - job: ${{ parameters.name }}
-    displayName: ${{ parameters.name }}
-    dependsOn: [Windows, Linux, macOS]
-    pool:
-      vmImage: 'windows-latest'
-    steps:
-    - template: nuget.yml
-      parameters:
-        nuget_version: '6.14.0'
+          presetSuffix: 'release'
