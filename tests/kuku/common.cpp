@@ -151,4 +151,23 @@ namespace kuku_tests
         ASSERT_EQ(0x0, get_low_word(bl));
         ASSERT_EQ(0x0, get_high_word(bl));
     }
+
+    TEST(CommonTests, ByteOrder)
+    {
+        // The words of an item are stored in little-endian byte order on every target, so that
+        // items made from the same words - and the table layout derived from them - are the same
+        // whatever the native byte order is.
+        item_type bl = make_item(0x0706050403020100ULL, 0x0F0E0D0C0B0A0908ULL);
+        for (size_t i = 0; i < bl.size(); i++)
+        {
+            ASSERT_EQ(static_cast<unsigned char>(i), bl[i]);
+        }
+        ASSERT_EQ(0x0706050403020100ULL, get_low_word(bl));
+        ASSERT_EQ(0x0F0E0D0C0B0A0908ULL, get_high_word(bl));
+
+        bl = make_item(0xFFFFFFFFFFFFFFFFULL, 0);
+        increment_item(bl);
+        const item_type expected{ 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 };
+        ASSERT_EQ(expected, bl);
+    }
 } // namespace kuku_tests

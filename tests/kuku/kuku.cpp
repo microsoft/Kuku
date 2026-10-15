@@ -249,6 +249,25 @@ namespace kuku_tests
         }
     }
 
+    TEST(KukuTableTests, LocationsKnownAnswer)
+    {
+        // Every location function of a table is derived from the seed, so the locations of an
+        // item must be the same on every target, whatever its native byte order, or two parties
+        // could not agree on where items live. The expected values were computed on a
+        // little-endian target.
+        KukuTable ct(
+            static_cast<table_size_type>(1) << 20U, 0, 3, make_item(0x0123456789ABCDEFULL, 0xFEDCBA9876543210ULL), 1,
+            make_zero_item());
+        item_type item = make_item(1, 0);
+        ASSERT_EQ(1033284U, ct.location(item, 0));
+        ASSERT_EQ(306355U, ct.location(item, 1));
+        ASSERT_EQ(196388U, ct.location(item, 2));
+        item = make_item(0xDEADBEEFDEADBEEFULL, 0xFEEDFACEFEEDFACEULL);
+        ASSERT_EQ(990766U, ct.location(item, 0));
+        ASSERT_EQ(641004U, ct.location(item, 1));
+        ASSERT_EQ(882278U, ct.location(item, 2));
+    }
+
     TEST(KukuTableTests, RepeatedInsert)
     {
         KukuTable ct(1U << 10U, 0, 4, make_zero_item(), 10, make_zero_item());
