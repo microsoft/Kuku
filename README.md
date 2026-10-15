@@ -51,7 +51,11 @@ vcpkg install kuku
 Kuku is built with CMake (≥ 3.25) and uses [vcpkg](https://github.com/microsoft/vcpkg) in manifest mode for build-time dependencies (currently only GoogleTest, and only when tests are enabled).
 A set of `CMakePresets.json` configurations is provided so that you do not need to remember the vcpkg toolchain-file path on every invocation.
 
-**Kuku supports little-endian targets only.** An item is 16 raw bytes, and Kuku both hashes those bytes and reinterprets them as integers using the native byte order, so a big-endian build would derive a different table layout than its little-endian peers — with no error and with every test passing. Because a silent disagreement about item placement is far worse than a failed build for the two-party protocols Kuku serves, this is enforced rather than assumed: a `static_assert` in `src/kuku/common.h` rejects big-endian targets, backed by a configure-time check for compilers that expose no byte-order macro. Every platform Kuku currently targets — x64 and ARM64 on Windows, Linux and macOS — is little-endian.
+**Kuku's table layout does not depend on the byte order of the target.**
+An item is 16 raw bytes, and Kuku hashes those bytes as they are.
+Wherever it interprets bytes as integers — the two 64-bit words of an item, and the 32-bit words of the BLAKE2xb output that seeds a location function — it reads and writes them in little-endian byte order regardless of the native byte order, so a big-endian build derives exactly the same table layout as its little-endian peers.
+This matters for the two-party protocols Kuku serves, where the parties must agree on where items live.
+On little-endian targets, which include every platform Kuku is tested on — x64 and ARM64 on Windows, Linux and macOS — the conversions are no-ops; other targets use a portable byte-by-byte implementation.
 
 Set the `VCPKG_ROOT` environment variable to point at your vcpkg checkout before configuring:
 

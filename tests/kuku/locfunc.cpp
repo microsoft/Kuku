@@ -46,4 +46,16 @@ namespace kuku_tests
             }
         }
     }
+
+    TEST(LocFuncTests, KnownAnswer)
+    {
+        // The location of an item for a given seed must be the same on every target, whatever its
+        // native byte order, or two parties could not agree on where items live. The expected
+        // values were computed on a little-endian target.
+        LocFunc lf(static_cast<table_size_type>(1) << 20U, make_item(0x0123456789ABCDEFULL, 0xFEDCBA9876543210ULL));
+        ASSERT_EQ(949276U, lf(make_item(0, 0)));
+        ASSERT_EQ(1033284U, lf(make_item(1, 0)));
+        ASSERT_EQ(675233U, lf(make_item(0, 1)));
+        ASSERT_EQ(990766U, lf(make_item(0xDEADBEEFDEADBEEFULL, 0xFEEDFACEFEEDFACEULL)));
+    }
 } // namespace kuku_tests
